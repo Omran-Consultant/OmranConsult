@@ -6,7 +6,10 @@ import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
 import { JsonLd } from "@/core/seo/json-ld";
 import { PageHeader } from "@/core/ui/page-header";
 import { Section } from "@/core/ui/section";
+import { ClientLogo } from "@/features/media/client-logo";
+import { ProjectOwnerLogo } from "@/features/media/project-owner-logo";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
+import { getClientLogo } from "@/features/media/brand-logos";
 import { RegionsMapFilter } from "@/features/projects/components/regions-map-filter";
 import type { ProjectsFilters } from "@/features/projects/services/get-projects-page-data";
 import { Link } from "@/i18n/navigation";
@@ -40,6 +43,7 @@ function buildQuery(filters: ProjectsFilters): string {
 export async function ProjectsPageContent({ locale, data, filters }: ProjectsPageContentProps) {
   const t = await getTranslations("ProjectsPage");
   const clients = data.clients.filter((client) => client.slug && client.projectsCount > 0 && client.name);
+  const clientLogoStrip = data.clients.filter((client) => client.inClientList);
   const regions = data.regions.filter((region) => region.name);
   const breadcrumbs = buildBreadcrumbJsonLd(locale, [
     { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
@@ -97,8 +101,20 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
           <EmptyState description={t("emptyDescription")} title={t("emptyTitle")} />
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {data.projects.projects.map((project) => (
-              <Card key={project.slug}>
+            {data.projects.projects.map((project) => {
+              const ownerHasLogo = project.client?.slug
+                ? Boolean(getClientLogo(project.client.slug, 0))
+                : false;
+
+              return (
+              <Card data-owner-has-logo={ownerHasLogo ? "true" : undefined} key={project.slug}>
+                {project.client ? (
+                  <ProjectOwnerLogo
+                    locale={locale}
+                    name={project.client.name}
+                    slug={project.client.slug}
+                  />
+                ) : null}
                 <h2 className="font-display text-lg font-semibold text-heading">{project.title}</h2>
                 {project.client?.name && project.client.slug ? (
                   <p className="mt-2 text-sm text-muted">
@@ -116,7 +132,8 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
                   {t("detailLink")}
                 </Link>
               </Card>
-            ))}
+            );
+            })}
           </div>
         )}
 
@@ -142,16 +159,15 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
       </Section>
 
       <Section heading={t("clientsHeading")}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {clients.map((client) => (
-            <Card key={client.slug}>
-              <Link
-                className="font-semibold text-heading hover:text-brand-green-strong"
-                href={`/projects${buildQuery({ ...filters, client: client.slug ?? undefined, page: 1 })}`}
-              >
-                {client.name}
-              </Link>
-            </Card>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-6">
+          {clientLogoStrip.map((client) => (
+            <ClientLogo
+              key={client.sortOrder}
+              locale={locale}
+              name={client.name}
+              slug={client.slug}
+              sortOrder={client.sortOrder}
+            />
           ))}
         </div>
       </Section>

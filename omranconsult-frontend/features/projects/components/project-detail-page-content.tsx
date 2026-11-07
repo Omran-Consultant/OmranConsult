@@ -4,6 +4,7 @@ import { PageHeader } from "@/core/ui/page-header";
 import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
 import { JsonLd } from "@/core/seo/json-ld";
 import { Section } from "@/core/ui/section";
+import { ProjectOwnerLogo } from "@/features/media/project-owner-logo";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
@@ -39,6 +40,13 @@ export async function ProjectDetailPageContent({
       />
 
       <Section heading={t("detailInfoHeading")}>
+        {project.client ? (
+          <ProjectOwnerLogo
+            locale={locale}
+            name={project.client.name}
+            slug={project.client.slug}
+          />
+        ) : null}
         {project.client?.name && project.client.slug ? (
           <p className="text-muted">
             {t("ownerLabel")}{" "}

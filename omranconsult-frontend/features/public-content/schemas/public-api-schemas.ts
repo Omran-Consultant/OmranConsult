@@ -195,6 +195,7 @@ export const partnersResponseSchema = z.object({
   data: z.array(
     z.object({
       id: z.number().int().positive(),
+      slug: nullableStringSchema,
       name: nullableStringSchema,
       field: nullableStringSchema,
     }),

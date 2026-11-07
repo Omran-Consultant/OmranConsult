@@ -7,6 +7,7 @@ import { Card } from "@/core/ui/card";
 import { PageHeader } from "@/core/ui/page-header";
 import { Section } from "@/core/ui/section";
 import { ExpertsExplorer } from "@/features/about/components/experts-explorer";
+import { PartnerLogo } from "@/features/media/partner-logo";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
 import type { AppLocale } from "@/i18n/routing";
 
@@ -246,9 +247,12 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
       <Section heading={t("partnersHeading")}>
         <div className="grid gap-4 md:grid-cols-2">
           {data.partners.map((partner) => (
-            <Card key={partner.id}>
-              <h3 className="font-display text-lg font-semibold text-heading">{partner.name}</h3>
-              <p className="mt-2 text-muted">{partner.field}</p>
+            <Card className="overflow-hidden p-0" key={partner.id}>
+              <PartnerLogo name={partner.name} slug={partner.slug} />
+              <div className="space-y-2 p-4">
+                <h3 className="font-display text-lg font-semibold text-heading">{partner.name}</h3>
+                <p className="text-muted">{partner.field}</p>
+              </div>
             </Card>
           ))}
         </div>

@@ -8,11 +8,13 @@ import { Section } from "@/core/ui/section";
 import { getConfiguredPublicSiteOrigin } from "@/core/seo/locale-metadata";
 import { JsonLd } from "@/core/seo/json-ld";
 import { Stat } from "@/core/ui/stat";
+import { ClientLogo } from "@/features/media/client-logo";
 import {
   getProfileImageAlt,
   HERO_SLIDE_IMAGES,
 } from "@/features/media/profile-images";
 import { formatStatisticValue } from "@/features/home/services/statistic-formatter";
+import { ProjectOwnerLogo } from "@/features/media/project-owner-logo";
 import type { AppLocale } from "@/i18n/routing";
 
 type HomePageData = Awaited<
@@ -54,7 +56,7 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
   const heroSlide = slidesByKey.get("hero");
   const coverSlide = slidesByKey.get("cover");
   const axisServices = data.services.filter((category) => category.kind === "axis");
-  const listedClients = data.clients.filter((client) => client.inClientList && client.name);
+  const listedClients = data.clients.filter((client) => client.inClientList);
   const licensesCount = data.documents.filter((doc) => doc.kind === "license").length;
   const certificatesCount = data.documents.filter((doc) => doc.kind === "iso_certificate").length;
   const siteOrigin = getConfiguredPublicSiteOrigin() ?? "http://localhost:3000";
@@ -158,6 +160,13 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {data.projects.projects.map((project) => (
             <Card key={project.slug}>
+              {project.client ? (
+                <ProjectOwnerLogo
+                  locale={locale}
+                  name={project.client.name}
+                  slug={project.client.slug}
+                />
+              ) : null}
               <h3 className="font-display text-lg font-semibold text-heading">{project.title}</h3>
               {project.client?.name ? <p className="mt-2 text-sm text-muted">{project.client.name}</p> : null}
             </Card>
@@ -207,6 +216,17 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
         <p className="text-muted-on-dark">
           {t("clientsCount", { count: listedClients.length })}
         </p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+          {listedClients.map((client) => (
+            <ClientLogo
+              key={client.sortOrder}
+              locale={locale}
+              name={client.name}
+              slug={client.slug}
+              sortOrder={client.sortOrder}
+            />
+          ))}
+        </div>
       </Section>
 
       <Section heading={asString(sectionTitles?.experts)} tone="light">

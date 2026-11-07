@@ -111,11 +111,12 @@ export function mapProjectDetailToUiModel(payload: ProjectDetailResponse) {
 }
 
 export function mapClientsToUiModel(payload: ClientsResponse) {
-  return payload.data.map((client) => ({
+  return payload.data.map((client, index) => ({
     slug: mapOptionalText(client.slug),
     name: mapOptionalText(client.name),
     inClientList: client.in_client_list,
     projectsCount: client.projects_count,
+    sortOrder: index + 1,
   }));
 }
 
@@ -171,6 +172,7 @@ export function mapDocumentsToUiModel(payload: DocumentsResponse) {
 export function mapPartnersToUiModel(payload: PartnersResponse) {
   return payload.data.map((partner) => ({
     id: partner.id,
+    slug: mapOptionalText(partner.slug),
     name: mapOptionalText(partner.name),
     field: mapOptionalText(partner.field),
   }));
