@@ -5,6 +5,7 @@ import {
   fetchPublicHome,
   fetchPublicOrgChart,
   fetchPublicPartners,
+  fetchPublicSettings,
 } from "@/lib/api/public-content";
 import {
   mapDocumentsToUiModel,
@@ -12,11 +13,13 @@ import {
   mapHomeToUiModel,
   mapOrgChartToUiModel,
   mapPartnersToUiModel,
+  mapSettingsToUiModel,
 } from "@/features/public-content/services/public-content-mappers";
 
 export async function getAboutPageData(locale: AppLocale) {
-  const [homePayload, expertsPayload, orgPayload, documentsPayload, partnersPayload] =
+  const [settingsPayload, homePayload, expertsPayload, orgPayload, documentsPayload, partnersPayload] =
     await Promise.all([
+      fetchPublicSettings(locale),
       fetchPublicHome(locale),
       fetchPublicExperts(locale),
       fetchPublicOrgChart(locale),
@@ -25,6 +28,7 @@ export async function getAboutPageData(locale: AppLocale) {
     ]);
 
   return {
+    settings: mapSettingsToUiModel(settingsPayload),
     home: mapHomeToUiModel(homePayload),
     experts: mapExpertsToUiModel(expertsPayload),
     orgChart: mapOrgChartToUiModel(orgPayload),
