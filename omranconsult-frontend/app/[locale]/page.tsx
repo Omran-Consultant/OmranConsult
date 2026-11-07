@@ -22,7 +22,7 @@ export default async function PublicHomePage({ params }: HomePageProps) {
         <h1 className="text-3xl font-semibold tracking-tight text-heading">
           {t("title")}
         </h1>
-        <p className="text-lg leading-8 text-muted">{t("description")}</p>
+        <p className="text-lg text-muted ltr:leading-8">{t("description")}</p>
       </div>
 
       <Suspense

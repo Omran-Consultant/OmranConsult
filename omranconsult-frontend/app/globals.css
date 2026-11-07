@@ -52,7 +52,7 @@
  */
 html[lang="ar"] {
   --oc-ar-scale: 1.2;
-  --oc-ar-leading-body: 1.6;
+  --oc-ar-leading-body: 1.5;
   --oc-ar-leading-heading: 1.3;
 
   --text-xs: calc(0.75rem * var(--oc-ar-scale));
