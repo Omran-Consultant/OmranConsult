@@ -42,7 +42,8 @@ class ProfileContentSeederTest extends TestCase
     public static function profileCounts(): array
     {
         return [
-            'site settings' => ['site_settings', 2],
+            // company_legal_name, contact + working_hours, profile_pdf (P23).
+            'site settings' => ['site_settings', 4],
             'hero and section dividers (§3.1)' => ['hero_slides', 14],
             // §3.4 (5) + years_experience and group_experience from the profile text (P22).
             'statistics (§3.4 + 2 text facts)' => ['statistics', 7],
