@@ -128,15 +128,15 @@ class ProjectsSeeder extends ProfileSeeder
 
     private function regions(): void
     {
-        // [slug, ISO 3166-2 code|null, Arabic name as printed, English name]
+        // [slug, ISO 3166-2 code|null, Arabic name as printed, English name mirroring the printed label]
         $rows = [
             ['northern-region', null, 'المنطقة الشمالية', 'Northern Region'],
             ['tabuk', 'SA-07', 'منطقة تبوك', 'Tabuk'],
             ['al-qassim', 'SA-05', 'منطقة القصيم', 'Al-Qassim'],
-            ['madinah', 'SA-03', 'منطقة المدينة المنورة', 'Madinah Region'],
-            ['riyadh', 'SA-01', 'الرياض', 'Riyadh Region'],
+            ['madinah', 'SA-03', 'منطقة المدينة المنورة', 'Madinah'],
+            ['riyadh', 'SA-01', 'الرياض', 'Riyadh'],
             ['eastern-province', 'SA-04', 'المنطقة الشرقية', 'Eastern Province'],
-            ['makkah', 'SA-02', 'مكة', 'Makkah Region'],
+            ['makkah', 'SA-02', 'مكة', 'Makkah'],
             ['al-baha', 'SA-11', 'الباحة', 'Al-Baha'],
             ['asir', 'SA-14', 'عسير', 'Asir'],
             ['jazan', 'SA-09', 'جازان', 'Jazan'],
