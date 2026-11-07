@@ -19,6 +19,7 @@ class ExpertResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'name' => PublicLocale::pick($this->name),
             'title' => PublicLocale::pick($this->title),
             'bio' => PublicLocale::pick($this->bio),

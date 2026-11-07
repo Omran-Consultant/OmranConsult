@@ -6,7 +6,7 @@ use App\Support\Content\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['name', 'title', 'bio', 'years_experience', 'is_expert', 'sort_order', 'status', 'published_at'])]
+#[Fillable(['slug', 'name', 'title', 'bio', 'years_experience', 'is_expert', 'sort_order', 'status', 'published_at'])]
 class TeamMember extends Model
 {
     use Publishable;

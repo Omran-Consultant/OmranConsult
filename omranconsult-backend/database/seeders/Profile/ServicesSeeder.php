@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Profile;
 
+use App\Modules\Services\Domain\ServiceCategoryKind;
 use App\Modules\Services\Infrastructure\Models\Service;
 use App\Modules\Services\Infrastructure\Models\ServiceCategory;
 
@@ -13,9 +14,10 @@ class ServicesSeeder extends ProfileSeeder
 {
     public function run(): void
     {
-        foreach ($this->categories() as $categoryIndex => [$slug, $titleAr, $titleEn, $services]) {
+        foreach ($this->categories() as $categoryIndex => [$slug, $kind, $titleAr, $titleEn, $services]) {
             $category = ServiceCategory::create([
                 'slug' => $slug,
+                'kind' => $kind,
                 'title' => self::t($titleAr, $titleEn),
                 'sort_order' => $categoryIndex + 1,
                 ...self::published(),
@@ -34,12 +36,12 @@ class ServicesSeeder extends ProfileSeeder
     }
 
     /**
-     * @return array<int, array{0: string, 1: string, 2: string, 3: array<int, array{0: string, 1: string, 2: string}>}>
+     * @return array<int, array{0: string, 1: ServiceCategoryKind, 2: string, 3: string, 4: array<int, array{0: string, 1: string, 2: string}>}>
      */
     private function categories(): array
     {
         return [
-            ['engineering-consulting', 'الاستشارات الهندسية', 'Engineering Consulting', [
+            ['engineering-consulting', ServiceCategoryKind::Axis, 'الاستشارات الهندسية', 'Engineering Consulting', [
                 ['design-management', 'إدارة التصميم', 'Design Management'],
                 ['building-inspection-and-site-supervision', 'فحص المباني والإشراف على مواقع البناء', 'Building Inspection and Construction Site Supervision'],
                 ['health-safety-and-environment', 'الصحة والسلامة والبيئة', 'Health, Safety, and Environment'],
@@ -50,7 +52,7 @@ class ServicesSeeder extends ProfileSeeder
                 ['sustainable-engineering-solutions', 'حلول هندسية مستدامة', 'Sustainable Engineering Solutions'],
                 ['quality-assurance-and-control', 'ضمان ومراقبة الجودة', 'Quality Assurance and Control'],
             ]],
-            ['project-management-and-technical-support', 'إدارة المشاريع والدعم الفني', 'Project Management and Technical Support', [
+            ['project-management-and-technical-support', ServiceCategoryKind::Axis, 'إدارة المشاريع والدعم الفني', 'Project Management and Technical Support', [
                 ['project-management', 'إدارة المشاريع', 'Project Management'],
                 ['contract-management', 'إدارة العقود', 'Contract Management'],
                 ['asset-and-facility-management', 'إدارة الأصول والمرافق', 'Asset and Facility Management'],
@@ -61,7 +63,7 @@ class ServicesSeeder extends ProfileSeeder
                 ['planning-and-scheduling', 'التخطيط والجدولة', 'Planning and Scheduling'],
                 ['stakeholder-management', 'إدارة أصحاب المصلحة', 'Stakeholder Management'],
             ]],
-            ['business-consulting', 'استشارات الأعمال', 'Business Consulting', [
+            ['business-consulting', ServiceCategoryKind::Axis, 'استشارات الأعمال', 'Business Consulting', [
                 ['digital-transformation', 'لتحول الرقمي', 'Digital Transformation'],
                 ['strategic-consulting', 'الاستشارات الاستراتيجية', 'Strategic Consulting'],
                 ['corporate-development-and-training', 'تطوير الشركات والتدريب', 'Corporate Development and Training'],
@@ -69,7 +71,7 @@ class ServicesSeeder extends ProfileSeeder
                 ['process-reengineering', 'إعادة هندسة العمليات', 'Process Reengineering'],
                 ['operations-supply-chain-management', 'إدارة سلسلة توريد العمليات', 'Operations Supply Chain Management'],
             ]],
-            ['asset-management-services', 'خدمات إدارة الأصول', 'Asset Management Services', [
+            ['asset-management-services', ServiceCategoryKind::AssetManagement, 'خدمات إدارة الأصول', 'Asset Management Services', [
                 ['asset-inventory-documentation-classification-and-valuation', 'حصر وتوثيق الأصول وتصنيفها وتقييمها', 'Asset Inventory, Documentation, Classification, and Valuation'],
                 ['work-order-task-and-contractor-management', 'إدارة أوامر العمل والمهام والمقاولين', 'Work Order, Task, and Contractor Management'],
                 ['work-order-task-and-contractor-management-03', 'إدارة أوامر العمل والمهام والمقاولين', 'Work Order, Task, and Contractor Management'],
@@ -81,7 +83,7 @@ class ServicesSeeder extends ProfileSeeder
                 ['energy-and-sustainability-management-and-resource-efficiency-improvement', 'إدارة الطاقة والاستدامة ورفع كفاءة الموارد', 'Energy and Sustainability Management and Resource Efficiency Improvement'],
                 ['reporting-dashboards-and-decision-support', 'التقارير ولوحاتالمؤشرات ودعم اتخاذ القرار', 'Reporting, Dashboards, and Decision Support'],
             ]],
-            ['engineering-and-design', 'الهندسة والتصميم', 'Engineering and Design', [
+            ['engineering-and-design', ServiceCategoryKind::EngineeringDesign, 'الهندسة والتصميم', 'Engineering and Design', [
                 ['facilities-engineering', 'هندسة المرافق', 'Facilities Engineering'],
                 ['master-planning', 'التخطيط الرئيسي', 'Master Planning'],
                 ['urban-planning', 'التخطيط الحضري', 'Urban Planning'],

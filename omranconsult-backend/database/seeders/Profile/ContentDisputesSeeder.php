@@ -115,6 +115,10 @@ class ContentDisputesSeeder extends ProfileSeeder
         $this->note($this->block('multi_phase_approach'), 'payload', 'EDITORIAL_SPELLING',
             'Spelling as printed: «مستوي»، «الإلتزام»، «لإستلام»، «اجراء».',
             ['page' => 38, 'printed' => ['مستوي', 'الإلتزام', 'لإستلام', 'اجراء']]);
+        $this->note($this->block('section_titles'), 'payload.org_groups', 'EDITORIAL_MIGRATION_AMBIGUITY',
+            'Organizational chart group labels are descriptive headings from the inventory, not printed as section titles on p.40. Confirm wording.',
+            ['page' => 40]);
+
         $this->note(HeroSlide::query()->where('key', 'hero')->firstOrFail(), 'subline.ar', 'EDITORIAL_SPELLING',
             'Printed «تعليمة»; likely «تعليمية».',
             ['pages' => '3, 5', 'printed' => 'لبيئة تعليمة مستدامة']);

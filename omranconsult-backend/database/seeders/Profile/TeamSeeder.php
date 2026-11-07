@@ -31,24 +31,25 @@ class TeamSeeder extends ProfileSeeder
     private function experts(): void
     {
         $experts = [
-            ['محمد مسعد', 'Mohammed Mosaad', 'مستشار الدراسات والتصميم', 'Studies and Design Consultant', 25, self::BIO_A_AR, self::BIO_A_EN],
-            ['بسام جورية', 'Bassam Jouriyeh', 'خبير واستشاري ، في الهندسة المدنية والمائية', 'Expert and Consultant in Civil and Water Engineering', 35, self::BIO_B_AR, self::BIO_B_EN],
+            ['mohammed-mosaad', 'محمد مسعد', 'Mohammed Mosaad', 'مستشار الدراسات والتصميم', 'Studies and Design Consultant', 25, self::BIO_A_AR, self::BIO_A_EN],
+            ['bassam-jouriyeh', 'بسام جورية', 'Bassam Jouriyeh', 'خبير واستشاري ، في الهندسة المدنية والمائية', 'Expert and Consultant in Civil and Water Engineering', 35, self::BIO_B_AR, self::BIO_B_EN],
             [
-                'د. محمد عبدالعليم', 'Dr. Mohammed Abdelalim', 'خبير الدراسات الهيدرولوجية وتكنولوجيا الاستشعار', 'Expert in Hydrological Studies and Sensing Technology', 15,
+                'mohammed-abdelalim', 'د. محمد عبدالعليم', 'Dr. Mohammed Abdelalim', 'خبير الدراسات الهيدرولوجية وتكنولوجيا الاستشعار', 'Expert in Hydrological Studies and Sensing Technology', 15,
                 'خبير واستشاري متخصص في الدراسات الهيدرولوجية والجيومورفولوجية وتقييم أخطار السيول، حاصل على درجة الدكتوراه في الجيومورفولوجيا التطبيقية والاستشعار عن بعد، شارك في إعداد وتنفيذ ومراجعة العديد من الدراسات والمشاريع المرتبطة بإدارة وتنمية موارد المياه السطحية والحماية من أخطار السيول، وتوظيف الاستشعار عن بعد ونظم المعلومات الجغرافية في بناء قواعد البيانات والتحليلات المكانية والنماذج الرقمية الداعمة للتخطيط واتخاذ القرار، إلى جانب خبرته، باستخدام البرامج المتخصصة:- ArcGIS Pro – ArcGIS – HEC-HMS – HEC-RAS – HyfranPlus – SPSS.',
                 'An expert and consultant specializing in hydrological and geomorphological studies and flood-risk assessment. He holds a PhD in applied geomorphology and remote sensing and has taken part in preparing, implementing, and reviewing many studies and projects on managing and developing surface water resources and protecting against flood hazards, using remote sensing and geographic information systems to build databases, spatial analyses, and digital models that support planning and decision-making. He is experienced with specialized software: ArcGIS Pro – ArcGIS – HEC-HMS – HEC-RAS – HyfranPlus – SPSS.',
             ],
-            ['عبدالرحمن المقبل', 'Abdulrahman Al-Muqbil', 'مستشار تحليل البيانات', 'Data Analysis Consultant', 25, self::BIO_A_AR, self::BIO_A_EN],
-            ['وسيم اصفهان', 'Waseem Asfahan', 'خبير الإدارة الهندسية والجودة', 'Expert in Engineering Management and Quality', 30, self::BIO_B_AR, self::BIO_B_EN],
+            ['abdulrahman-al-muqbil', 'عبدالرحمن المقبل', 'Abdulrahman Al-Muqbil', 'مستشار تحليل البيانات', 'Data Analysis Consultant', 25, self::BIO_A_AR, self::BIO_A_EN],
+            ['waseem-asfahan', 'وسيم اصفهان', 'Waseem Asfahan', 'خبير الإدارة الهندسية والجودة', 'Expert in Engineering Management and Quality', 30, self::BIO_B_AR, self::BIO_B_EN],
             [
-                'د/ أميرة البرتقالي', 'Dr. Amira Al-Burtuqali', 'خبير التصاميم والهويات المعمارية', 'Expert in Architectural Design and Identity', 15,
+                'amira-al-burtuqali', 'د/ أميرة البرتقالي', 'Dr. Amira Al-Burtuqali', 'خبير التصاميم والهويات المعمارية', 'Expert in Architectural Design and Identity', 15,
                 'خبرة واسعة في تطوير الحلول المعمارية والحضرية، وتصميم المساحات الخارجية واللاند سكيب، والتخطيط الاستراتيجي، والاستدامة، بما يؤهلها للمساهمة بفاعلية في تطوير هوية معمارية متكاملة وموحدة تربط بين الطابع المؤسسي، والسياق المحلي، والمتطلبات الوظيفية والتشغيلية للمشاريع. تتميز خبرتها بالقدرة على تحويل الرؤية والهوية المؤسسية إلى مبادئ ومفردات تصميمية قابلة للتطبيق على مشاريع متعددة الأنماط والأحجام، مع مراعاة خصوصية الموقع، والبيئة المحيطة، وتجربة المستخدم، وجودة المشهد الحضري. كما تمتلك خبرة في إدارة وتنسيق المشاريع متعددة التخصصات،',
                 'Extensive experience in developing architectural and urban solutions, designing outdoor spaces and landscape, strategic planning, and sustainability, qualifying her to contribute effectively to an integrated, unified architectural identity that connects corporate character, local context, and the functional and operational requirements of projects. Her expertise stands out in turning corporate vision and identity into design principles and vocabulary that apply to projects of many types and sizes, taking into account the site, the surrounding environment, user experience, and the quality of the urban landscape. She also has experience in managing and coordinating multidisciplinary projects,',
             ],
         ];
 
-        foreach ($experts as $index => [$nameAr, $nameEn, $titleAr, $titleEn, $years, $bioAr, $bioEn]) {
+        foreach ($experts as $index => [$slug, $nameAr, $nameEn, $titleAr, $titleEn, $years, $bioAr, $bioEn]) {
             TeamMember::create([
+                'slug' => $slug,
                 'name' => self::t($nameAr, $nameEn),
                 'title' => self::t($titleAr, $titleEn),
                 'bio' => self::t($bioAr, $bioEn),
@@ -90,6 +91,7 @@ class TeamSeeder extends ProfileSeeder
         $order = 1;
         foreach ($people as $key => [$nameAr, $nameEn]) {
             $members[$key] = TeamMember::create([
+                'slug' => $key,
                 'name' => self::t($nameAr, $nameEn),
                 'is_expert' => false,
                 'sort_order' => 100 + $order++,

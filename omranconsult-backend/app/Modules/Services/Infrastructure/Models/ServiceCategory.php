@@ -2,12 +2,13 @@
 
 namespace App\Modules\Services\Infrastructure\Models;
 
+use App\Modules\Services\Domain\ServiceCategoryKind;
 use App\Support\Content\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['slug', 'title', 'sort_order', 'status', 'published_at'])]
+#[Fillable(['slug', 'kind', 'title', 'sort_order', 'status', 'published_at'])]
 class ServiceCategory extends Model
 {
     use Publishable;
@@ -19,6 +20,7 @@ class ServiceCategory extends Model
     {
         return [
             'title' => 'array',
+            'kind' => ServiceCategoryKind::class,
         ];
     }
 

@@ -108,7 +108,7 @@ class PublicContentApiTest extends TestCase
 
         $this->assertSame(
             ['about', 'education_goals', 'core_offerings', 'flexible_model', 'strategy', 'credentials',
-                'work_stages', 'esg', 'tools', 'engineering_design', 'multi_phase_approach'],
+                'work_stages', 'esg', 'tools', 'engineering_design', 'multi_phase_approach', 'section_titles'],
             array_keys($response->json('data.blocks')),
         );
     }

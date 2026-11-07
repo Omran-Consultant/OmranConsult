@@ -86,6 +86,7 @@ class HomeContentSeeder extends ProfileSeeder
             'tools' => $this->tools(),
             'engineering_design' => $this->engineeringDesign(),
             'multi_phase_approach' => $this->multiPhaseApproach(),
+            'section_titles' => $this->sectionTitles(),
         ];
 
         $order = 1;
@@ -359,6 +360,27 @@ class HomeContentSeeder extends ProfileSeeder
                 self::t('إعداد إستراتيجيات وبرامج التحول في مجال إدارة المشاريع وصياغة العقود', 'Transformation strategies and programs for project management and contract drafting'),
                 self::t('إعداد الدراسات الهندسية للوضع الحالي والمستهدف وتحليل الفجوات', 'Engineering studies of the current and target state, with gap analysis'),
                 self::t('نموذج عمل متوافق مع الدليل الوطني لإدارة المشاريع وإدارة الأصول والمرافق وكوادر بشرية متنوعة ومدربة ومؤهلة لإستلام المهام', 'An operating model aligned with the national manuals for project management and for asset and facility management, with diverse, trained, and qualified staff ready to take on the work'),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function sectionTitles(): array
+    {
+        return [
+            'statistics' => self::t('أرقام وتواريخ شركة العمران المتقدم', 'OMRAN Advanced Company figures and milestones'),
+            'experts' => self::t('خبراء شركة العمران المتقدم', 'OMRAN Advanced Company experts'),
+            'org_chart' => self::t('الهيكل التنظيمي', 'Organizational chart'),
+            'featured_projects' => self::t('أبرز المشاريع', 'Featured projects'),
+            'org_groups' => [
+                'board' => self::t('مجلس الإدارة', 'Board of directors'),
+                'board_committees' => self::t('لجان مجلس الإدارة والمكتب التنفيذي', 'Board committees and executive office'),
+                'executive_management' => self::t('الإدارة التنفيذية', 'Executive management'),
+                'committees' => self::t('اللجان', 'Committees'),
+                'projects' => self::t('المشاريع', 'Projects'),
+                'planning_control' => self::t('التخطيط والرقابة', 'Planning and control'),
             ],
         ];
     }

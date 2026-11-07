@@ -24,6 +24,7 @@ class OrgPositionResource extends JsonResource
             'title' => PublicLocale::pick($this->title),
             'person' => $this->member ? [
                 'id' => $this->member->id,
+                'slug' => $this->member->slug,
                 'name' => PublicLocale::pick($this->member->name),
             ] : null,
         ];

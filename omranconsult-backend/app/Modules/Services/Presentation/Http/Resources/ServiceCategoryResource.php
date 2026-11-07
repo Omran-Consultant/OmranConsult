@@ -19,6 +19,7 @@ class ServiceCategoryResource extends JsonResource
     {
         return [
             'slug' => $this->slug,
+            'kind' => $this->kind->value,
             'title' => PublicLocale::pick($this->title),
             'services' => ServiceResource::collection($this->whenLoaded('services')),
         ];
