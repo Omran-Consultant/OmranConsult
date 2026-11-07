@@ -16,6 +16,11 @@
     "clientsCount": "{count} listed clients",
     "mapAlt": "Map of Saudi Arabia regions"
   },
+  "AboutPage": {
+    "titleFallback": "About OMRAN",
+    "expiredBadge": "Expired",
+    "partnersHeading": "Partners"
+  },
   "LocaleSwitcher": {
     "label": "Language",
     "switchToEnglish": "EN",

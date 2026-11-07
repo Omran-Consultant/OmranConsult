@@ -16,6 +16,11 @@
     "clientsCount": "{count} عميلًا مدرجًا",
     "mapAlt": "خريطة مناطق المملكة العربية السعودية"
   },
+  "AboutPage": {
+    "titleFallback": "عن شركة العمران",
+    "expiredBadge": "منتهية",
+    "partnersHeading": "الشركاء"
+  },
   "LocaleSwitcher": {
     "label": "اللغة",
     "switchToEnglish": "EN",
