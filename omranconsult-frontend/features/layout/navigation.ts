@@ -3,8 +3,8 @@ export const PRIMARY_NAV_ITEMS = [
   { href: "/about", messageKey: "about" },
   { href: "/services", messageKey: "services" },
   { href: "/projects", messageKey: "projects" },
-  { href: "/careers", messageKey: "careers" },
-  { href: "/contact", messageKey: "contact" },
+  // U26/A19: careers stays hidden until Phase 4B.
+  { href: "/#contact", messageKey: "contact" },
 ] as const;
 
 export const FOOTER_QUICK_LINKS = [
@@ -12,5 +12,5 @@ export const FOOTER_QUICK_LINKS = [
   { href: "/about", messageKey: "about" },
   { href: "/services", messageKey: "services" },
   { href: "/projects", messageKey: "projects" },
-  { href: "/careers", messageKey: "careers" },
+  { href: "/#contact", messageKey: "contact" },
 ] as const;

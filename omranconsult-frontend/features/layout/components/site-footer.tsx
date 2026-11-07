@@ -4,13 +4,9 @@ import { Link } from "@/i18n/navigation";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
 import { FOOTER_QUICK_LINKS } from "@/features/layout/navigation";
 import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedInIcon,
   MailIcon,
   MapPinIcon,
   PhoneIcon,
-  TwitterIcon,
 } from "@/features/layout/components/site-icons";
 
 const footerLinkClassName =
@@ -20,14 +16,6 @@ export async function SiteFooter() {
   const t = await getTranslations("Layout.footer");
   const brandT = await getTranslations("Layout.brand");
   const navT = await getTranslations("Layout.nav");
-  const socialT = await getTranslations("Layout.social");
-
-  const socialLinks = [
-    { label: socialT("facebook"), Icon: FacebookIcon },
-    { label: socialT("twitter"), Icon: TwitterIcon },
-    { label: socialT("linkedin"), Icon: LinkedInIcon },
-    { label: socialT("instagram"), Icon: InstagramIcon },
-  ] as const;
 
   const phones = [
     { tel: t("phoneTel"), display: t("phoneDisplay") },
@@ -49,19 +37,7 @@ export async function SiteFooter() {
               </Link>
             </div>
             <p className="mb-4 text-muted-on-dark">{t("tagline")}</p>
-            <div className="flex gap-4">
-              {socialLinks.map(({ label, Icon }) => (
-                <a
-                  key={label}
-                  aria-label={label}
-                  className="rounded-full bg-white/10 p-1.5 transition-all hover:bg-white/20"
-                  href="#"
-                  rel="noopener noreferrer"
-                >
-                  <Icon className="size-5" />
-                </a>
-              ))}
-            </div>
+            {/* U26: social URLs are pending, so icons stay hidden for now. */}
           </div>
 
           <div>

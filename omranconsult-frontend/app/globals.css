@@ -29,6 +29,7 @@
   --oc-border-strong: #d1d5db;
   --oc-ring: #0c7f3d;
   --oc-footer: #0d1c36;
+  --oc-font-display: var(--font-rubik);
 }
 
 .dark {
@@ -51,6 +52,7 @@
  * line-heights tightened. Tailwind text-* utilities read these tokens.
  */
 html[lang="ar"] {
+  --oc-font-display: var(--font-somar);
   --oc-ar-scale: 1.2;
   --oc-ar-leading-body: 1.5;
   --oc-ar-leading-heading: 1.3;
@@ -94,6 +96,7 @@ html[lang="ar"] {
   /* Typography */
   --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
   --font-arabic: var(--font-somar), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--oc-font-display), var(--font-sans);
 
   /* Spacing scale extensions (section rhythm; revisited with Phase 4 pages) */
   --spacing-section-y: 4.5rem;

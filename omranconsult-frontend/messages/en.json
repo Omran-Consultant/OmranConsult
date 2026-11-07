@@ -3,17 +3,10 @@
     "title": "OMRAN Advanced Company",
     "description": "A first-grade classified consultancy supporting integrated asset and facility management, development, and automation in the Kingdom for more than 21 years."
   },
-  "Home": {
-    "phaseLabel": "Phase 2",
-    "title": "omranconsult — public entry",
-    "description": "Layout shell with the Corporate Profile 2029 identity. Page content is built in Phase 4."
-  },
-  "ApiConnectivity": {
-    "sectionLabel": "API connectivity",
-    "heading": "Laravel API (server fetch)",
-    "checking": "Checking Laravel API connectivity…",
-    "ok": "GET /api/health responded with status ok.",
-    "unavailable": "API health check unavailable (start Laravel on http://localhost:8000 for local verification)."
+  "HomePlaceholder": {
+    "eyebrow": "Phase 4A",
+    "title": "Public website foundation ready",
+    "description": "The full home sections land in the next checkpoint."
   },
   "LocaleSwitcher": {
     "label": "Language",

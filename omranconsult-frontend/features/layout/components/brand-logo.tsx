@@ -19,7 +19,7 @@ export function BrandLogo({ alt, className, surface, priority = false }: BrandLo
         className={className}
         height={LOGO_HEIGHT}
         priority={priority}
-        src="/images/brand/logo-white.png"
+        src="/images/brand/logo-white.svg"
         width={LOGO_WIDTH}
       />
     );
@@ -32,14 +32,14 @@ export function BrandLogo({ alt, className, surface, priority = false }: BrandLo
         className={`${className} dark:hidden`}
         height={LOGO_HEIGHT}
         priority={priority}
-        src="/images/brand/logo-dark.png"
+        src="/images/brand/logo-dark.svg"
         width={LOGO_WIDTH}
       />
       <Image
         alt={alt}
         className={`${className} hidden dark:block`}
         height={LOGO_HEIGHT}
-        src="/images/brand/logo-white.png"
+        src="/images/brand/logo-white.svg"
         width={LOGO_WIDTH}
       />
     </>

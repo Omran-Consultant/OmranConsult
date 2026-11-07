@@ -15,7 +15,7 @@ const loadNavMessages = (locale: "en" | "ar"): Record<string, unknown> => {
 test("primary navigation matches the SDD §4.2 public routes in order", () => {
   assert.deepEqual(
     PRIMARY_NAV_ITEMS.map((item) => item.href),
-    ["/", "/about", "/services", "/projects", "/careers", "/contact"],
+    ["/", "/about", "/services", "/projects", "/#contact"],
   );
 });
 

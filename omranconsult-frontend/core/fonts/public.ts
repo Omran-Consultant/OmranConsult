@@ -10,6 +10,7 @@ export const somar = localFont({
   src: [
     { path: "../../app/fonts/somar/somar-400.woff2", weight: "400", style: "normal" },
     { path: "../../app/fonts/somar/somar-500.woff2", weight: "500", style: "normal" },
+    { path: "../../app/fonts/somar/somar-600.woff2", weight: "600", style: "normal" },
     { path: "../../app/fonts/somar/somar-700.woff2", weight: "700", style: "normal" },
     { path: "../../app/fonts/somar/somar-800.woff2", weight: "800", style: "normal" },
   ],
