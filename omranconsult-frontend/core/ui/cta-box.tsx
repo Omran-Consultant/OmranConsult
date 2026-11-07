@@ -1,0 +1,38 @@
+import Image from "next/image";
+import type { ReactNode } from "react";
+
+import { AccentText } from "@/core/ui/accent-text";
+import { classNames } from "@/core/ui/class-names";
+import type { ImageAsset } from "@/core/ui/image-asset";
+
+type CtaBoxProps = {
+  readonly image: ImageAsset;
+  readonly title: string;
+  readonly text?: string;
+  readonly titleId?: string;
+  /** Buttons (Primary first, then Light). */
+  readonly actions: ReactNode;
+  readonly className?: string;
+};
+
+/** Figma "CTA Box": radius xl, photo with a start-side scrim, Display/L title, body, buttons. */
+export function CtaBox({ image, title, text, titleId, actions, className }: CtaBoxProps) {
+  return (
+    <div
+      className={classNames(
+        "scheme-dark relative isolate flex min-h-110 items-center overflow-hidden rounded-xl bg-canvas px-6 py-14 text-primary md:px-18",
+        className,
+      )}
+    >
+      <Image alt={image.alt} className="-z-20 object-cover" fill sizes="(min-width: 1440px) 1280px, 100vw" src={image.src} />
+      <span aria-hidden="true" className="scrim-start absolute inset-0 -z-10" />
+      <div className="flex max-w-155 flex-col gap-7">
+        <h2 className="font-display text-display-l" id={titleId}>
+          <AccentText value={title} />
+        </h2>
+        {text ? <p className="text-body-l text-secondary">{text}</p> : null}
+        <div className="flex flex-wrap gap-4">{actions}</div>
+      </div>
+    </div>
+  );
+}

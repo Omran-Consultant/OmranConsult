@@ -16,13 +16,12 @@ describe("parseThemePreference", () => {
 });
 
 describe("resolveTheme", () => {
-  it("prefers stored preference over system", () => {
-    assert.equal(resolveTheme("light", true), "light");
-    assert.equal(resolveTheme("dark", false), "dark");
+  it("keeps the stored preference", () => {
+    assert.equal(resolveTheme("light"), "light");
+    assert.equal(resolveTheme("dark"), "dark");
   });
 
-  it("falls back to system preference when storage is empty", () => {
-    assert.equal(resolveTheme(null, true), "dark");
-    assert.equal(resolveTheme(null, false), "light");
+  it("defaults to dark when nothing is stored (D1)", () => {
+    assert.equal(resolveTheme(null), "dark");
   });
 });

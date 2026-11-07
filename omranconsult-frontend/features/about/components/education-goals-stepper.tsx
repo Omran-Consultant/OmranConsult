@@ -76,18 +76,18 @@ export function EducationGoalsStepper({ items, locale, sectionTitle }: Education
 
   if (usePlainList) {
     return (
-      <div className="px-(--oc-page-margin) py-(--oc-section-y)">
+      <div className="px-page py-section-y">
         {sectionTitle ? (
-          <h2 className="font-display mb-8 text-(--text-oc-h2) font-bold text-heading">{sectionTitle}</h2>
+          <h2 className="font-display mb-8 text-h1 font-bold text-primary">{sectionTitle}</h2>
         ) : null}
         <ol className="space-y-8">
           {items.map((item, index) => (
-            <li className="border-b border-border-strong pb-8" key={`${item.lead ?? "goal"}-${index}`}>
-              <p className="font-display text-xl font-bold text-heading">
-                <span className="me-2 text-brand-green-strong">{index + 1}.</span>
+            <li className="border-b border-line-strong pb-8" key={`${item.lead ?? "goal"}-${index}`}>
+              <p className="font-display text-xl font-bold text-primary">
+                <span className="me-2 text-accent">{index + 1}.</span>
                 {item.lead}
               </p>
-              {item.body ? <p className="mt-3 text-base leading-relaxed text-muted">{item.body}</p> : null}
+              {item.body ? <p className="mt-3 text-base leading-relaxed text-secondary">{item.body}</p> : null}
             </li>
           ))}
         </ol>
@@ -96,7 +96,7 @@ export function EducationGoalsStepper({ items, locale, sectionTitle }: Education
   }
 
   return (
-    <div className="relative bg-brand-navy-deep text-white" ref={containerRef} style={{ height: `${Math.max(items.length + 1, 4) * 70}vh` }}>
+    <div className="relative bg-canvas text-white" ref={containerRef} style={{ height: `${Math.max(items.length + 1, 4) * 70}vh` }}>
       <div className="sticky top-0 flex h-svh flex-col overflow-hidden">
         <Image
           alt={getProfileImageAlt(background, locale)}
@@ -105,11 +105,11 @@ export function EducationGoalsStepper({ items, locale, sectionTitle }: Education
           sizes="100vw"
           src={background.src}
         />
-        <div aria-hidden className="absolute inset-0 bg-brand-navy/55" />
-        <ol className="relative z-10 mx-(--oc-page-margin) mt-[12vh] flex max-w-[min(620px,56vw)] flex-col gap-2.5">
+        <div aria-hidden className="absolute inset-0 bg-elevated/55" />
+        <ol className="relative z-10 mx-(--page-margin) mt-[12vh] flex max-w-[min(620px,56vw)] flex-col gap-2.5">
           {sectionTitle ? (
             <li className="list-none">
-              <h2 className="mb-3 text-2xl font-bold text-brand-green-light">{sectionTitle}</h2>
+              <h2 className="mb-3 text-2xl font-bold text-accent">{sectionTitle}</h2>
             </li>
           ) : null}
           {items.map((item, index) => {
@@ -118,7 +118,7 @@ export function EducationGoalsStepper({ items, locale, sectionTitle }: Education
               <li
                 className={classNames(
                   "list-none font-display text-lg font-bold leading-snug transition-colors",
-                  active ? "text-white" : "text-muted-on-dark",
+                  active ? "text-white" : "text-secondary",
                 )}
                 key={`${item.lead ?? "goal"}-${index}`}
               >

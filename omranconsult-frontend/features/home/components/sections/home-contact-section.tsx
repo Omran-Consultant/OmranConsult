@@ -18,7 +18,7 @@ export async function HomeContactSection({ locale, settings }: HomeContactSectio
   const contact = settings.contact;
 
   return (
-    <section className="relative min-h-svh bg-brand-navy-deep" data-section="contact" id="contact">
+    <section className="relative min-h-svh bg-canvas" data-section="contact" id="contact">
       <Image
         alt={getProfileImageAlt(image, locale)}
         className="absolute inset-0 h-full w-full object-cover"
@@ -26,13 +26,13 @@ export async function HomeContactSection({ locale, settings }: HomeContactSectio
         sizes="100vw"
         src={image.src}
       />
-      <div className="relative z-1 flex justify-start px-(--oc-page-margin) py-14">
-        <div className="w-full max-w-md rounded-(--oc-radius-brand) bg-page p-8 text-foreground shadow-elevated">
-          <h2 className="font-display text-3xl font-bold text-heading">{t("contactHeading")}</h2>
+      <div className="relative z-1 flex justify-start px-page py-14">
+        <div className="w-full max-w-md rounded-lg bg-canvas p-8 text-primary">
+          <h2 className="font-display text-3xl font-bold text-primary">{t("contactHeading")}</h2>
           <dl className="mt-4 space-y-3 text-base">
             {contact.address ? (
               <div>
-                <dt className="text-sm text-muted">{t("addressLabel")}</dt>
+                <dt className="text-sm text-secondary">{t("addressLabel")}</dt>
                 <dd className="font-medium">
                   {contact.address}
                   {contact.postal ? (
@@ -46,9 +46,9 @@ export async function HomeContactSection({ locale, settings }: HomeContactSectio
             ) : null}
             {contact.email ? (
               <div>
-                <dt className="text-sm text-muted">{t("emailLabel")}</dt>
+                <dt className="text-sm text-secondary">{t("emailLabel")}</dt>
                 <dd>
-                  <a className="num-isolate hover:text-brand-green-strong" dir="ltr" href={`mailto:${contact.email}`}>
+                  <a className="num-isolate hover:text-accent" dir="ltr" href={`mailto:${contact.email}`}>
                     {contact.email}
                   </a>
                 </dd>
@@ -56,11 +56,11 @@ export async function HomeContactSection({ locale, settings }: HomeContactSectio
             ) : null}
             {contact.phones.length > 0 ? (
               <div>
-                <dt className="text-sm text-muted">{t("phoneLabel")}</dt>
+                <dt className="text-sm text-secondary">{t("phoneLabel")}</dt>
                 <dd className="space-y-1">
                   {contact.phones.map((phone) => (
                     <a
-                      className="num-isolate block hover:text-brand-green-strong"
+                      className="num-isolate block hover:text-accent"
                       dir="ltr"
                       href={`tel:${formatPhoneTelLink(phone)}`}
                       key={phone}

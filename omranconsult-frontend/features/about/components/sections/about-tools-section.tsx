@@ -35,22 +35,22 @@ export function AboutToolsSection({ toolsBlock }: AboutToolsSectionProps) {
   }
 
   return (
-    <section className="bg-surface px-(--oc-page-margin) py-(--oc-section-y)" data-section="tools" id="tools">
+    <section className="bg-surface px-page py-section-y" data-section="tools" id="tools">
       <div className="grid gap-12 md:grid-cols-2 md:items-end">
-        {heading ? <h2 className="font-display text-(--text-oc-h2) font-bold text-heading">{heading}</h2> : null}
-        {intro ? <p className="text-(--text-oc-lead) leading-relaxed text-muted">{intro}</p> : <span aria-hidden />}
+        {heading ? <h2 className="font-display text-h1 font-bold text-primary">{heading}</h2> : null}
+        {intro ? <p className="text-body-l leading-relaxed text-secondary">{intro}</p> : <span aria-hidden />}
       </div>
 
       <div className="mt-16 columns-1 gap-16 md:columns-2">
         {items.map((item, index) => (
           <article
-            className="mb-0 grid break-inside-avoid gap-2 border-t border-border-strong py-5.5 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-6"
+            className="mb-0 grid break-inside-avoid gap-2 border-t border-line-strong py-5.5 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-6"
             key={`${item.title ?? "tool"}-${index}`}
           >
             {item.title ? (
-              <h3 className="font-display text-2xl font-extrabold text-heading transition-colors">{item.title}</h3>
+              <h3 className="font-display text-2xl font-extrabold text-primary transition-colors">{item.title}</h3>
             ) : null}
-            {item.body ? <p className="text-base leading-relaxed text-muted">{item.body}</p> : null}
+            {item.body ? <p className="text-base leading-relaxed text-secondary">{item.body}</p> : null}
           </article>
         ))}
       </div>

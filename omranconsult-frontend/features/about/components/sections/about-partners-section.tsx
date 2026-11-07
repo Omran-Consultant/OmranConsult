@@ -19,14 +19,14 @@ export async function AboutPartnersSection({ locale, partners }: AboutPartnersSe
   }
 
   return (
-    <section className="bg-brand-navy px-(--oc-page-margin) py-(--oc-section-y) text-white" data-section="partners">
-      <h2 className="font-display text-3xl font-bold text-brand-green-light">{t("partnersHeading")}</h2>
+    <section className="bg-elevated px-page py-section-y text-white" data-section="partners">
+      <h2 className="font-display text-3xl font-bold text-accent">{t("partnersHeading")}</h2>
       <ul className="mt-10 columns-1 gap-8 text-lg leading-snug sm:columns-2 md:columns-3">
         {partners.map((partner) => (
           <li className="break-inside-avoid py-1" key={partner.id}>
             {partner.name}
             {partner.field ? (
-              <span className="text-muted-on-dark">{`: ${partner.field}`}</span>
+              <span className="text-secondary">{`: ${partner.field}`}</span>
             ) : null}
           </li>
         ))}

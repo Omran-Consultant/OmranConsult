@@ -20,7 +20,7 @@ export function ProjectOwnerLogo({ locale, name, slug, sortOrder = 0 }: ProjectO
   const alt = name?.trim() ? name : locale === "ar" ? "شعار عميل" : "Client logo";
 
   return (
-    <div className="mb-3 flex h-16 items-center justify-center rounded-lg border border-border bg-white p-2">
+    <div className="mb-3 flex h-16 items-center justify-center rounded-lg border border-line bg-white p-2">
       <Image
         alt={alt}
         className="max-h-12 w-full object-contain"

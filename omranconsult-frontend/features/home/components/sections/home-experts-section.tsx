@@ -14,7 +14,7 @@ export function HomeExpertsSection({ blocks, experts, locale }: HomeExpertsSecti
   const heading = asString(sectionTitles?.experts);
 
   return (
-    <section className="bg-page px-(--oc-page-margin) py-(--oc-section-y)" data-section="experts" id="experts">
+    <section className="bg-canvas px-page py-section-y" data-section="experts" id="experts">
       <HomeExpertsPreview experts={experts} heading={heading} locale={locale} />
     </section>
   );

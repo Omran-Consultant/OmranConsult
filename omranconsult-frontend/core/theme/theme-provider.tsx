@@ -11,6 +11,7 @@ import {
 
 import {
   applyThemeClass,
+  DEFAULT_THEME,
   persistThemePreference,
   readClientThemePreference,
   type ThemePreference,
@@ -34,19 +35,15 @@ function subscribe(onStoreChange: () => void): () => void {
     return () => undefined;
   }
 
-  const media = window.matchMedia("(prefers-color-scheme: dark)");
-
   const handleChange = () => {
     applyThemeClass(readClientThemePreference());
     onStoreChange();
   };
 
-  media.addEventListener("change", handleChange);
   window.addEventListener("storage", handleChange);
   window.addEventListener(THEME_CHANGE_EVENT, handleChange);
 
   return () => {
-    media.removeEventListener("change", handleChange);
     window.removeEventListener("storage", handleChange);
     window.removeEventListener(THEME_CHANGE_EVENT, handleChange);
   };
@@ -60,7 +57,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSyncExternalStore<ThemePreference>(
     subscribe,
     getThemeSnapshot,
-    () => "light",
+    () => DEFAULT_THEME,
   );
 
   const toggleTheme = useCallback(() => {

@@ -60,22 +60,22 @@ export async function AboutWorkStagesSection({
   }
 
   return (
-    <section className="overflow-hidden bg-page pt-(--oc-section-y)" data-section="work-stages" id="work-stages">
-      <div className="flex items-end justify-between gap-6 px-(--oc-page-margin)">
-        {heading ? <h2 className="font-display text-(--text-oc-h2) font-bold text-heading">{heading}</h2> : null}
+    <section className="overflow-hidden bg-canvas pt-(--section-y)" data-section="work-stages" id="work-stages">
+      <div className="flex items-end justify-between gap-6 px-page">
+        {heading ? <h2 className="font-display text-h1 font-bold text-primary">{heading}</h2> : null}
       </div>
 
       {introSteps.length > 0 ? (
-        <ul className="mx-(--oc-page-margin) mt-6 grid max-w-[1200px] gap-3 md:grid-cols-2 md:gap-x-12">
+        <ul className="mx-(--page-margin) mt-6 grid max-w-[1200px] gap-3 md:grid-cols-2 md:gap-x-12">
           {introSteps.map((step) => (
-            <li className="relative ps-5.5 text-base leading-relaxed text-muted" key={step}>
-              <span aria-hidden className="absolute start-0 top-[0.7em] size-2 rounded-full bg-brand-green-strong" />
+            <li className="relative ps-5.5 text-base leading-relaxed text-secondary" key={step}>
+              <span aria-hidden className="absolute start-0 top-[0.7em] size-2 rounded-full bg-accent-strong" />
               {step}
             </li>
           ))}
         </ul>
       ) : asString(coverage?.body) ? (
-        <p className="mx-(--oc-page-margin) mt-6 max-w-4xl text-base leading-relaxed text-muted">
+        <p className="mx-(--page-margin) mt-6 max-w-4xl text-base leading-relaxed text-secondary">
           {asString(coverage?.body)}
         </p>
       ) : null}

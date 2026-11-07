@@ -12,18 +12,18 @@ export async function ServicesApproachSection({ heading, outputs, steps }: Servi
   const t = await getTranslations("ServicesPage");
 
   return (
-    <section className="overflow-hidden px-(--oc-page-margin) pt-(--oc-section-y) pb-(--oc-section-y)" data-section="approach">
+    <section className="overflow-hidden px-page pt-(--section-y) pb-(--section-y)" data-section="approach">
       {heading ? (
-        <h2 className="font-display text-(--text-oc-h2) leading-tight font-bold text-heading">{heading}</h2>
+        <h2 className="font-display text-h1 leading-tight font-bold text-primary">{heading}</h2>
       ) : null}
 
       {steps.length > 0 ? (
         <ul className="mt-6 grid max-w-300 gap-3 md:grid-cols-2 md:gap-x-12">
           {steps.map((step) => (
-            <li className="relative ps-5.5 text-base leading-relaxed text-muted" key={step}>
+            <li className="relative ps-5.5 text-base leading-relaxed text-secondary" key={step}>
               <span
                 aria-hidden
-                className="absolute start-0 top-[0.7em] size-2 rounded-full bg-brand-green-strong"
+                className="absolute start-0 top-[0.7em] size-2 rounded-full bg-accent-strong"
               />
               {step}
             </li>

@@ -33,7 +33,7 @@ The sections below are the required shape for **future** work. Do not scaffold e
 ## Resolved conflicts
 
 - **Default public locale:** English (`en`) is default. Root **`/`** redirects to **`/en`** through **`proxy.ts`** (next-intl middleware, **`SYSTEM_DESIGN.md` v1.6** §4.2). Every public page sets **`generateMetadata` alternates** with **`x-default` → `en`**. Arabic (`ar`) has the same copy, validation, navigation, metadata, and layout coverage as English.
-- The old line "tokens come from Figma" is retired. No Figma file is in the repo. Colors, gradients, typography, and logo come from the Corporate Profile 2029 as recorded in `docs/DESIGN_BASELINE.md` (SDD A15). Do not invent a palette, and do not take tokens from any earlier website. Do not hardcode raw colors once tokens exist.
+- **Tokens come from the Figma handoff** (SDD A30, Phase 4C): `docs/design-reference/figma-handoff/02-Design-Tokens/`, recorded in `docs/DESIGN_BASELINE.md`. They supersede the profile-sampled palette and gradients. Do not invent a palette, and do not take tokens from any earlier website. No raw hex outside `app/globals.css`.
 - "Locale lives in the route" applies to the public website only. The dashboard locale is a separate preference and must not read or write the public locale.
 - **Design vs data:** CMS and API models are independent of the current public UI. Dashboard and public presentation may change without altering backend content shape beyond documented API fields.
 
@@ -182,10 +182,10 @@ Applies to the public website and the admin dashboard. Both languages are comple
 
 ### 7) Design
 
-* The Corporate Profile 2029 is the source for public content and identity (root `CLAUDE.md` § Reference). Old-site interactions are kept only where approved: careers form, contact form, language switch, dark mode. Other old-site interactions (hero carousel, logo marquee, WhatsApp button, social links) wait for a decision (SDD U26).
+* The Corporate Profile 2029 is the source for public content; the Figma design is the source for visuals (root `CLAUDE.md` § Reference, SDD A30). Phase 4C follows `docs/briefs/PHASE4C_FIGMA.md` and `PHASE4C_DECISIONS.md`. Design copy is seeded through the API, never hard-coded; UI labels live in `messages/`. Other old-site interactions (hero carousel, logo marquee, WhatsApp button, social links) wait for a decision (SDD U26).
 * **Design independence:** stored content and API field shapes must not assume a specific page layout. Use tokens and reusable components so a future redesign can swap presentation without CMS re-entry.
-* **Design tokens:** colors, gradients (profile green ↔ navy, SDD A21), typography, spacing, radii, and shadows live in the Tailwind theme (`@theme`). No raw hex and no magic pixel values inside components. Dark mode stays (SDD A23); dark colors are derived from the profile palette and use `dark:` variants.
-* **Typography:** public — **Somar** for all Arabic text via `next/font/local` (WOFF2, only the weights in `docs/DESIGN_BASELINE.md`), **Rubik** for English via `next/font/google` (SDD A24). Admin dashboard — **IBM Plex Sans Arabic** (ar), **Inter** (en), unchanged. All via `next/font` with `display: swap`. Geist is scaffold only.
+* **Design tokens:** semantic colors (`bg-base`, `text-primary`, `text-accent`, `border-line`, …), type scale (`text-display-xl` … `text-overline`), spacing, radii, motion, and shadows live in the Tailwind theme (`@theme`, the default palette is removed). No raw hex and no magic pixel values inside components. **Dark is the default theme** (SDD A29); the light theme maps the same semantic names onto light primitives, so components use semantic tokens instead of `dark:` variants. Photographic heroes stay dark in both themes (`scheme-dark`).
+* **Typography:** public — **Somar** for all Arabic text via `next/font/local` (WOFF2, only the weights in `docs/DESIGN_BASELINE.md`; it stands in for DIN Next LT Arabic behind `--font-ar`), **Rubik** for English text, **Montserrat** for Latin overlines and decorative numbers, both via `next/font/google` (SDD A24, A30). Admin dashboard — **IBM Plex Sans Arabic** (ar), **Inter** (en), unchanged. All via `next/font` with `display: swap`. Geist is scaffold only.
 * Mobile-first. Check 390, 768, and 1440. No horizontal page scroll at any width.
 * Reuse `core/ui` primitives (`Button`, `Card`, `Input`, `Dialog`) once they exist. Don't restyle ad hoc.
 * Use `cva` / `clsx` + `tailwind-merge` for variants when those utilities are added. No inline style except dynamic values.
@@ -211,7 +211,7 @@ Applies to the public website and the admin dashboard. Both languages are comple
 ### 10) Accessibility (WCAG 2.2 AA)
 
 * Native elements first (`button`, `a`, form controls). ARIA only when native is not enough.
-* Touch targets ≥ 44px. Visible `:focus-visible` states. Color contrast ≥ 4.5:1, including white text on the profile green (use `#0C7F3D`, not `#0E8A43`) and green headings on navy.
+* Touch targets ≥ 44px. Visible `:focus-visible` states. Color contrast ≥ 4.5:1 for every token pair in both themes (table in `docs/DESIGN_BASELINE.md` §2.2); the primary button hover is green/700, a recorded deviation from Figma for AA.
 * Dialogs and lightboxes: focus trap, return focus on close, Esc closes, arrow keys navigate where a set of items exists, `aria-modal`, labelled.
 * Forms: associated labels, error text linked with `aria-describedby`, errors announced (`aria-live`).
 * Never convey meaning by color alone.

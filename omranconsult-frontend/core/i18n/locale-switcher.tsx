@@ -6,10 +6,10 @@ import { Link, usePathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 
 const headerSwitcherClassName =
-  "inline-flex size-10 items-center justify-center rounded-full bg-brand-navy text-sm font-bold text-white transition-colors hover:bg-brand-green-strong dark:bg-brand-green-strong dark:hover:bg-brand-green-light dark:hover:text-brand-navy-deep";
+  "inline-flex size-10 items-center justify-center rounded-full bg-elevated text-sm font-bold text-white transition-colors hover:bg-accent-strong ";
 
 const defaultSwitcherClassName =
-  "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-medium text-brand-navy shadow-card transition-colors hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-line bg-surface px-3 text-sm font-medium text-primary transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 type LocaleSwitcherLinkProps = {
   variant?: "default" | "header";

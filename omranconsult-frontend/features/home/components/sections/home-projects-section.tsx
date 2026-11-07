@@ -36,17 +36,17 @@ export async function HomeProjectsSection({
 
   return (
     <section
-      className="mt-24 bg-brand-green-strong px-(--oc-page-margin) py-24 pb-(--oc-section-y) text-white"
+      className="mt-24 bg-accent-strong px-page py-24 pb-(--section-y) text-white"
       data-section="projects"
       id="projects"
     >
       {heading ? (
-        <h2 className="font-display text-(--text-oc-h2) leading-tight font-bold">{heading}</h2>
+        <h2 className="font-display text-h1 leading-tight font-bold">{heading}</h2>
       ) : null}
 
       <HomeProjectsMapPanel regions={regions} />
 
-      <div className="mt-(--oc-section-y) flex flex-col gap-20">
+      <div className="mt-(--section-y) flex flex-col gap-20">
         {groups.map((group, index) => {
           const layout = PROJECT_LAYOUT_CLASS[index % PROJECT_LAYOUT_CLASS.length];
           const image = featuredProjectImage(index);
@@ -83,9 +83,9 @@ export async function HomeProjectsSection({
 
       <div className="mt-12">
         <LinkButton
-          className="rounded-full border border-white/30 bg-white text-brand-navy hover:bg-brand-green-light hover:text-brand-navy-deep"
+          className="rounded-full border border-white/30 bg-white text-primary hover:bg-accent-strong hover:text-primary"
           href="/projects"
-          variant="solid"
+          variant="primary"
         >
           {t("projectsCta")}
         </LinkButton>

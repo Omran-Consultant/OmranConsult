@@ -7,15 +7,15 @@ import { useFocusTrap } from "@/core/hooks/use-focus-trap";
 import { HeaderLocaleSwitcher } from "@/core/i18n/locale-switcher";
 import { ThemeToggle } from "@/core/theme/theme-toggle";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
-import { CloseIcon, MenuIcon } from "@/features/layout/components/site-icons";
+import { Icon } from "@/core/ui/icon";
 import { PRIMARY_NAV_ITEMS } from "@/features/layout/navigation";
 import { Link } from "@/i18n/navigation";
 
 const navLinkClassName =
-  "px-3 py-2 font-bold text-nav-link transition-colors hover:text-brand-green-strong dark:hover:text-brand-green-light";
+  "px-3 py-2 font-bold text-secondary transition-colors hover:text-accent ";
 
 const mobilePrimaryLinkClassName =
-  "block rounded-lg px-4 py-3 font-bold text-foreground transition-colors hover:bg-brand-navy hover:text-white";
+  "block rounded-lg px-4 py-3 font-bold text-primary transition-colors hover:bg-elevated hover:text-white";
 
 export function SiteHeader() {
   const t = useTranslations("Layout.nav");
@@ -69,7 +69,7 @@ export function SiteHeader() {
     <>
       <nav
         aria-label={t("primaryLabel")}
-        className="sticky top-0 z-40 bg-surface shadow-md transition-all duration-300 dark:bg-brand-navy-deep"
+        className="sticky top-0 z-40 bg-surface"
       >
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex h-16 items-center justify-between sm:h-20">
@@ -102,13 +102,13 @@ export function SiteHeader() {
               aria-expanded={mobileOpen}
               aria-haspopup="dialog"
               aria-label={mobileOpen ? t("closeMenu") : t("toggleMenu")}
-              className="rounded-md p-2 text-muted transition-colors hover:bg-surface-muted lg:hidden dark:hover:bg-brand-navy"
+              className="rounded-md p-2 text-secondary transition-colors hover:bg-surface lg:hidden "
               onClick={() => setMobileOpen((open) => !open)}
             >
               {mobileOpen ? (
-                <CloseIcon className="size-6" />
+                <Icon className="size-6" name="close" />
               ) : (
-                <MenuIcon className="size-6" />
+                <Icon className="size-6" name="menu" />
               )}
             </button>
           </div>
@@ -119,7 +119,7 @@ export function SiteHeader() {
         ref={mobileDrawerRef}
         aria-labelledby={mobileMenuTitleId}
         aria-modal="true"
-        className={`fixed inset-0 z-50 flex transform flex-col bg-surface transition-all duration-300 ease-in-out motion-reduce:transition-none dark:bg-brand-navy-deep lg:hidden ${mobilePanelClassName}`}
+        className={`fixed inset-0 z-50 flex transform flex-col bg-surface transition-all duration-300 ease-in-out motion-reduce:transition-none lg:hidden ${mobilePanelClassName}`}
         hidden={!mobileOpen}
         id="mobile-primary-navigation"
         role="dialog"
@@ -128,7 +128,7 @@ export function SiteHeader() {
           {t("primaryLabel")}
         </h2>
 
-        <div className="flex items-center justify-between border-b border-border p-4">
+        <div className="flex items-center justify-between border-b border-line p-4">
           <Link href="/" onClick={closeMobile}>
             <BrandLogo alt={brandT("logoAlt")} className="h-10 w-auto" surface="adaptive" />
           </Link>
@@ -136,10 +136,10 @@ export function SiteHeader() {
             type="button"
             ref={mobileCloseButtonRef}
             aria-label={t("closeMenu")}
-            className="rounded-md p-2 text-muted transition-colors hover:bg-surface-muted dark:hover:bg-brand-navy"
+            className="rounded-md p-2 text-secondary transition-colors hover:bg-surface "
             onClick={closeMobile}
           >
-            <CloseIcon className="size-6" />
+            <Icon className="size-6" name="close" />
           </button>
         </div>
 
@@ -157,7 +157,7 @@ export function SiteHeader() {
             ))}
           </div>
 
-          <div className="mt-auto flex items-center gap-3 border-t border-border pt-4">
+          <div className="mt-auto flex items-center gap-3 border-t border-line pt-4">
             <HeaderLocaleSwitcher />
             <ThemeToggle />
           </div>

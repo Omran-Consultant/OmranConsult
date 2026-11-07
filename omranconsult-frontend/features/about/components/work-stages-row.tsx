@@ -67,14 +67,14 @@ export function WorkStagesRow({ cards, locale }: WorkStagesRowProps) {
       cards.map((card, index) => (
         <article className="flex w-[300px] shrink-0 snap-start flex-col" key={`${card.title ?? "stage"}-${index}`}>
           {card.phaseLabel ? (
-            <span className="text-sm font-bold text-brand-green-strong">{card.phaseLabel}</span>
+            <span className="text-sm font-bold text-accent">{card.phaseLabel}</span>
           ) : null}
-          {card.title ? <h3 className="mt-1 font-display text-xl font-extrabold text-heading">{card.title}</h3> : null}
-          {card.body ? <p className="mt-2 text-base leading-relaxed text-muted">{card.body}</p> : null}
+          {card.title ? <h3 className="mt-1 font-display text-xl font-extrabold text-primary">{card.title}</h3> : null}
+          {card.body ? <p className="mt-2 text-base leading-relaxed text-secondary">{card.body}</p> : null}
           {card.tags.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {card.tags.map((tag) => (
-                <span className="rounded-full bg-surface px-3 py-1 text-sm font-medium text-foreground" key={tag}>
+                <span className="rounded-full bg-surface px-3 py-1 text-sm font-medium text-primary" key={tag}>
                   {tag}
                 </span>
               ))}
@@ -83,7 +83,7 @@ export function WorkStagesRow({ cards, locale }: WorkStagesRowProps) {
           <div className="mt-auto flex flex-col justify-end pt-6">
             <Image
               alt={getProfileImageAlt(card.image, locale)}
-              className="aspect-4/5 w-full rounded-(--oc-radius-brand) object-cover"
+              className="aspect-4/5 w-full rounded-lg object-cover"
               height={card.image.height}
               sizes="300px"
               src={card.image.src}
@@ -99,23 +99,23 @@ export function WorkStagesRow({ cards, locale }: WorkStagesRowProps) {
     <>
       <div
         aria-hidden
-        className="mx-(--oc-page-margin) mt-9 h-1.5 overflow-hidden rounded-sm bg-border"
+        className="mx-(--page-margin) mt-9 h-1.5 overflow-hidden rounded-sm bg-line"
       >
-        <span className="block h-full bg-brand-navy transition-[width] duration-200" style={{ width: `${progress}%` }} />
+        <span className="block h-full bg-elevated transition-[width] duration-200" style={{ width: `${progress}%` }} />
       </div>
       <div
         aria-label={t("workStagesScrollLabel")}
-        className="mx-(--oc-page-margin) mt-8 flex snap-x snap-mandatory gap-8 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mx-(--page-margin) mt-8 flex snap-x snap-mandatory gap-8 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         ref={rowRef}
         tabIndex={0}
       >
         {cardNodes}
       </div>
-      <div className="mx-(--oc-page-margin) mt-6 flex justify-end gap-2">
+      <div className="mx-(--page-margin) mt-6 flex justify-end gap-2">
         <button
           aria-label={t("scrollPrevious")}
           className={classNames(
-            "grid size-13 place-items-center rounded-full bg-brand-navy text-white transition-colors hover:bg-brand-green-strong",
+            "grid size-13 place-items-center rounded-full bg-elevated text-white transition-colors hover:bg-accent-strong",
           )}
           onClick={() => scrollByPage(-1)}
           type="button"
@@ -126,7 +126,7 @@ export function WorkStagesRow({ cards, locale }: WorkStagesRowProps) {
         </button>
         <button
           aria-label={t("scrollNext")}
-          className="grid size-13 place-items-center rounded-full bg-brand-navy text-white transition-colors hover:bg-brand-green-strong"
+          className="grid size-13 place-items-center rounded-full bg-elevated text-white transition-colors hover:bg-accent-strong"
           onClick={() => scrollByPage(1)}
           type="button"
         >

@@ -120,6 +120,7 @@
       "twitter": "X",
       "linkedin": "LinkedIn",
       "instagram": "Instagram"
-    }
+    },
+    "breadcrumbLabel": "Breadcrumb"
   }
 }

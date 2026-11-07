@@ -28,20 +28,20 @@ export async function HomeAboutSection({ aboutBlock, locale, settingsAddress }: 
   const hq = headquartersCaption(settingsAddress, locale);
 
   return (
-    <section className="bg-page px-(--oc-page-margin) pt-(--oc-section-y)" data-section="about" id="about">
+    <section className="bg-canvas px-page pt-(--section-y)" data-section="about" id="about">
       <div className="grid grid-cols-12 gap-6">
         {heading ? (
-          <h2 className="font-display col-span-12 text-(--text-oc-h2) leading-tight font-bold text-heading md:col-span-7">
+          <h2 className="font-display col-span-12 text-h1 leading-tight font-bold text-primary md:col-span-7">
             {heading}
           </h2>
         ) : null}
         {lead ? (
-          <p className="col-span-12 mt-6 text-(--text-oc-lead) leading-relaxed text-muted md:col-span-7">{lead}</p>
+          <p className="col-span-12 mt-6 text-body-l leading-relaxed text-secondary md:col-span-7">{lead}</p>
         ) : null}
       </div>
 
       <div className="mt-16 grid gap-4 md:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
-        <div className="relative aspect-16/10 overflow-hidden rounded-(--oc-radius-brand) bg-brand-navy">
+        <div className="relative aspect-16/10 overflow-hidden rounded-lg bg-elevated">
           <Image
             alt={getProfileImageAlt(image, locale)}
             className="h-full w-full object-cover"
@@ -50,7 +50,7 @@ export async function HomeAboutSection({ aboutBlock, locale, settingsAddress }: 
             src={image.src}
           />
           {note ? (
-            <p className="absolute end-0 top-0 max-w-[min(360px,60%)] rounded-es-(--oc-radius-brand) bg-page p-6 text-base leading-relaxed text-foreground">
+            <p className="absolute end-0 top-0 max-w-[min(360px,60%)] rounded-es-(--radius-lg) bg-canvas p-6 text-base leading-relaxed text-primary">
               {note}
             </p>
           ) : null}
@@ -59,7 +59,7 @@ export async function HomeAboutSection({ aboutBlock, locale, settingsAddress }: 
         <div>
           <div
             aria-label={t("mapTileLabel")}
-            className="relative aspect-square overflow-hidden rounded-(--oc-radius-brand) bg-brand-navy"
+            className="relative aspect-square overflow-hidden rounded-lg bg-elevated"
             role="img"
           >
             <Image
@@ -76,7 +76,7 @@ export async function HomeAboutSection({ aboutBlock, locale, settingsAddress }: 
       </div>
 
       <div className="mt-10">
-        <LinkButton href="/about" variant="outline">
+        <LinkButton href="/about" variant="secondary">
           {t("aboutCta")}
         </LinkButton>
       </div>

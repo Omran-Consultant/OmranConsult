@@ -12,10 +12,10 @@ type AboutOrgChartSectionProps = {
 function OrgPersonCard({ node, highlight }: { readonly node: OrgChartNode; readonly highlight?: boolean }) {
   return (
     <div
-      className={`rounded-(--oc-radius-brand) bg-surface px-4 py-3 text-center ${highlight ? "ring-2 ring-brand-green-strong" : ""}`}
+      className={`rounded-lg bg-surface px-4 py-3 text-center ${highlight ? "ring-2 ring-accent" : ""}`}
     >
-      {node.title ? <p className="font-display text-base font-bold text-heading">{node.title}</p> : null}
-      {node.person?.name ? <p className="mt-1 text-sm text-muted">{node.person.name}</p> : null}
+      {node.title ? <p className="font-display text-base font-bold text-primary">{node.title}</p> : null}
+      {node.person?.name ? <p className="mt-1 text-sm text-secondary">{node.person.name}</p> : null}
     </div>
   );
 }
@@ -33,9 +33,9 @@ export function AboutOrgChartSection({ blocks, orgChart }: AboutOrgChartSectionP
   }
 
   return (
-    <section className="bg-surface px-(--oc-page-margin) py-24" data-section="org-chart" id="org-chart">
+    <section className="bg-surface px-page py-24" data-section="org-chart" id="org-chart">
       {heading ? (
-        <h2 className="font-display text-(--text-oc-h2) font-bold text-heading">{heading}</h2>
+        <h2 className="font-display text-h1 font-bold text-primary">{heading}</h2>
       ) : null}
 
       <div className="mt-14 flex flex-col items-center gap-5">
@@ -46,7 +46,7 @@ export function AboutOrgChartSection({ blocks, orgChart }: AboutOrgChartSectionP
         ) : null}
 
         {layout.top && layout.boardRow.length > 0 ? (
-          <span aria-hidden className="h-6 w-px bg-border-strong" />
+          <span aria-hidden className="h-6 w-px bg-line-strong" />
         ) : null}
 
         {layout.boardRow.length > 0 ? (
@@ -76,13 +76,13 @@ export function AboutOrgChartSection({ blocks, orgChart }: AboutOrgChartSectionP
               return (
                 <div key={column.group}>
                   {groupHeading ? (
-                    <h3 className="py-3 font-display text-lg font-bold text-brand-green-strong">{groupHeading}</h3>
+                    <h3 className="py-3 font-display text-lg font-bold text-accent">{groupHeading}</h3>
                   ) : null}
                   <ul className="space-y-2">
                     {column.nodes.map((node) => (
-                      <li className="rounded-(--oc-radius-brand) bg-page px-4 py-3" key={node.id}>
-                        {node.title ? <p className="font-semibold text-heading">{node.title}</p> : null}
-                        {node.person?.name ? <p className="text-sm text-muted">{node.person.name}</p> : null}
+                      <li className="rounded-lg bg-canvas px-4 py-3" key={node.id}>
+                        {node.title ? <p className="font-semibold text-primary">{node.title}</p> : null}
+                        {node.person?.name ? <p className="text-sm text-secondary">{node.person.name}</p> : null}
                       </li>
                     ))}
                   </ul>

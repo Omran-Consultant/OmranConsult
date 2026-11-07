@@ -28,10 +28,10 @@ export async function HomeServicesSection({ categories, heading, locale }: HomeS
   ].filter((category): category is ServiceCategory => Boolean(category));
 
   return (
-    <section className="bg-brand-green-light text-brand-navy-deep" data-section="services" id="services">
-      <div className="px-(--oc-page-margin) pt-(--oc-section-y)">
+    <section className="bg-accent-strong text-primary" data-section="services" id="services">
+      <div className="px-page pt-(--section-y)">
         {heading ? (
-          <h2 className="font-display text-center text-(--text-oc-h2) leading-tight font-bold md:col-span-8 md:col-start-3">
+          <h2 className="font-display text-center text-h1 leading-tight font-bold md:col-span-8 md:col-start-3">
             {heading}
           </h2>
         ) : null}
@@ -39,11 +39,11 @@ export async function HomeServicesSection({ categories, heading, locale }: HomeS
 
       <HomeServicesBand items={bandItems} locale={locale} />
 
-      <div className="grid gap-10 px-(--oc-page-margin) pt-14 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-10 px-page pt-14 sm:grid-cols-2 lg:grid-cols-4">
         {listColumns.map((category) => (
           <div key={category.slug}>
             {category.title ? <h3 className="font-display mb-4 text-xl font-bold">{category.title}</h3> : null}
-            <ul className="divide-y divide-brand-navy-deep/15">
+            <ul className="divide-y divide-line">
               {category.services.slice(0, 5).map((service) => (
                 <li className="py-1.5 text-base leading-snug" key={service.slug}>
                   {service.title}
@@ -54,8 +54,8 @@ export async function HomeServicesSection({ categories, heading, locale }: HomeS
         ))}
       </div>
 
-      <div className="px-(--oc-page-margin) py-10">
-        <LinkButton href="/services" variant="outline">
+      <div className="px-page py-10">
+        <LinkButton href="/services" variant="secondary">
           {t("servicesCta")}
         </LinkButton>
       </div>

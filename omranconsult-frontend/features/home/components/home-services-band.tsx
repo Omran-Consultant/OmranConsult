@@ -26,7 +26,7 @@ export function HomeServicesBand({ items, locale }: HomeServicesBandProps) {
         const grow = activeIndex === index ? 6 : item.grow;
         return (
           <figure
-            className="relative m-0 min-w-0 overflow-hidden bg-brand-navy-deep transition-[flex-grow] duration-500 ease-out"
+            className="relative m-0 min-w-0 overflow-hidden bg-canvas transition-[flex-grow] duration-500 ease-out"
             key={`${item.title ?? "band"}-${index}`}
             onBlur={() => setActiveIndex(undefined)}
             onFocus={() => setActiveIndex(index)}
@@ -42,7 +42,7 @@ export function HomeServicesBand({ items, locale }: HomeServicesBandProps) {
               src={item.image.src}
             />
             {item.title ? (
-              <figcaption className="absolute start-0 top-0 z-1 max-w-[90%] rounded-ee-(--oc-radius-brand) bg-brand-navy-deep/55 px-6 pt-6 pb-10 font-display text-xl font-bold text-white md:text-2xl">
+              <figcaption className="absolute start-0 top-0 z-1 max-w-[90%] rounded-ee-(--radius-lg) bg-canvas/55 px-6 pt-6 pb-10 font-display text-xl font-bold text-white md:text-2xl">
                 {item.title}
               </figcaption>
             ) : null}

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { MailIcon, PhoneIcon } from "@/features/layout/components/site-icons";
+import { Icon } from "@/core/ui/icon";
 
 export async function SiteHeaderTopBar() {
   const t = await getTranslations("Layout.topBar");
@@ -11,23 +11,23 @@ export async function SiteHeaderTopBar() {
   ] as const;
 
   return (
-    <div className="relative z-50 hidden bg-brand-gradient py-2 text-white shadow-md md:block">
+    <div className="relative z-50 hidden bg-elevated py-2 text-white shadow-md md:block">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-4 text-xs sm:text-sm">
           <a
-            className="flex items-center gap-2 rounded-full px-3 py-1 transition-all hover:bg-brand-navy/90"
+            className="flex items-center gap-2 rounded-full px-3 py-1 transition-all hover:bg-elevated/90"
             href={`mailto:${t("email")}`}
           >
-            <MailIcon className="size-3 sm:size-4" />
+            <Icon className="size-3 sm:size-4" name="mail" />
             <span>{t("email")}</span>
           </a>
           {phones.map((phone) => (
             <a
-              className="flex items-center gap-2 rounded-full px-3 py-1 transition-all hover:bg-brand-navy/90"
+              className="flex items-center gap-2 rounded-full px-3 py-1 transition-all hover:bg-elevated/90"
               href={`tel:${phone.tel}`}
               key={phone.tel}
             >
-              <PhoneIcon className="size-3 sm:size-4" />
+              <Icon className="size-3 sm:size-4" name="phone" />
               <span dir="ltr">{phone.display}</span>
             </a>
           ))}

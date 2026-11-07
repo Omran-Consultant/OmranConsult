@@ -3,14 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
 import { FOOTER_QUICK_LINKS } from "@/features/layout/navigation";
-import {
-  MailIcon,
-  MapPinIcon,
-  PhoneIcon,
-} from "@/features/layout/components/site-icons";
+import { Icon } from "@/core/ui/icon";
 
 const footerLinkClassName =
-  "text-muted-on-dark transition-colors hover:text-brand-green-light";
+  "text-secondary transition-colors hover:text-accent";
 
 export async function SiteFooter() {
   const t = await getTranslations("Layout.footer");
@@ -23,7 +19,7 @@ export async function SiteFooter() {
   ] as const;
 
   return (
-    <footer className="bg-footer text-white">
+    <footer className="bg-surface text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           <div>
@@ -36,7 +32,7 @@ export async function SiteFooter() {
                 />
               </Link>
             </div>
-            <p className="mb-4 text-muted-on-dark">{t("tagline")}</p>
+            <p className="mb-4 text-secondary">{t("tagline")}</p>
             {/* U26: social URLs are pending, so icons stay hidden for now. */}
           </div>
 
@@ -56,15 +52,15 @@ export async function SiteFooter() {
           <div>
             <h3 className="mb-4 text-lg font-semibold">{t("contactHeading")}</h3>
             <div className="space-y-3">
-              <div className="flex items-start gap-3 text-muted-on-dark">
-                <MapPinIcon className="mt-1 size-5 shrink-0 text-brand-green-light" />
+              <div className="flex items-start gap-3 text-secondary">
+                <Icon className="mt-1 size-5 shrink-0 text-accent" name="map-pin" />
                 <span>{t("address")}</span>
               </div>
               {phones.map((phone) => (
-                <div className="flex items-center gap-3 text-muted-on-dark" key={phone.tel}>
-                  <PhoneIcon className="size-5 shrink-0 text-brand-green-light" />
+                <div className="flex items-center gap-3 text-secondary" key={phone.tel}>
+                  <Icon className="size-5 shrink-0 text-accent" name="phone" />
                   <a
-                    className="hover:text-brand-green-light"
+                    className="hover:text-accent"
                     dir="ltr"
                     href={`tel:${phone.tel}`}
                   >
@@ -72,9 +68,9 @@ export async function SiteFooter() {
                   </a>
                 </div>
               ))}
-              <div className="flex items-center gap-3 text-muted-on-dark">
-                <MailIcon className="size-5 shrink-0 text-brand-green-light" />
-                <a className="hover:text-brand-green-light" href={`mailto:${t("email")}`}>
+              <div className="flex items-center gap-3 text-secondary">
+                <Icon className="size-5 shrink-0 text-accent" name="mail" />
+                <a className="hover:text-accent" href={`mailto:${t("email")}`}>
                   {t("email")}
                 </a>
               </div>
@@ -83,7 +79,7 @@ export async function SiteFooter() {
         </div>
 
         <div className="mt-8 border-t border-white/10 pt-8 text-center">
-          <p className="text-muted-on-dark-subtle">{t("copyright")}</p>
+          <p className="text-secondary">{t("copyright")}</p>
         </div>
       </div>
     </footer>

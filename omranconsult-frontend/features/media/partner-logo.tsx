@@ -15,8 +15,8 @@ export function PartnerLogo({ className, name, slug }: PartnerLogoProps) {
   }
 
   const boxClassName = className
-    ? `flex min-h-28 items-center justify-center rounded-xl bg-brand-navy-deep p-4 ${className}`
-    : "flex min-h-28 items-center justify-center rounded-xl bg-brand-navy-deep p-4";
+    ? `flex min-h-28 items-center justify-center rounded-xl bg-canvas p-4 ${className}`
+    : "flex min-h-28 items-center justify-center rounded-xl bg-canvas p-4";
 
   return (
     <div className={boxClassName}>

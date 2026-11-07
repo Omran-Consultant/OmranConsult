@@ -1,5 +1,7 @@
-import { PageHeader } from "@/core/ui/page-header";
-import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
+import { getTranslations } from "next-intl/server";
+
+import { PageHero } from "@/core/ui/page-hero";
+import { SECTION_BACKGROUND_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type { AppLocale } from "@/i18n/routing";
 
 type AboutHeaderSectionProps = {
@@ -8,13 +10,16 @@ type AboutHeaderSectionProps = {
   readonly subline?: string;
 };
 
-export function AboutHeaderSection({ locale, subline, title }: AboutHeaderSectionProps) {
+export async function AboutHeaderSection({ locale, subline, title }: AboutHeaderSectionProps) {
+  const t = await getTranslations("Layout");
+
   return (
     <div data-section="header">
-      <PageHeader
-        description={subline}
-        image={SECTION_BACKGROUND_IMAGES.about}
-        locale={locale}
+      <PageHero
+        breadcrumbLabel={t("breadcrumbLabel")}
+        breadcrumbs={[{ label: t("nav.home"), href: "/" }, { label: title }]}
+        image={toImageAsset(SECTION_BACKGROUND_IMAGES.about, locale)}
+        intro={subline}
         title={title}
       />
     </div>

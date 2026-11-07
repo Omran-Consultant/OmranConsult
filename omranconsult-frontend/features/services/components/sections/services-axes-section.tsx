@@ -20,20 +20,20 @@ export function ServicesAxesSection({ categories, heading, locale }: ServicesAxe
   const bandItems = resolveServicesBandItems(categories);
 
   return (
-    <section className="bg-brand-green-light text-brand-navy-deep" data-section="axes">
+    <section className="bg-accent-strong text-primary" data-section="axes">
       {heading ? (
-        <div className="px-(--oc-page-margin) pt-(--oc-section-y)">
-          <h2 className="font-display text-center text-(--text-oc-h2) leading-tight font-bold">{heading}</h2>
+        <div className="px-page pt-(--section-y)">
+          <h2 className="font-display text-center text-h1 leading-tight font-bold">{heading}</h2>
         </div>
       ) : null}
 
       <HomeServicesBand items={bandItems} locale={locale} />
 
-      <div className="grid gap-10 px-(--oc-page-margin) pt-14 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-10 px-page pt-14 sm:grid-cols-2 lg:grid-cols-3">
         {axisCategories.map((category) => (
           <div key={category.slug}>
             {category.title ? <h3 className="font-display mb-4 text-xl font-bold">{category.title}</h3> : null}
-            <ul className="divide-y divide-brand-navy-deep/15">
+            <ul className="divide-y divide-line">
               {category.services.map((service) => (
                 <li className="py-1.5 text-base leading-snug" key={service.slug}>
                   {service.title}

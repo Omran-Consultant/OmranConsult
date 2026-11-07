@@ -31,7 +31,7 @@ export function ExpertsExplorer({ experts, heading, locale }: ExpertsExplorerPro
   return (
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
       <div className="lg:col-span-5 lg:sticky lg:top-[14vh] lg:self-start">
-        <div className="relative mx-auto aspect-4/5 max-w-[27.5rem] overflow-hidden rounded-t-[240px] rounded-b-[var(--oc-radius-brand)] bg-surface">
+        <div className="relative mx-auto aspect-4/5 max-w-[27.5rem] overflow-hidden rounded-t-[240px] rounded-b-[var(--radius-lg)] bg-surface">
           {experts.map((expert) => {
             const image = EXPERT_PORTRAITS[expert.slug as keyof typeof EXPERT_PORTRAITS];
             if (!image) {
@@ -57,9 +57,9 @@ export function ExpertsExplorer({ experts, heading, locale }: ExpertsExplorerPro
 
       <div className="lg:col-span-6 lg:col-start-7">
         {heading ? (
-          <h2 className="font-display mb-10 text-(--text-oc-h2) leading-tight font-bold text-heading">{heading}</h2>
+          <h2 className="font-display mb-10 text-h1 leading-tight font-bold text-primary">{heading}</h2>
         ) : null}
-        <ul className="divide-y-2 divide-border-strong">
+        <ul className="divide-y-2 divide-line-strong">
           {experts.map((expert) => {
             const active = expert.slug === selectedExpert?.slug;
             return (
@@ -68,7 +68,7 @@ export function ExpertsExplorer({ experts, heading, locale }: ExpertsExplorerPro
                   aria-expanded={active}
                   className={classNames(
                     "flex w-full min-h-18 items-center justify-between gap-4 py-3 text-start transition-colors",
-                    active ? "text-heading" : "text-muted hover:text-heading",
+                    active ? "text-primary" : "text-secondary hover:text-primary",
                   )}
                   onClick={() => setSelectedSlug(expert.slug)}
                   type="button"
@@ -77,7 +77,7 @@ export function ExpertsExplorer({ experts, heading, locale }: ExpertsExplorerPro
                   <span
                     className={classNames(
                       "text-sm whitespace-nowrap",
-                      active ? "font-bold text-brand-green-strong" : "",
+                      active ? "font-bold text-accent" : "",
                     )}
                   >
                     {t("expertYears", { years: expert.yearsExperience })}
@@ -86,9 +86,9 @@ export function ExpertsExplorer({ experts, heading, locale }: ExpertsExplorerPro
                 {active ? (
                   <div className="pb-5">
                     {expert.title ? (
-                      <p className="text-base font-bold text-brand-green-strong">{expert.title}</p>
+                      <p className="text-base font-bold text-accent">{expert.title}</p>
                     ) : null}
-                    {expert.bio ? <p className="mt-3 text-base leading-relaxed text-muted">{expert.bio}</p> : null}
+                    {expert.bio ? <p className="mt-3 text-base leading-relaxed text-secondary">{expert.bio}</p> : null}
                   </div>
                 ) : null}
               </li>

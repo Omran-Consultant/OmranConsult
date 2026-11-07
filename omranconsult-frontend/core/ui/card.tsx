@@ -7,12 +7,10 @@ type CardProps = HTMLAttributes<HTMLElement> & {
   readonly className?: string;
 };
 
+/** Glass card (overlay/glass + border/subtle, radius lg). */
 export function Card({ children, className, ...rest }: CardProps) {
   return (
-    <article
-      className={classNames("rounded-xl border border-border bg-surface p-6 shadow-card", className)}
-      {...rest}
-    >
+    <article className={classNames("glass rounded-lg border border-line p-6", className)} {...rest}>
       {children}
     </article>
   );

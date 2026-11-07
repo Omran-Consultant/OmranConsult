@@ -17,7 +17,7 @@ export function HomeStrategySection({ sectionHeading, strategyBlock }: HomeStrat
   const background = SECTION_BACKGROUND_IMAGES.strategy;
 
   return (
-    <section className="relative mt-(--oc-section-y) overflow-hidden bg-brand-navy-deep text-white" data-section="strategy">
+    <section className="relative mt-(--section-y) overflow-hidden bg-canvas text-white" data-section="strategy">
       <Image
         alt=""
         className="absolute inset-0 h-full w-full object-cover opacity-35"
@@ -25,9 +25,9 @@ export function HomeStrategySection({ sectionHeading, strategyBlock }: HomeStrat
         sizes="100vw"
         src={background.src}
       />
-      <div className="relative px-(--oc-page-margin) py-(--oc-section-y)">
+      <div className="relative px-page py-section-y">
         {sectionHeading ? (
-          <h2 className="font-display max-w-3xl text-(--text-oc-h2) leading-tight font-bold text-brand-green-light">
+          <h2 className="font-display max-w-3xl text-h1 leading-tight font-bold text-accent">
             {sectionHeading}
           </h2>
         ) : null}
@@ -46,7 +46,7 @@ export function HomeStrategySection({ sectionHeading, strategyBlock }: HomeStrat
                   <h3 className="font-display text-3xl font-extrabold md:col-span-3 md:text-4xl">{title}</h3>
                 ) : null}
                 {body ? (
-                  <p className="text-(--text-oc-lead) leading-relaxed text-muted-on-dark md:col-span-7 md:max-w-[58ch]">{body}</p>
+                  <p className="text-body-l leading-relaxed text-secondary md:col-span-7 md:max-w-[58ch]">{body}</p>
                 ) : null}
               </article>
             );

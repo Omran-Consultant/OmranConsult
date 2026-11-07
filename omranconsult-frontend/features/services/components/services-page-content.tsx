@@ -2,14 +2,14 @@ import { getTranslations } from "next-intl/server";
 
 import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
 import { JsonLd } from "@/core/seo/json-ld";
-import { PageHeader } from "@/core/ui/page-header";
+import { PageHero } from "@/core/ui/page-hero";
 import { asObject, asString, asStringList } from "@/features/home/lib/block-helpers";
 import { ServicesApproachSection } from "@/features/services/components/sections/services-approach-section";
 import { ServicesAssetManagementSection } from "@/features/services/components/sections/services-asset-management-section";
 import { ServicesAxesSection } from "@/features/services/components/sections/services-axes-section";
 import { ServicesEngineeringSection } from "@/features/services/components/sections/services-engineering-section";
 import { ServicesOfferingsSection } from "@/features/services/components/sections/services-offerings-section";
-import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
+import { SECTION_BACKGROUND_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type { AppLocale } from "@/i18n/routing";
 
 type ServicesPageData = Awaited<
@@ -46,6 +46,7 @@ function joinSlideHeadline(headline?: string, subline?: string): string | undefi
 
 export async function ServicesPageContent({ locale, data }: ServicesPageContentProps) {
   const t = await getTranslations("ServicesPage");
+  const layoutT = await getTranslations("Layout");
   const slidesByKey = new Map(data.home.heroSlides.map((slide) => [slide.key, slide]));
   const blocks = data.home.blocks;
   const coreOfferings = asObject(blocks.core_offerings);
@@ -77,10 +78,11 @@ export async function ServicesPageContent({ locale, data }: ServicesPageContentP
     <main className="flex flex-1 flex-col">
       <JsonLd data={breadcrumbs} />
       <div data-section="header">
-        <PageHeader
-          description={servicesSlide?.subline}
-          image={SECTION_BACKGROUND_IMAGES.services}
-          locale={locale}
+        <PageHero
+          breadcrumbLabel={layoutT("breadcrumbLabel")}
+          breadcrumbs={[{ label: layoutT("nav.home"), href: "/" }, { label: title }]}
+          image={toImageAsset(SECTION_BACKGROUND_IMAGES.services, locale)}
+          intro={servicesSlide?.subline}
           title={title}
         />
       </div>

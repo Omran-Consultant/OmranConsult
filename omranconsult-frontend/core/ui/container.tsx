@@ -7,6 +7,7 @@ type ContainerProps = {
   readonly className?: string;
 };
 
+/** 1280 px container with the responsive side margins (DESIGN_BASELINE §4). */
 export function Container({ children, className }: ContainerProps) {
-  return <div className={classNames("mx-auto w-full max-w-7xl px-4", className)}>{children}</div>;
+  return <div className={classNames("container-page", className)}>{children}</div>;
 }

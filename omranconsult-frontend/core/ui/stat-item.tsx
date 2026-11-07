@@ -1,0 +1,20 @@
+import { classNames } from "@/core/ui/class-names";
+import { CountUp } from "@/core/ui/count-up";
+
+type StatItemProps = {
+  readonly value: string;
+  readonly label?: string;
+  /** The first item of a row is accent-coloured (spec). */
+  readonly accent?: boolean;
+  readonly className?: string;
+};
+
+/** Figma "Stat Item": 1 px top border, padding-top 28, gap 12, Number/L + Body/S. */
+export function StatItem({ value, label, accent = false, className }: StatItemProps) {
+  return (
+    <div className={classNames("flex flex-col gap-3 border-t border-line pt-7", className)}>
+      <CountUp className={classNames("font-display text-number-l", accent ? "text-accent" : "text-primary")} value={value} />
+      {label ? <p className="text-body-s text-secondary">{label}</p> : null}
+    </div>
+  );
+}

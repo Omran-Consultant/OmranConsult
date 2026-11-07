@@ -26,7 +26,7 @@ export function HomeProjectsMapPanel({ regions }: HomeProjectsMapPanelProps) {
 
   return (
     <div className="mapper-grid mt-12 grid gap-10 lg:grid-cols-12 lg:items-center">
-      <div className="relative rounded-(--oc-radius-brand) bg-page p-6 lg:col-span-7">
+      <div className="relative rounded-lg bg-canvas p-6 lg:col-span-7">
         <Image
           alt={projectsT("mapAlt")}
           className="h-auto w-full mix-blend-multiply"
@@ -55,8 +55,8 @@ export function HomeProjectsMapPanel({ regions }: HomeProjectsMapPanelProps) {
                 className={classNames(
                   "absolute start-1/2 top-3/5 block size-7 -translate-1/2 rounded-full border-3 transition-transform",
                   pressed
-                    ? "border-white bg-brand-green-light/35 scale-100 opacity-100"
-                    : "border-brand-green-light scale-60 opacity-0 hover:opacity-100 hover:scale-100",
+                    ? "border-white bg-accent/35 scale-100 opacity-100"
+                    : "border-accent scale-60 opacity-0 hover:opacity-100 hover:scale-100",
                 )}
               />
             </button>
@@ -75,8 +75,8 @@ export function HomeProjectsMapPanel({ regions }: HomeProjectsMapPanelProps) {
               className={classNames(
                 "min-h-10 rounded-full px-3.5 text-sm font-medium transition-colors",
                 activeRegion === region.slug
-                  ? "bg-white font-bold text-brand-green-strong"
-                  : "border border-white/35 bg-brand-navy-deep/55 text-white hover:bg-brand-navy-deep/75",
+                  ? "bg-white font-bold text-green-700"
+                  : "border border-white/35 bg-canvas/55 text-white hover:bg-canvas/75",
               )}
               key={region.slug}
               onClick={() => setActiveRegion(region.slug)}

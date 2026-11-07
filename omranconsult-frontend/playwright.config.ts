@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/** E2E_PORT lets the suite run beside a dev server that already holds 3000. */
+const port = process.env.E2E_PORT ?? "3000";
+const origin = `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 45_000,
@@ -7,13 +11,13 @@ export default defineConfig({
     timeout: 10_000,
   },
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: origin,
     trace: "on-first-retry",
   },
   webServer: {
     command:
-      "API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 npm run build && API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 npm run start -- --hostname 127.0.0.1 --port 3000",
-    url: "http://127.0.0.1:3000/en",
+      `API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_SITE_URL=${origin} npm run build && API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_SITE_URL=${origin} npm run start -- --hostname 127.0.0.1 --port ${port}`,
+    url: `${origin}/en`,
     reuseExistingServer: false,
     timeout: 240_000,
   },

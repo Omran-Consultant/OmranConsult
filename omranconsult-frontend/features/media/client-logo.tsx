@@ -21,8 +21,8 @@ export function ClientLogo({ className, locale, name, slug, sortOrder }: ClientL
   const alt = name?.trim() ? name : locale === "ar" ? "شعار عميل" : "Client logo";
 
   const boxClassName = className
-    ? `flex aspect-[4/3] items-center justify-center rounded-xl border border-border bg-white p-3 dark:border-white/10 ${className}`
-    : "flex aspect-[4/3] items-center justify-center rounded-xl border border-border bg-white p-3 dark:border-white/10";
+    ? `flex aspect-[4/3] items-center justify-center rounded-xl border border-line bg-white p-3 ${className}`
+    : "flex aspect-[4/3] items-center justify-center rounded-xl border border-line bg-white p-3 ";
 
   return (
     <div className={boxClassName}>

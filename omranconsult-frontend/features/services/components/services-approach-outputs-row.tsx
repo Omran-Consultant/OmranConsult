@@ -67,7 +67,7 @@ export function ServicesApproachOutputsRow({
 
   if (outputs.length < 4 || reducedMotion) {
     return (
-      <ol className="mt-8 list-decimal space-y-3 ps-6 text-base leading-relaxed text-muted">
+      <ol className="mt-8 list-decimal space-y-3 ps-6 text-base leading-relaxed text-secondary">
         {outputs.map((output) => (
           <li key={output}>{output}</li>
         ))}
@@ -79,17 +79,17 @@ export function ServicesApproachOutputsRow({
     <div className="mt-8">
       <div
         aria-hidden
-        className="mb-8 h-1.5 overflow-hidden rounded-full bg-border"
+        className="mb-8 h-1.5 overflow-hidden rounded-full bg-line"
         id={progressId}
       >
         <div
-          className="h-full rounded-full bg-brand-navy-deep motion-safe:transition-[width] motion-safe:duration-200"
+          className="h-full rounded-full bg-canvas motion-safe:transition-[width] motion-safe:duration-200"
           style={{ width: `${progress}%` }}
         />
       </div>
       <div
         aria-label={ariaLabel}
-        className="-mx-(--oc-page-margin) flex snap-x snap-mandatory gap-8 overflow-x-auto px-(--oc-page-margin) pb-2 [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-green-strong [&::-webkit-scrollbar]:hidden"
+        className="-mx-(--page-margin) flex snap-x snap-mandatory gap-8 overflow-x-auto px-page pb-2 [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent [&::-webkit-scrollbar]:hidden"
         onScroll={syncProgress}
         ref={rowRef}
         tabIndex={0}
@@ -99,13 +99,13 @@ export function ServicesApproachOutputsRow({
             className="flex w-[min(300px,80vw)] shrink-0 snap-start flex-col"
             key={output}
           >
-            <p className="text-base leading-relaxed text-muted">{output}</p>
+            <p className="text-base leading-relaxed text-secondary">{output}</p>
           </article>
         ))}
       </div>
       <div className="mt-6 flex gap-2 rtl:flex-row-reverse">
         <button
-          className="grid size-13 place-items-center rounded-full border-0 bg-brand-navy-deep text-white motion-safe:transition-[background-color,transform] motion-safe:duration-150 motion-safe:active:scale-95 motion-safe:hover:bg-brand-green-strong"
+          className="grid size-13 place-items-center rounded-full border-0 bg-canvas text-white motion-safe:transition-[background-color,transform] motion-safe:duration-150 motion-safe:active:scale-95 motion-safe:hover:bg-accent-strong"
           onClick={() => scrollByStep(-1)}
           type="button"
         >
@@ -113,7 +113,7 @@ export function ServicesApproachOutputsRow({
           <ChevronIcon flipped />
         </button>
         <button
-          className="grid size-13 place-items-center rounded-full border-0 bg-brand-navy-deep text-white motion-safe:transition-[background-color,transform] motion-safe:duration-150 motion-safe:active:scale-95 motion-safe:hover:bg-brand-green-strong"
+          className="grid size-13 place-items-center rounded-full border-0 bg-canvas text-white motion-safe:transition-[background-color,transform] motion-safe:duration-150 motion-safe:active:scale-95 motion-safe:hover:bg-accent-strong"
           onClick={() => scrollByStep(1)}
           type="button"
         >

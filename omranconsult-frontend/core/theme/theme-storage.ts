@@ -46,15 +46,10 @@ export function readCookieTheme(): ThemePreference | null {
   }
 }
 
-export function readSystemPrefersDark(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
+/** Dark is the default theme (SDD A29, D1); a stored choice wins. */
+export const DEFAULT_THEME: ThemePreference = "dark";
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
-/** Client-only: localStorage → cookie → system default. */
+/** Client-only: localStorage → cookie → dark default. */
 export function readClientThemePreference(): ThemePreference {
   const fromStorage = readStoredTheme();
   if (fromStorage) {
@@ -66,7 +61,7 @@ export function readClientThemePreference(): ThemePreference {
     return fromCookie;
   }
 
-  return resolveTheme(null, readSystemPrefersDark());
+  return resolveTheme(null);
 }
 
 export function writeStoredTheme(theme: ThemePreference): void {
@@ -87,15 +82,8 @@ export function persistThemePreference(theme: ThemePreference): void {
   document.cookie = `${THEME_STORAGE_KEY}=${theme};path=/;max-age=${THEME_COOKIE_MAX_AGE};SameSite=Lax`;
 }
 
-export function resolveTheme(
-  stored: ThemePreference | null,
-  prefersDark: boolean,
-): ThemePreference {
-  if (stored) {
-    return stored;
-  }
-
-  return prefersDark ? "dark" : "light";
+export function resolveTheme(stored: ThemePreference | null): ThemePreference {
+  return stored ?? DEFAULT_THEME;
 }
 
 export function applyThemeClass(theme: ThemePreference): void {

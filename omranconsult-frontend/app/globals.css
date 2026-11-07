@@ -3,144 +3,292 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Design tokens — Corporate Profile 2029 identity (docs/DESIGN_BASELINE.md §2).
- * Components use the semantic and brand utilities below, never raw hex.
+ * Design tokens — Figma handoff (SDD A30, docs/DESIGN_BASELINE.md §2–§4).
+ * Primitives are raw values; components use the semantic names only.
+ * Dark is the default theme (A29); `.scheme-dark` re-declares the dark values
+ * on a subtree so photographic heroes stay dark in the light theme.
  */
 
 :root {
-  --oc-radius-brand: 10px;
-  --oc-page-margin: clamp(1rem, 3.2vw, 3rem);
-  --oc-section-y: clamp(5.5rem, 8.4vw, 8rem);
+  /* Primitives */
+  --navy-950: #081322;
+  --navy-900: #0c1b30;
+  --navy-800: #132a48;
+  --navy-700: #1b3d65;
+  --navy-600: #24507f;
+  --navy-400: #5a7ba3;
+  --navy-200: #b4c3d6;
+  --green-700: #0b6b36;
+  --green-600: #0e8442;
+  --green-500: #1fa055;
+  --green-300: #72c067;
+  --green-100: #ddf1d8;
+  --neutral-0: #ffffff;
+  --neutral-100: #f2f4f7;
+  --neutral-300: #c9d2de;
+  --neutral-500: #8a99ad;
+  --neutral-700: #4a5568;
+  --red-500: #e5484d;
+  /* Derived for the light theme only (PHASE4C Q7): red/500 is 3.55:1 on neutral/100. */
+  --red-700: #b42318;
+  --amber-500: #f5a524;
+  --blue-400: #4c9aff;
 
-  /* Brand (stable across light/dark) */
-  --oc-brand-navy: #13294b;
-  --oc-brand-navy-deep: #0d1c36;
-  --oc-brand-green: #0e8a43;
-  --oc-brand-green-strong: #0c7f3d;
-  --oc-brand-green-light: #6cc644;
-  --oc-muted-on-dark: #d1d5db;
-  --oc-muted-on-dark-subtle: #9ca3af;
+  /* Semantic — light theme (derived, DESIGN_BASELINE §2.2) */
+  --bg-base: var(--neutral-100);
+  --bg-surface: var(--neutral-0);
+  --bg-elevated: var(--neutral-0);
+  --bg-highlight: var(--neutral-300);
+  --bg-inverse: var(--navy-950);
+  --text-primary: var(--navy-950);
+  --text-secondary: var(--neutral-700);
+  --text-muted: var(--navy-600);
+  --text-inverse: var(--neutral-0);
+  --accent-default: var(--green-700);
+  --accent-strong: var(--green-600);
+  --border-subtle: rgb(8 19 34 / 0.1);
+  --border-strong: rgb(8 19 34 / 0.2);
+  --border-accent: rgb(14 132 66 / 0.4);
+  --overlay-glass: rgb(8 19 34 / 0.04);
+  --overlay-tint: rgb(8 19 34 / 0.06);
+  --overlay-tint-strong: rgb(8 19 34 / 0.12);
+  --overlay-scrim: rgb(8 19 34 / 0.7);
+  --status-success: var(--green-700);
+  --status-warning: var(--amber-500);
+  --status-danger: var(--red-700);
+  --status-danger-label: var(--red-700);
+  --status-info: var(--navy-600);
+  --header-glass: rgb(242 244 247 / 0.85);
+  color-scheme: light;
 
-  /* Light theme surfaces & text */
-  --oc-page: #f4f5f6;
-  --oc-surface: #ffffff;
-  --oc-surface-muted: #f4f5f6;
-  --oc-foreground: #13294b;
-  --oc-heading: #13294b;
-  --oc-nav-link: #13294b;
-  --oc-muted: #46566f;
-  --oc-border: #e5e7eb;
-  --oc-border-strong: #d1d5db;
-  --oc-ring: #0c7f3d;
-  --oc-footer: #0d1c36;
-  --oc-font-display: var(--font-rubik);
+  /* Layout */
+  --page-margin: 1.25rem;
+  --section-y: 4rem;
+  --section-gap: 1.5rem;
+  --card-gap: 1rem;
+
+  /* Type scale — mobile first (tokens.css) */
+  --fs-display-xl: 2.75rem;
+  --fs-display-l: 2.75rem;
+  --fs-h1: 1.875rem;
+  --fs-h2: 1.375rem;
+  --fs-h3: 1.375rem;
+  --fs-h4: 1.125rem;
+  --fs-body-l: 1rem;
+  --fs-number-xl: 2.5rem;
+  --fs-number-l: 2.5rem;
+
+  --font-display-switch: var(--font-rubik);
 }
 
-.dark {
-  --oc-page: #0d1c36;
-  --oc-surface: #13294b;
-  --oc-surface-muted: #0d1c36;
-  --oc-foreground: #f4f5f6;
-  --oc-heading: #f4f5f6;
-  --oc-nav-link: #f4f5f6;
-  --oc-muted: #d1d5db;
-  --oc-border: #1a4459;
-  --oc-border-strong: #1a4459;
-  --oc-ring: #6cc644;
-  --oc-footer: #13294b;
+.dark,
+.scheme-dark {
+  --bg-base: var(--navy-950);
+  --bg-surface: var(--navy-900);
+  --bg-elevated: var(--navy-800);
+  --bg-highlight: var(--navy-700);
+  --bg-inverse: var(--neutral-0);
+  --text-primary: var(--neutral-0);
+  --text-secondary: var(--navy-200);
+  --text-muted: var(--neutral-500);
+  --text-inverse: var(--navy-950);
+  --accent-default: var(--green-300);
+  --accent-strong: var(--green-600);
+  --border-subtle: rgb(255 255 255 / 0.1);
+  --border-strong: rgb(255 255 255 / 0.2);
+  --border-accent: rgb(114 192 103 / 0.4);
+  --overlay-glass: rgb(255 255 255 / 0.06);
+  --overlay-tint: rgb(255 255 255 / 0.08);
+  --overlay-tint-strong: rgb(255 255 255 / 0.16);
+  --status-success: var(--green-500);
+  --status-danger: var(--red-500);
+  /* red/500 on its own 14 % tint over navy/800 is 3.32:1; the badge label stays white (AA). */
+  --status-danger-label: var(--neutral-0);
+  --status-info: var(--blue-400);
+  --header-glass: rgb(8 19 34 / 0.85);
+  color-scheme: dark;
 }
 
-/*
- * Arabic optical size: Somar draws smaller than Rubik at the same font-size
- * (alef 0.46em vs Rubik cap 0.70em), so Arabic text sizes are scaled up and
- * line-heights tightened. Tailwind text-* utilities read these tokens.
- */
+@media (min-width: 768px) {
+  :root {
+    --page-margin: 2rem;
+    --section-y: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-margin: 3rem;
+    --section-y: 8.75rem;
+    --section-gap: 4rem;
+    --card-gap: 1.5rem;
+    --fs-display-xl: 5.5rem;
+    --fs-display-l: 4rem;
+    --fs-h1: 3rem;
+    --fs-h2: 2.25rem;
+    --fs-h3: 1.5rem;
+    --fs-h4: 1.25rem;
+    --fs-body-l: 1.125rem;
+    --fs-number-xl: 6rem;
+    --fs-number-l: 3.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --page-margin: 4rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --page-margin: 5rem;
+  }
+}
+
+/* Arabic uses Somar in place of DIN Next LT Arabic (D2). Swap the family here to change it. */
 html[lang="ar"] {
-  --oc-font-display: var(--font-somar);
-  --oc-ar-scale: 1.2;
-  --oc-ar-leading-body: 1.5;
-  --oc-ar-leading-heading: 1.3;
+  --font-display-switch: var(--font-somar);
+}
 
-  --text-xs: calc(0.75rem * var(--oc-ar-scale));
-  --text-sm: calc(0.875rem * var(--oc-ar-scale));
-  --text-base: calc(1rem * var(--oc-ar-scale));
-  --text-lg: calc(1.125rem * var(--oc-ar-scale));
-  --text-xl: calc(1.25rem * var(--oc-ar-scale));
-  --text-2xl: calc(1.5rem * var(--oc-ar-scale));
-  --text-3xl: calc(1.875rem * var(--oc-ar-scale));
-  --text-xs--line-height: var(--oc-ar-leading-body);
-  --text-sm--line-height: var(--oc-ar-leading-body);
-  --text-base--line-height: var(--oc-ar-leading-body);
-  --text-lg--line-height: var(--oc-ar-leading-body);
+@theme {
+  --color-*: initial;
+  --breakpoint-2xl: 90rem;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+
+  --shadow-*: initial;
+  --shadow-elevated: 0 24px 48px rgb(0 0 0 / 0.35);
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --container-page: 80rem;
 }
 
 @theme inline {
-  /* Brand palette */
-  --color-brand-navy: var(--oc-brand-navy);
-  --color-brand-navy-deep: var(--oc-brand-navy-deep);
-  --color-brand-green: var(--oc-brand-green);
-  --color-brand-green-strong: var(--oc-brand-green-strong);
-  --color-brand-green-light: var(--oc-brand-green-light);
-  --color-muted-on-dark: var(--oc-muted-on-dark);
-  --color-muted-on-dark-subtle: var(--oc-muted-on-dark-subtle);
+  /* Primitives used by theme-independent components (Light button on photos). */
+  --color-white: var(--neutral-0);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-300: var(--neutral-300);
+  --color-navy-950: var(--navy-950);
+  --color-green-700: var(--green-700);
 
-  /* Semantic surfaces & text */
-  --color-page: var(--oc-page);
-  --color-surface: var(--oc-surface);
-  --color-surface-muted: var(--oc-surface-muted);
-  --color-foreground: var(--oc-foreground);
-  --color-heading: var(--oc-heading);
-  --color-nav-link: var(--oc-nav-link);
-  --color-muted: var(--oc-muted);
-  --color-border: var(--oc-border);
-  --color-border-strong: var(--oc-border-strong);
-  --color-ring: var(--oc-ring);
-  --color-footer: var(--oc-footer);
+  /* Semantic */
+  --color-canvas: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-highlight: var(--bg-highlight);
+  --color-inverse: var(--bg-inverse);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-on-inverse: var(--text-inverse);
+  --color-accent: var(--accent-default);
+  --color-accent-strong: var(--accent-strong);
+  --color-line: var(--border-subtle);
+  --color-line-strong: var(--border-strong);
+  --color-line-accent: var(--border-accent);
+  --color-glass: var(--overlay-glass);
+  --color-tint: var(--overlay-tint);
+  --color-tint-strong: var(--overlay-tint-strong);
+  --color-scrim: var(--overlay-scrim);
+  --color-header-glass: var(--header-glass);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-danger: var(--status-danger);
+  --color-danger-label: var(--status-danger-label);
+  --color-info: var(--status-info);
 
   /* Typography */
   --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
-  --font-arabic: var(--font-somar), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--oc-font-display), var(--font-sans);
+  --font-ar: var(--font-somar), ui-sans-serif, system-ui, sans-serif;
+  --font-latin: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-switch), ui-sans-serif, system-ui, sans-serif;
 
-  /* Spacing scale extensions (section rhythm; revisited with Phase 4 pages) */
-  --spacing-section-y: 4.5rem;
-  --spacing-section-y-lg: 6rem;
+  --text-display-xl: var(--fs-display-xl);
+  --text-display-xl--line-height: 1.1;
+  --text-display-xl--font-weight: 400;
+  --text-display-l: var(--fs-display-l);
+  --text-display-l--line-height: 1.15;
+  --text-display-l--font-weight: 400;
+  --text-h1: var(--fs-h1);
+  --text-h1--line-height: 1.25;
+  --text-h1--font-weight: 500;
+  --text-h2: var(--fs-h2);
+  --text-h2--line-height: 1.3;
+  --text-h2--font-weight: 500;
+  --text-h3: var(--fs-h3);
+  --text-h3--line-height: 1.4;
+  --text-h3--font-weight: 500;
+  --text-h4: var(--fs-h4);
+  --text-h4--line-height: 1.45;
+  --text-h4--font-weight: 500;
+  --text-body-l: var(--fs-body-l);
+  --text-body-l--line-height: 1.75;
+  --text-body-m: 1rem;
+  --text-body-m--line-height: 1.7;
+  --text-body-s: 0.875rem;
+  --text-body-s--line-height: 1.65;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.6;
+  --text-label-m: 0.9375rem;
+  --text-label-m--line-height: 1.4;
+  --text-label-m--font-weight: 500;
+  --text-label-s: 0.8125rem;
+  --text-label-s--line-height: 1.4;
+  --text-label-s--font-weight: 500;
+  --text-number-xl: var(--fs-number-xl);
+  --text-number-xl--line-height: 1;
+  --text-number-xl--font-weight: 500;
+  --text-number-l: var(--fs-number-l);
+  --text-number-l--line-height: 1;
+  --text-number-l--font-weight: 500;
+  --text-number-m: 2rem;
+  --text-number-m--line-height: 1.1;
+  --text-number-m--font-weight: 500;
+  --text-overline: 0.75rem;
+  --text-overline--line-height: 1.4;
+  --text-overline--font-weight: 600;
+  --text-overline--letter-spacing: 0.24em;
 
-  /* Radii */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-
-  /* Prototype parity scale (docs/design-reference/prototype/styles.css) */
-  --text-oc-display: clamp(3.5rem, 8.2vw, 8rem);
-  --text-oc-h2: clamp(2.125rem, 3.9vw, 3.625rem);
-  --text-oc-lead: clamp(1.1875rem, 1.5vw, 1.4375rem);
-
-  /* Shadows (brand navy) */
-  --shadow-card: 0 1px 3px 0 rgb(19 41 75 / 0.08), 0 1px 2px -1px rgb(19 41 75 / 0.08);
-  --shadow-elevated: 0 10px 25px -5px rgb(19 41 75 / 0.12),
-    0 8px 10px -6px rgb(19 41 75 / 0.08);
+  --spacing-section-y: var(--section-y);
+  --spacing-section-gap: var(--section-gap);
+  --spacing-card-gap: var(--card-gap);
+  --spacing-page: var(--page-margin);
 }
 
-/*
- * Profile gradient (A21): green at the reading start, navy at the end.
- * Stops carry white text at >= 5.1:1 contrast.
- */
-@utility bg-brand-gradient {
-  background-image: linear-gradient(
-    to right,
-    var(--oc-brand-green-strong),
-    var(--oc-brand-navy)
-  );
+/* Page container: 1280 px max, side margins 20 / 32 / 48 / 64 / 80 (DESIGN_BASELINE §4). */
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container-page) + 2 * var(--page-margin));
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+}
 
-  &:dir(rtl) {
-    background-image: linear-gradient(
-      to left,
-      var(--oc-brand-green-strong),
-      var(--oc-brand-navy)
-    );
+/* Directional icons are drawn for RTL (the Figma arrow points down-left); mirror them in LTR. */
+@utility flip-ltr {
+  &:dir(ltr) {
+    transform: scaleX(-1);
   }
+}
+
+@utility glass {
+  background-color: var(--overlay-glass);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+@utility num-isolate {
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
 }
 
 @layer base {
@@ -149,79 +297,76 @@ html[lang="ar"] {
   }
 
   body {
-    @apply min-h-full bg-page font-sans text-base leading-normal text-foreground antialiased;
+    @apply min-h-full bg-canvas font-sans text-body-m text-primary antialiased;
   }
 
   html[lang="ar"] body {
-    font-family: var(--font-arabic);
-    line-height: var(--oc-ar-leading-body);
-  }
-
-  /* --tw-leading feeds text-* utilities; an explicit leading-* class still wins. */
-  html[lang="ar"] :where(h1, h2, h3, h4, h5, h6) {
-    line-height: var(--oc-ar-leading-heading);
-    --tw-leading: var(--oc-ar-leading-heading);
-  }
-
-  html[lang="en"] body {
-    font-family: var(--font-sans);
+    font-family: var(--font-ar);
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-ring;
+    outline: 2px solid var(--accent-default);
+    outline-offset: 3px;
   }
 
-  .num-isolate {
-    font-variant-numeric: tabular-nums;
-    direction: ltr;
-    unicode-bidi: isolate;
-    display: inline-block;
+  ::selection {
+    background-color: var(--accent-strong);
+    color: var(--neutral-0);
   }
 }
 
-@layer components {
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-drift {
-      animation: hero-drift 24s cubic-bezier(0.33, 1, 0.68, 1) both;
-    }
+/* Section reveal (motion table): only when JS runs (html.js) and motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 600ms var(--ease-out),
+      transform 600ms var(--ease-out);
+    transition-delay: calc(var(--reveal-index, 0) * 80ms);
   }
 
-  .home-proj-a figure {
-    @apply col-span-12 md:col-span-7;
-  }
-  .home-proj-a .home-proj-text {
-    @apply col-span-12 md:col-span-5 md:col-start-8;
-  }
-  .home-proj-a figure img {
-    aspect-ratio: 3 / 2;
-  }
-
-  .home-proj-b figure {
-    @apply col-span-12 md:col-span-5 md:col-start-8;
-  }
-  .home-proj-b .home-proj-text {
-    @apply col-span-12 md:col-span-6 md:col-start-1 md:row-start-1;
-  }
-  .home-proj-b figure img {
-    aspect-ratio: 4 / 5;
-  }
-
-  .home-proj-c figure {
-    @apply col-span-12 md:col-span-8;
-  }
-  .home-proj-c .home-proj-text {
-    @apply col-span-12 md:col-span-4 md:col-start-9;
-  }
-  .home-proj-c figure img {
-    aspect-ratio: 16 / 9;
+  html.js [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
   }
 }
 
-@keyframes hero-drift {
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-property: color, background-color, border-color, outline-color, fill, stroke !important;
+  }
+}
+
+@keyframes shimmer {
   from {
-    transform: scale(1.12);
+    background-position: 200% 0;
   }
   to {
-    transform: scale(1);
+    background-position: -200% 0;
+  }
+}
+
+/* Photo scrim: darkest at the reading start, where the text sits (CTA box, page heroes). */
+@utility scrim-start {
+  background-image: linear-gradient(
+    to left,
+    rgb(8 19 34 / 0.92) 0%,
+    rgb(8 19 34 / 0.75) 45%,
+    rgb(8 19 34 / 0.15) 100%
+  );
+
+  &:dir(ltr) {
+    background-image: linear-gradient(
+      to right,
+      rgb(8 19 34 / 0.92) 0%,
+      rgb(8 19 34 / 0.75) 45%,
+      rgb(8 19 34 / 0.15) 100%
+    );
   }
 }

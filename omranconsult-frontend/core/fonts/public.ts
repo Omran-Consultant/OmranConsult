@@ -1,10 +1,11 @@
 import localFont from "next/font/local";
-import { Rubik } from "next/font/google";
+import { Montserrat, Rubik } from "next/font/google";
 
 /**
- * Public-site typography (docs/DESIGN_BASELINE.md §3).
- * Somar is licensed for web use; its files are converted from the company's OTF set.
- * Each family is bound to its locale in globals.css via html[lang].
+ * Public-site typography (docs/DESIGN_BASELINE.md §3, SDD A24, A30).
+ * Somar stands in for DIN Next LT Arabic (no web licence); its files are converted
+ * from the company's OTF set. Montserrat sets the Latin overlines and decorative numbers.
+ * Each family is bound to its role in globals.css.
  */
 export const somar = localFont({
   src: [
@@ -24,4 +25,11 @@ export const rubik = Rubik({
   display: "swap",
 });
 
-export const publicFontVariables = `${rubik.variable} ${somar.variable}`;
+export const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+export const publicFontVariables = `${rubik.variable} ${somar.variable} ${montserrat.variable}`;

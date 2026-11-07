@@ -141,7 +141,7 @@ This JSON shape is the rule for content tables (implemented in Phase 3).
 
 ## CMS workflow
 
-Not built. Build it only for content in `docs/PROFILE_INVENTORY.md` and `SYSTEM_DESIGN.md` §1.2 (plus careers and contact messages). Expected areas include pages, services (and categories), projects (and images), client logos, careers, contact messages, site settings, homepage sections, documents/licenses, leadership/board, and related media. Do not add content types that are not in scope.
+Not built. Build it only for content in `docs/PROFILE_INVENTORY.md` and `SYSTEM_DESIGN.md` §1.2, plus careers and the Phase 4C types (SDD A29): sectors, inquiries (replace contact messages), newsletter subscribers, news, and design copy. Expected areas include pages, services (and categories), projects (and images), client logos, careers, contact messages, site settings, homepage sections, documents/licenses, leadership/board, and related media. Do not add content types that are not in scope.
 
 When those models are added, follow **`SYSTEM_DESIGN.md` §6–§9** for publish gates, disputes, soft delete/restore, slug reservation, and audit. Summary rules:
 
@@ -155,7 +155,7 @@ When those models are added, follow **`SYSTEM_DESIGN.md` §6–§9** for publish
 
 ## Files
 
-`FILESYSTEM_DISK` is `local`. Production storage is not chosen. Do not switch disks or add S3 as a drive-by.
+`FILESYSTEM_DISK` is `local`. Production storage is not chosen. Do not switch disks or add S3 as a drive-by. The downloadable company profile is a manual copy in the git-ignored `storage/app/public/files/` (served through `php artisan storage:link`) until the Phase 5 media library.
 
 When uploads are added:
 

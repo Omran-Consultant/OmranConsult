@@ -26,10 +26,10 @@ export function ServicesOfferingsSection({
 
   return (
     <section
-      className="grid gap-12 px-(--oc-page-margin) py-(--oc-section-y) lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]"
+      className="grid gap-12 px-page py-section-y lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]"
       data-section="offerings"
     >
-      <div className="relative min-h-[32.5rem] overflow-hidden rounded-(--oc-radius-brand) bg-brand-navy-deep text-white">
+      <div className="relative min-h-[32.5rem] overflow-hidden rounded-lg bg-canvas text-white">
         <Image
           alt={getProfileImageAlt(photo, locale)}
           className="object-cover"
@@ -37,10 +37,10 @@ export function ServicesOfferingsSection({
           sizes="(max-width: 1024px) 100vw, 58vw"
           src={photo.src}
         />
-        <div aria-hidden className="absolute inset-0 bg-brand-navy-deep/55" />
+        <div aria-hidden className="absolute inset-0 bg-canvas/55" />
         <div className="relative z-1 flex h-full flex-col gap-5 p-7 md:p-10">
           {coreTitle ? (
-            <h2 className="font-display text-[clamp(1.75rem,2.6vw,2.5rem)] leading-tight font-bold text-brand-green-light">
+            <h2 className="font-display text-[clamp(1.75rem,2.6vw,2.5rem)] leading-tight font-bold text-accent">
               {coreTitle}
             </h2>
           ) : null}
@@ -56,14 +56,14 @@ export function ServicesOfferingsSection({
 
       <div className="flex flex-col justify-center gap-5">
         {flexibleTitle ? (
-          <h2 className="font-display text-[clamp(1.75rem,2.6vw,2.5rem)] leading-tight font-bold text-heading">
+          <h2 className="font-display text-[clamp(1.75rem,2.6vw,2.5rem)] leading-tight font-bold text-primary">
             {flexibleTitle}
           </h2>
         ) : null}
         <ul className="flex flex-col gap-2">
           {flexibleItems.map((item, index) => (
             <li
-              className="rounded-(--oc-radius-brand) bg-surface/55 px-5.5 py-4 text-lg font-bold text-heading motion-safe:transition-[background-color,transform] motion-safe:duration-300 motion-safe:hover:-translate-x-1.5 motion-safe:hover:bg-surface"
+              className="rounded-lg bg-surface/55 px-5.5 py-4 text-lg font-bold text-primary motion-safe:transition-[background-color,transform] motion-safe:duration-300 motion-safe:hover:-translate-x-1.5 motion-safe:hover:bg-surface"
               key={`${item.title ?? "flex"}-${index}`}
             >
               {item.title}
