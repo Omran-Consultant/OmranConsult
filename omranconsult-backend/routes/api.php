@@ -10,6 +10,7 @@ use App\Modules\Content\Presentation\Http\Controllers\HomeController;
 use App\Modules\Content\Presentation\Http\Controllers\SettingsController;
 use App\Modules\Documents\Presentation\Http\Controllers\DocumentsController;
 use App\Modules\Inquiries\Presentation\Http\Controllers\InquiriesController;
+use App\Modules\News\Presentation\Http\Controllers\NewsController;
 use App\Modules\Newsletter\Presentation\Http\Controllers\NewsletterController;
 use App\Modules\Partners\Presentation\Http\Controllers\PartnersController;
 use App\Modules\Projects\Presentation\Http\Controllers\ClientsController;
@@ -33,6 +34,9 @@ Route::middleware(SetPublicLocale::class)->group(function (): void {
     Route::get('/clients', ClientsController::class);
     Route::get('/regions', RegionsController::class);
     Route::get('/sectors', SectorsController::class);
+    Route::get('/news-categories', [NewsController::class, 'categories']);
+    Route::get('/news', [NewsController::class, 'index']);
+    Route::get('/news/{slug}', [NewsController::class, 'show']);
     Route::get('/experts', ExpertsController::class);
     Route::get('/org-chart', OrgChartController::class);
     Route::get('/documents', DocumentsController::class);
