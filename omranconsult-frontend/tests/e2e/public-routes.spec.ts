@@ -33,6 +33,12 @@ for (const { locale, dir } of LOCALES) {
 
       expect(consoleErrors).toEqual([]);
 
+      const noHorizontalOverflow = await page.evaluate(() => {
+        const root = document.documentElement;
+        return root.scrollWidth <= root.clientWidth;
+      });
+      expect(noHorizontalOverflow).toBe(true);
+
       const axe = await new AxeBuilder({ page }).analyze();
       const severeViolations = axe.violations.filter((violation) =>
         ["critical", "serious"].includes(violation.impact ?? ""),

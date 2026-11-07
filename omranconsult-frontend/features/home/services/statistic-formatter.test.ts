@@ -43,3 +43,23 @@ test("keeps latin digits for arabic locale", () => {
     "10+",
   );
 });
+
+test("does not duplicate currency in the formatted value", () => {
+  const enValue = formatStatisticValue({
+    value: 15,
+    scale: "billion",
+    suffix: "+",
+    locale: "en",
+  });
+  const arValue = formatStatisticValue({
+    value: 15,
+    scale: "billion",
+    suffix: "+",
+    locale: "ar",
+  });
+
+  assert.equal(enValue, "15B+");
+  assert.equal(arValue, "15B+");
+  assert.doesNotMatch(enValue, /SAR|riyal/i);
+  assert.doesNotMatch(arValue, /ريال|ر\.س/);
+});

@@ -56,9 +56,9 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: "/images/profile/earth.jpg",
-          width: 2560,
-          height: 1280,
+          url: "/images/og-default.jpg",
+          width: 1200,
+          height: 630,
           alt: t("title"),
         },
       ],
@@ -67,7 +67,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
-      images: ["/images/profile/earth.jpg"],
+      images: ["/images/og-default.jpg"],
     },
   };
 }
