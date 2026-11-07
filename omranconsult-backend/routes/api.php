@@ -13,6 +13,7 @@ use App\Modules\Partners\Presentation\Http\Controllers\PartnersController;
 use App\Modules\Projects\Presentation\Http\Controllers\ClientsController;
 use App\Modules\Projects\Presentation\Http\Controllers\ProjectsController;
 use App\Modules\Projects\Presentation\Http\Controllers\RegionsController;
+use App\Modules\Projects\Presentation\Http\Controllers\SectorsController;
 use App\Modules\Services\Presentation\Http\Controllers\ServicesController;
 use App\Modules\Team\Presentation\Http\Controllers\ExpertsController;
 use App\Modules\Team\Presentation\Http\Controllers\OrgChartController;
@@ -29,6 +30,7 @@ Route::middleware(SetPublicLocale::class)->group(function (): void {
     Route::get('/projects/{slug}', [ProjectsController::class, 'show']);
     Route::get('/clients', ClientsController::class);
     Route::get('/regions', RegionsController::class);
+    Route::get('/sectors', SectorsController::class);
     Route::get('/experts', ExpertsController::class);
     Route::get('/org-chart', OrgChartController::class);
     Route::get('/documents', DocumentsController::class);

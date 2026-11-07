@@ -90,6 +90,7 @@ class PublicApiContractTest extends TestCase
             'org chart' => '/api/org-chart',
             'documents' => '/api/documents',
             'partners' => '/api/partners',
+            'sectors' => '/api/sectors',
         ]);
     }
 

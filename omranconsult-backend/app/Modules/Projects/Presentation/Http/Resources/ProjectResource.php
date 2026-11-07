@@ -24,6 +24,10 @@ class ProjectResource extends JsonResource
                 'slug' => $this->client->slug,
                 'name' => PublicLocale::pick($this->client->name),
             ] : null,
+            'sector' => $this->sector ? [
+                'slug' => $this->sector->slug,
+                'name' => PublicLocale::pick($this->sector->name),
+            ] : null,
             'regions' => RegionResource::collection($this->whenLoaded('regions')),
         ];
     }

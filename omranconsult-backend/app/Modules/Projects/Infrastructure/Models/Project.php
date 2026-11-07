@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['slug', 'client_id', 'title', 'sort_order', 'status', 'published_at'])]
+#[Fillable(['slug', 'client_id', 'sector_id', 'title', 'sort_order', 'status', 'published_at'])]
 class Project extends Model
 {
     use Publishable;
@@ -31,6 +31,14 @@ class Project extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    /**
+     * @return BelongsTo<Sector, $this>
+     */
+    public function sector(): BelongsTo
+    {
+        return $this->belongsTo(Sector::class);
     }
 
     /**

@@ -24,6 +24,7 @@ class ProfileContentSeeder extends Seeder
             HomeContentSeeder::class,
             ServicesSeeder::class,
             ProjectsSeeder::class,
+            SectorsSeeder::class,
             TeamSeeder::class,
             DocumentsSeeder::class,
             PartnersSeeder::class,
