@@ -51,11 +51,11 @@ class HomeContentSeeder extends ProfileSeeder
     private function statistics(): void
     {
         $rows = [
-            ['employees', 4500, null, null, null, 'موظف خبير، مهندس، إداري، وفني', 'Expert staff: engineers, administrators, and technicians'],
-            ['project_volume', 15, self::t('ريال', 'SAR'), '+', 'billion', 'حجم المشاريع لآخر ثلاث سنوات', 'Project volume over the last three years'],
-            ['partnerships', 10, null, '+', null, 'شراكات نوعية لتنفيذ المشاريع', 'Distinguished partnerships for project delivery'],
-            ['local_content', 72.92, self::t('%', '%'), null, null, 'نسبة المحتوى المحلي للشركة', 'Local content ratio'],
             ['completed_projects', 204, null, '+', null, 'المشاريع المنجزة (استشاري، اشرافي)', 'Completed projects (consultancy and supervision)'],
+            ['project_volume', 15, self::t('ريال', 'SAR'), '+', 'billion', 'حجم المشاريع لآخر ثلاث سنوات', 'Project volume over the last three years'],
+            ['employees', 4500, null, null, null, 'موظف خبير، مهندس، إداري، وفني', 'Expert staff: engineers, administrators, and technicians'],
+            ['local_content', 72.92, self::t('%', '%'), null, null, 'نسبة المحتوى المحلي للشركة', 'Local content ratio'],
+            ['partnerships', 10, null, '+', null, 'شراكات نوعية لتنفيذ المشاريع', 'Distinguished partnerships for project delivery'],
         ];
 
         foreach ($rows as $index => [$key, $value, $unit, $suffix, $scale, $labelAr, $labelEn]) {
