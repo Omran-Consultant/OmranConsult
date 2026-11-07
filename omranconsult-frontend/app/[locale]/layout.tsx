@@ -49,6 +49,26 @@ export async function generateMetadata({
     title: t("title"),
     description: t("description"),
     alternates,
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      locale,
+      type: "website",
+      images: [
+        {
+          url: "/images/profile/earth.jpg",
+          width: 2560,
+          height: 1280,
+          alt: t("title"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
+      images: ["/images/profile/earth.jpg"],
+    },
   };
 }
 

@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
 import { Badge } from "@/core/ui/badge";
+import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
+import { JsonLd } from "@/core/seo/json-ld";
 import { Card } from "@/core/ui/card";
 import { PageHeader } from "@/core/ui/page-header";
 import { Section } from "@/core/ui/section";
@@ -100,6 +102,11 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
   const orgGroupTitles = asObject(sectionTitles?.org_groups);
   const orgRoots = buildOrgTree(data.orgChart);
   const groupedOrg = new Map<string, OrgNode[]>();
+  const pageTitle = asString(aboutBlock?.heading) ?? t("titleFallback");
+  const breadcrumbs = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
+    { name: pageTitle, path: "/about" },
+  ]);
 
   for (const root of orgRoots) {
     const group = root.group;
@@ -110,11 +117,12 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
 
   return (
     <main className="flex flex-1 flex-col">
+      <JsonLd data={breadcrumbs} />
       <PageHeader
         description={firstString(aboutBlock?.body)}
         image={SECTION_BACKGROUND_IMAGES.about}
         locale={locale}
-        title={asString(aboutBlock?.heading) ?? t("titleFallback")}
+        title={pageTitle}
       />
 
       <Section heading={asString(aboutBlock?.heading)}>

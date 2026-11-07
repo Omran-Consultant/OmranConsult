@@ -12,7 +12,10 @@ Stack to use when building: Next.js App Router · TypeScript strict · Tailwind 
 
 **Implemented.** The public site has a layout shell but no content pages. Do not describe the items below as missing.
 
-* **Routes and i18n:** `next-intl` with locales `en` (default) and `ar`, `localePrefix: "always"`, cookie `NEXT_LOCALE` (`i18n/routing.ts`, `i18n/request.ts`, `i18n/navigation.ts`). **`proxy.ts`** runs the next-intl middleware, so `/` redirects to `/en`. **`app/[locale]/layout.tsx`** sets `lang` and `dir`, loads messages, metadata with `alternates` and `x-default` → `en` (`core/seo/locale-metadata.ts`), and the theme pre-paint script. **`app/[locale]/page.tsx`** is a stub with the server-side **`GET /api/health`** probe (`api-connectivity.tsx`). `messages/en.json` and `messages/ar.json` hold the shell copy.
+* **Routes and i18n:** `next-intl` with locales `en` (default) and `ar`, `localePrefix: "always"`, cookie `NEXT_LOCALE` (`i18n/routing.ts`, `i18n/request.ts`, `i18n/navigation.ts`). **`proxy.ts`** runs the next-intl middleware, so `/` redirects to `/en`. **`app/[locale]/layout.tsx`** sets `lang` and `dir`, loads messages, metadata with `alternates` and `x-default` → `en` (`core/seo/locale-metadata.ts`), and the theme pre-paint script.
+* **Public pages (Phase 4A baseline):** home, about, services, projects list, and project detail routes render content from the Laravel public API using cached server fetchers (`lib/api/public-content.ts`), Zod validation (`features/public-content/schemas/`), and feature mappers (`features/public-content/services/`).
+* **SEO and crawling:** locale-aware metadata uses shared helpers plus `app/sitemap.ts`, `app/robots.ts`, Organization JSON-LD on home, and BreadcrumbList JSON-LD on about/services/projects/project detail.
+* **Testing:** Node unit tests remain under `npm test`; Playwright + `@axe-core/playwright` smoke/a11y coverage runs with `npm run test:e2e`.
 * **Layout shell (`features/layout/`):** header, top bar, footer, mobile drawer (focus trap in `core/hooks/use-focus-trap.ts`), `navigation.ts` (primary and footer links; Services and Projects are plain links until Phase 4). Locale switcher in `core/i18n/`; light/dark theme in `core/theme/`.
 * **Identity (Corporate Profile 2029):** `--oc-*` tokens and the `bg-brand-gradient` utility in `app/globals.css`; Somar (`app/fonts/somar/`, `next/font/local`) for Arabic and Rubik (`next/font/google`) for English in `core/fonts/public.ts`; logos in `public/images/brand/` via `features/layout/components/brand-logo.tsx`. Values are recorded in `docs/DESIGN_BASELINE.md`.
 * **Next config:** `cacheComponents` and `partialPrefetching` enabled. **`next.config.ts`** rewrites **`/api/*`** and **`/sanctum/*`** to **`API_BASE_URL`** (default **`http://localhost:8000`**) so browser calls stay same-origin on **`http://localhost:3000`** for Sanctum cookies and CSRF.
@@ -23,7 +26,7 @@ Stack to use when building: Next.js App Router · TypeScript strict · Tailwind 
 
 **Not built (planned — do not claim present).**
 
-* Public content pages, **`core/ui`**, dashboard, **`/api/revalidate`**, security headers in **`next.config`**, Playwright, Vitest, React Testing Library, Zod.
+* Admin dashboard, **`/api/revalidate`**, and CMS publishing integrations.
 
 The sections below are the required shape for **future** work. Do not scaffold empty trees unless a task needs them.
 

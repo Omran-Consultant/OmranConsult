@@ -1,0 +1,52 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+
+const LOCALES = [
+  { locale: "en", dir: "ltr" },
+  { locale: "ar", dir: "rtl" },
+] as const;
+
+const ROUTES = [
+  "",
+  "/about",
+  "/services",
+  "/projects",
+  "/projects/cop16-technical-audit",
+] as const;
+
+for (const { locale, dir } of LOCALES) {
+  for (const route of ROUTES) {
+    test(`${locale}${route || "/"} smoke + a11y`, async ({ page }) => {
+      const consoleErrors: string[] = [];
+      page.on("console", (message) => {
+        if (message.type() === "error") {
+          consoleErrors.push(message.text());
+        }
+      });
+
+      const response = await page.goto(`/${locale}${route}`);
+      expect(response?.status()).toBe(200);
+
+      await expect(page.locator("html")).toHaveAttribute("lang", locale);
+      await expect(page.locator("html")).toHaveAttribute("dir", dir);
+      await expect(page.locator("h1")).toHaveCount(1);
+
+      expect(consoleErrors).toEqual([]);
+
+      const axe = await new AxeBuilder({ page }).analyze();
+      const severeViolations = axe.violations.filter((violation) =>
+        ["critical", "serious"].includes(violation.impact ?? ""),
+      );
+      expect(severeViolations).toEqual([]);
+    });
+  }
+}
+
+test("projects filters update URL", async ({ page }) => {
+  await page.goto("/en/projects");
+  await page.selectOption('select[name="region"]', "riyadh");
+  await page.getByRole("button", { name: "Apply filters" }).click();
+
+  await expect(page).toHaveURL(/region=riyadh/);
+  await expect(page.locator("h1")).toHaveCount(1);
+});

@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
 import { Card } from "@/core/ui/card";
+import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
+import { JsonLd } from "@/core/seo/json-ld";
 import { PageHeader } from "@/core/ui/page-header";
 import { Section } from "@/core/ui/section";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
@@ -45,14 +47,20 @@ export async function ServicesPageContent({ locale, data }: ServicesPageContentP
   const axisCategories = data.services.filter((category) => category.kind === "axis");
   const assetCategory = data.services.find((category) => category.kind === "asset_management");
   const engineeringCategory = data.services.find((category) => category.kind === "engineering_design");
+  const title = slidesByKey.get("services")?.headline ?? t("titleFallback");
+  const breadcrumbs = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
+    { name: title, path: "/services" },
+  ]);
 
   return (
     <main className="flex flex-1 flex-col">
+      <JsonLd data={breadcrumbs} />
       <PageHeader
         description={slidesByKey.get("services")?.subline}
         image={SECTION_BACKGROUND_IMAGES.services}
         locale={locale}
-        title={slidesByKey.get("services")?.headline ?? t("titleFallback")}
+        title={title}
       />
 
       <Section heading={t("axesHeading")}>

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types \"lib/**/*.test.ts\" \"core/**/*.test.ts\" \"features/**/*.test.ts\""
+    "test": "node --test --experimental-strip-types \"lib/**/*.test.ts\" \"core/**/*.test.ts\" \"features/**/*.test.ts\"",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "next": "16.4.3",
@@ -18,6 +19,8 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

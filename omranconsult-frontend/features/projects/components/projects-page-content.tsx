@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 
 import { Card } from "@/core/ui/card";
 import { EmptyState } from "@/core/ui/empty-state";
+import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
+import { JsonLd } from "@/core/seo/json-ld";
 import { PageHeader } from "@/core/ui/page-header";
 import { Section } from "@/core/ui/section";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
@@ -39,9 +41,14 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
   const t = await getTranslations("ProjectsPage");
   const clients = data.clients.filter((client) => client.slug && client.projectsCount > 0 && client.name);
   const regions = data.regions.filter((region) => region.name);
+  const breadcrumbs = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
+    { name: t("headerTitle"), path: "/projects" },
+  ]);
 
   return (
     <main className="flex flex-1 flex-col">
+      <JsonLd data={breadcrumbs} />
       <PageHeader
         description={t("headerDescription")}
         image={SECTION_BACKGROUND_IMAGES.featured_projects}

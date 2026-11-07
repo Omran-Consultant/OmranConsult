@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/core/ui/page-header";
+import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
+import { JsonLd } from "@/core/seo/json-ld";
 import { Section } from "@/core/ui/section";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
 import { Link } from "@/i18n/navigation";
@@ -20,13 +22,20 @@ export async function ProjectDetailPageContent({
   project,
 }: ProjectDetailPageContentProps) {
   const t = await getTranslations("ProjectsPage");
+  const title = project.title ?? t("detailFallbackTitle");
+  const breadcrumbs = buildBreadcrumbJsonLd(locale, [
+    { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
+    { name: t("headerTitle"), path: "/projects" },
+    { name: title, path: `/projects/${project.slug}` },
+  ]);
 
   return (
     <main className="flex flex-1 flex-col">
+      <JsonLd data={breadcrumbs} />
       <PageHeader
         image={SECTION_BACKGROUND_IMAGES.featured_projects}
         locale={locale}
-        title={project.title ?? t("detailFallbackTitle")}
+        title={title}
       />
 
       <Section heading={t("detailInfoHeading")}>

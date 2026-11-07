@@ -5,6 +5,8 @@ import { Card } from "@/core/ui/card";
 import { Container } from "@/core/ui/container";
 import { LinkButton } from "@/core/ui/button";
 import { Section } from "@/core/ui/section";
+import { getConfiguredPublicSiteOrigin } from "@/core/seo/locale-metadata";
+import { JsonLd } from "@/core/seo/json-ld";
 import { Stat } from "@/core/ui/stat";
 import {
   getProfileImageAlt,
@@ -55,9 +57,19 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
   const listedClients = data.clients.filter((client) => client.inClientList && client.name);
   const licensesCount = data.documents.filter((doc) => doc.kind === "license").length;
   const certificatesCount = data.documents.filter((doc) => doc.kind === "iso_certificate").length;
+  const siteOrigin = getConfiguredPublicSiteOrigin() ?? "http://localhost:3000";
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: data.settings.companyLegalName ?? coverSlide?.headline,
+    url: `${siteOrigin}/${locale}`,
+    email: data.settings.contact.email,
+    telephone: data.settings.contact.phones[0],
+  };
 
   return (
     <main className="flex flex-1 flex-col">
+      <JsonLd data={organizationJsonLd} />
       <section className="relative overflow-hidden bg-brand-navy text-white">
         <Image
           alt={getProfileImageAlt(HERO_SLIDE_IMAGES.hero, locale)}
