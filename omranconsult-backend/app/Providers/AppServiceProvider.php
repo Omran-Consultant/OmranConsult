@@ -28,5 +28,8 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($request->ip().'|'.$email);
         });
+
+        // Public writes (SDD §7.2): 5 per minute per IP.
+        RateLimiter::for('inquiries', fn (Request $request) => Limit::perMinute(5)->by((string) $request->ip()));
     }
 }
