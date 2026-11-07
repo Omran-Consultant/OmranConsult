@@ -21,6 +21,12 @@
     "expiredBadge": "منتهية",
     "partnersHeading": "الشركاء"
   },
+  "ServicesPage": {
+    "titleFallback": "خدماتنا",
+    "axesHeading": "محاور الخدمات",
+    "stepsHeading": "خطوات التنفيذ",
+    "outputsHeading": "المخرجات المتوقعة"
+  },
   "LocaleSwitcher": {
     "label": "اللغة",
     "switchToEnglish": "EN",

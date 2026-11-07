@@ -21,6 +21,12 @@
     "expiredBadge": "Expired",
     "partnersHeading": "Partners"
   },
+  "ServicesPage": {
+    "titleFallback": "Our Services",
+    "axesHeading": "Service axes",
+    "stepsHeading": "Implementation steps",
+    "outputsHeading": "Expected outputs"
+  },
   "LocaleSwitcher": {
     "label": "Language",
     "switchToEnglish": "EN",

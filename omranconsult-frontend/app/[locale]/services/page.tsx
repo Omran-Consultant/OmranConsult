@@ -1,0 +1,24 @@
+import { hasLocale } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+
+import { ServicesPageContent } from "@/features/services/components/services-page-content";
+import { getServicesPageData } from "@/features/services/services/get-services-page-data";
+import { routing } from "@/i18n/routing";
+
+type ServicesPageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function ServicesPage({ params }: ServicesPageProps) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+  const data = await getServicesPageData(locale);
+
+  return <ServicesPageContent data={data} locale={locale} />;
+}
