@@ -29,11 +29,17 @@ Read the installed Laravel 13 docs before adding framework code. This skeleton c
 * **Database:** Migrations ran on local dev MySQL **`omranconsult`** (users, password reset tokens, **sessions**, cache, jobs, Spatie permission tables). **`.env.example`** documents MySQL 8 (MAMP **`127.0.0.1:8889`**, **`utf8mb4_unicode_ci`**) and **`SESSION_DRIVER=database`**, **`SESSION_LIFETIME=120`**. **PHPUnit** still uses in-memory SQLite (`phpunit.xml`); do not migrate **`omranconsult_test`** unless a task says so. Never commit **`database/database.sqlite`** or local **`.env`**.
 * **Tests:** `php artisan test` — Feature coverage includes API health, Sanctum/CORS configuration, Super Admin bootstrap safety, admin login/logout/me authorization, and **`/api/admin/ping`** gates (not only scaffold examples). Style: **`vendor/bin/pint --test`**.
 
+**Phase 3 content (implemented 2026-11-07, SDD A25–A27).**
+
+* **Content tables** per `SYSTEM_DESIGN.md` §6.7 (supersedes §6.2 for these tables): `site_settings`, `hero_slides`, `statistics`, `content_blocks`, `service_categories`, `services`, `clients`, `regions`, `projects`, `project_region`, `team_members`, `org_positions`, `documents`, `partners`, `content_disputes`. Bilingual JSON columns follow "Bilingual storage" below.
+* **Modules:** `app/Modules/{Content,Services,Projects,Team,Documents,Partners}`; shared `app/Support/Content` (`PublicationStatus`, `Publishable` trait with `published()` scope and soft deletes, `PublicLocale`) and `app/Http/Middleware/SetPublicLocale.php`.
+* **Public read API** (`SYSTEM_DESIGN.md` §7.1): `GET /api/settings`, `/home`, `/services`, `/projects`, `/projects/{slug}`, `/clients`, `/regions`, `/experts`, `/org-chart`, `/documents`, `/partners`.
+* **Seeders:** `database/seeders/Profile/` imports the whole profile as **published** demo data with Claude's unreviewed English (A25); profile errors are stored as printed and recorded in `content_disputes`, which do not hide content (A26). `DatabaseSeeder` runs them; they skip if content exists.
+* **Tests:** `tests/Feature/Content/`, `tests/Unit/Content/`.
+
 **Not built (planned / proposed — do not implement without approval).**
 
-* Public read CMS API (`/api/settings`, `/api/home`, services, projects, etc.).
-* Content tables. Before writing any content migration, read `SYSTEM_DESIGN.md` §6.7: the Corporate Profile 2029 changes `statistics`, `projects`, `team_members`, `documents`, and `services`, and adds `regions` and `partners` (P10–P16, proposed until approved).
-* CMS models, drafts, publish/dispute workflow, audit log, uploads, bilingual content columns.
+* Admin content endpoints, CMS drafts and publish/dispute workflow, publish gate, audit log, uploads and media (images and logos are not stored yet).
 * Granular Spatie **permissions** (added with each CMS module per §10.4).
 * **`POST /api/admin/users`** and user-management module (§7.6 module 11).
 * Production deployment, backups jobs, MySQL CI integration job (proposed P7).
@@ -108,7 +114,7 @@ One business row per website entity. Locale is not a second entity.
 * Relations point at the business row, not at a language copy. An image shared by both languages is one file relation.
 * Unique indexes account for the real public identity. Do not enforce uniqueness on a single language while ignoring the other if both are public.
 
-This JSON shape is the rule for new tables. No content table uses it yet.
+This JSON shape is the rule for content tables (implemented in Phase 3).
 
 ## Auth and permissions
 

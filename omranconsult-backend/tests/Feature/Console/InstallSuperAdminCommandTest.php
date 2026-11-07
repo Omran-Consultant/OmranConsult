@@ -12,11 +12,37 @@ class InstallSuperAdminCommandTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const KEYS = ['ADMIN_EMAIL', 'ADMIN_PASSWORD'];
+
+    /**
+     * Values the developer's local environment may already hold for KEYS.
+     * Laravel's env() reads $_SERVER first, then $_ENV, then getenv(), so the
+     * test overrides and restores all three to stay independent of the machine.
+     *
+     * @var array<string, array{server: mixed, env: mixed, getenv: string|false}>
+     */
+    private array $originalEnvironment = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        foreach (self::KEYS as $key) {
+            $this->originalEnvironment[$key] = [
+                'server' => $_SERVER[$key] ?? null,
+                'env' => $_ENV[$key] ?? null,
+                'getenv' => getenv($key),
+            ];
+        }
+    }
+
     protected function tearDown(): void
     {
-        putenv('ADMIN_EMAIL');
-        putenv('ADMIN_PASSWORD');
-        unset($_ENV['ADMIN_EMAIL'], $_ENV['ADMIN_PASSWORD']);
+        foreach ($this->originalEnvironment as $key => $original) {
+            $this->restore($_SERVER, $key, $original['server']);
+            $this->restore($_ENV, $key, $original['env']);
+            putenv($original['getenv'] === false ? $key : "{$key}={$original['getenv']}");
+        }
 
         parent::tearDown();
     }
@@ -89,9 +115,24 @@ class InstallSuperAdminCommandTest extends TestCase
 
     private function setBootstrapCredentials(string $email, string $password): void
     {
-        putenv("ADMIN_EMAIL={$email}");
-        putenv("ADMIN_PASSWORD={$password}");
-        $_ENV['ADMIN_EMAIL'] = $email;
-        $_ENV['ADMIN_PASSWORD'] = $password;
+        foreach (['ADMIN_EMAIL' => $email, 'ADMIN_PASSWORD' => $password] as $key => $value) {
+            putenv("{$key}={$value}");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $store
+     */
+    private function restore(array &$store, string $key, mixed $value): void
+    {
+        if ($value === null) {
+            unset($store[$key]);
+
+            return;
+        }
+
+        $store[$key] = $value;
     }
 }
