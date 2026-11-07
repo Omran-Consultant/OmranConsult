@@ -8,8 +8,21 @@
     "servicesCta": "استعرض جميع الخدمات",
     "projectsCta": "عرض جميع المشاريع",
     "expertsCta": "تعرف على خبرائنا",
+    "expertYears": "أكثر من {years} عامًا",
     "contactCta": "تواصل معنا",
     "contactHeading": "تواصل معنا",
+    "consultationSubject": "طلب استشارة",
+    "credentialsNav": "الاعتمادات",
+    "addressLabel": "العنوان",
+    "emailLabel": "البريد الإلكتروني",
+    "phoneLabel": "الهاتف",
+    "licensesGroup": "التراخيص",
+    "partnersGroup": "الشركاء",
+    "clientsGroup": "عملاؤنا",
+    "isoHeading": "شهادات الأيزو",
+    "unnamedClient": "عميل",
+    "mapTileLabel": "خريطة المملكة وموقع المقر",
+    "regionProjectCount": "{count} مشروعًا في هذه المنطقة",
     "licensesCount": "تراخيص",
     "certificatesCount": "شهادات ISO",
     "partnersCount": "شركاء استراتيجيون",
@@ -19,13 +32,20 @@
   "AboutPage": {
     "titleFallback": "عن شركة العمران",
     "expiredBadge": "منتهية",
-    "partnersHeading": "الشركاء"
+    "partnersHeading": "الشركاء",
+    "workPhase": "المرحلة {n}",
+    "workStagesScrollLabel": "مراحل العمل، مرّر أفقياً",
+    "scrollPrevious": "السابق",
+    "scrollNext": "التالي"
   },
   "ServicesPage": {
     "titleFallback": "خدماتنا",
     "axesHeading": "محاور الخدمات",
     "stepsHeading": "خطوات التنفيذ",
-    "outputsHeading": "المخرجات المتوقعة"
+    "outputsHeading": "المخرجات المتوقعة",
+    "outputsRowLabel": "المخرجات المتوقعة، مرّر أفقياً",
+    "outputsRowPrevious": "السابق",
+    "outputsRowNext": "التالي"
   },
   "ProjectsPage": {
     "headerTitle": "المشاريع",
@@ -49,7 +69,8 @@
     "detailInfoHeading": "معلومات المشروع",
     "ownerLabel": "الجهة المالكة:",
     "regionsLabel": "المناطق:",
-    "backToProjects": "العودة إلى المشاريع"
+    "backToProjects": "العودة إلى المشاريع",
+    "relatedProjectsHeading": "مشاريع أخرى لنفس الجهة"
   },
   "LocaleSwitcher": {
     "label": "اللغة",

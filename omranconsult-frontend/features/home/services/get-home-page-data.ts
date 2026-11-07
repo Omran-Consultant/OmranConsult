@@ -37,7 +37,7 @@ export async function getHomePageData(locale: AppLocale) {
     fetchPublicSettings(locale),
     fetchPublicHome(locale),
     fetchPublicServices(locale),
-    fetchPublicProjects(locale, { perPage: 6 }),
+    fetchPublicProjects(locale, { perPage: 60 }),
     fetchPublicRegions(locale),
     fetchPublicDocuments(locale),
     fetchPublicPartners(locale),

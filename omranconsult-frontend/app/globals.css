@@ -8,6 +8,10 @@
  */
 
 :root {
+  --oc-radius-brand: 10px;
+  --oc-page-margin: clamp(1rem, 3.2vw, 3rem);
+  --oc-section-y: clamp(5.5rem, 8.4vw, 8rem);
+
   /* Brand (stable across light/dark) */
   --oc-brand-navy: #13294b;
   --oc-brand-navy-deep: #0d1c36;
@@ -108,6 +112,11 @@ html[lang="ar"] {
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 
+  /* Prototype parity scale (docs/design-reference/prototype/styles.css) */
+  --text-oc-display: clamp(3.5rem, 8.2vw, 8rem);
+  --text-oc-h2: clamp(2.125rem, 3.9vw, 3.625rem);
+  --text-oc-lead: clamp(1.1875rem, 1.5vw, 1.4375rem);
+
   /* Shadows (brand navy) */
   --shadow-card: 0 1px 3px 0 rgb(19 41 75 / 0.08), 0 1px 2px -1px rgb(19 41 75 / 0.08);
   --shadow-elevated: 0 10px 25px -5px rgb(19 41 75 / 0.12),
@@ -160,5 +169,59 @@ html[lang="ar"] {
 
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  .num-isolate {
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-drift {
+      animation: hero-drift 24s cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+  }
+
+  .home-proj-a figure {
+    @apply col-span-12 md:col-span-7;
+  }
+  .home-proj-a .home-proj-text {
+    @apply col-span-12 md:col-span-5 md:col-start-8;
+  }
+  .home-proj-a figure img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .home-proj-b figure {
+    @apply col-span-12 md:col-span-5 md:col-start-8;
+  }
+  .home-proj-b .home-proj-text {
+    @apply col-span-12 md:col-span-6 md:col-start-1 md:row-start-1;
+  }
+  .home-proj-b figure img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .home-proj-c figure {
+    @apply col-span-12 md:col-span-8;
+  }
+  .home-proj-c .home-proj-text {
+    @apply col-span-12 md:col-span-4 md:col-start-9;
+  }
+  .home-proj-c figure img {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
   }
 }
