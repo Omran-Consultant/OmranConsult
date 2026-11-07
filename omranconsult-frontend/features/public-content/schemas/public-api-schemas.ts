@@ -49,6 +49,16 @@ export const settingsResponseSchema = z.object({
       email: nullableStringSchema,
       phones: z.array(z.string()),
     }),
+    working_hours: nullableStringSchema.optional(),
+    profile_pdf_url: z.string().url().nullable().optional(),
+  }),
+});
+
+/** GET /api/pages/{page}: design copy and other blocks of one page (SDD P22). */
+export const pageResponseSchema = z.object({
+  locale: localeSchema,
+  data: z.object({
+    blocks: z.record(z.unknown()),
   }),
 });
 
@@ -204,6 +214,7 @@ export const partnersResponseSchema = z.object({
 
 export type SettingsResponse = z.infer<typeof settingsResponseSchema>;
 export type HomeResponse = z.infer<typeof homeResponseSchema>;
+export type PageResponse = z.infer<typeof pageResponseSchema>;
 export type ServicesResponse = z.infer<typeof servicesResponseSchema>;
 export type ProjectsIndexResponse = z.infer<typeof projectsIndexResponseSchema>;
 export type ProjectDetailResponse = z.infer<typeof projectDetailResponseSchema>;

@@ -3,6 +3,7 @@ import type {
   DocumentsResponse,
   ExpertsResponse,
   HomeResponse,
+  PageResponse,
   OrgChartResponse,
   PartnersResponse,
   ProjectDetailResponse,
@@ -31,7 +32,14 @@ export function mapSettingsToUiModel(payload: SettingsResponse) {
       email: mapOptionalText(payload.data.contact.email),
       phones: payload.data.contact.phones,
     },
+    workingHours: mapOptionalText(payload.data.working_hours ?? null),
+    profilePdfUrl: payload.data.profile_pdf_url ?? undefined,
   };
+}
+
+/** Raw page blocks; each feature validates the copy it reads with its own schema. */
+export function mapPageToBlocks(payload: PageResponse): Record<string, unknown> {
+  return payload.data.blocks;
 }
 
 export function mapHomeToUiModel(payload: HomeResponse) {

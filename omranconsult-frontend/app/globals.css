@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+/* Dark surface: the dark theme or a `scheme-dark` island (photo heroes) — for theme-specific assets. */
+@custom-variant on-dark (&:where(.dark *, .scheme-dark *));
 
 /*
  * Design tokens — Figma handoff (SDD A30, docs/DESIGN_BASELINE.md §2–§4).
@@ -79,6 +81,7 @@
   --fs-number-l: 2.5rem;
 
   --font-display-switch: var(--font-rubik);
+  --type-scale: 1;
 }
 
 .dark,
@@ -146,9 +149,15 @@
   }
 }
 
-/* Arabic uses Somar in place of DIN Next LT Arabic (D2). Swap the family here to change it. */
+/*
+ * Arabic uses Somar in place of DIN Next LT Arabic (D2). Swap the family here to change it.
+ * Somar draws smaller than DIN Next at the same size (measured: text width ×1.42, alef height ×1.47),
+ * so Arabic sizes are scaled by --type-scale and line-height ratios divided by it: glyphs match the
+ * design and line heights stay at the design's pixel values. Set --type-scale to 1 with DIN Next.
+ */
 html[lang="ar"] {
   --font-display-switch: var(--font-somar);
+  --type-scale: 1.4;
 }
 
 @theme {
@@ -211,46 +220,46 @@ html[lang="ar"] {
   --font-latin: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-switch), ui-sans-serif, system-ui, sans-serif;
 
-  --text-display-xl: var(--fs-display-xl);
-  --text-display-xl--line-height: 1.1;
+  --text-display-xl: calc(var(--fs-display-xl) * var(--type-scale));
+  --text-display-xl--line-height: calc(1.1 / var(--type-scale));
   --text-display-xl--font-weight: 400;
-  --text-display-l: var(--fs-display-l);
-  --text-display-l--line-height: 1.15;
+  --text-display-l: calc(var(--fs-display-l) * var(--type-scale));
+  --text-display-l--line-height: calc(1.15 / var(--type-scale));
   --text-display-l--font-weight: 400;
-  --text-h1: var(--fs-h1);
-  --text-h1--line-height: 1.25;
+  --text-h1: calc(var(--fs-h1) * var(--type-scale));
+  --text-h1--line-height: calc(1.25 / var(--type-scale));
   --text-h1--font-weight: 500;
-  --text-h2: var(--fs-h2);
-  --text-h2--line-height: 1.3;
+  --text-h2: calc(var(--fs-h2) * var(--type-scale));
+  --text-h2--line-height: calc(1.3 / var(--type-scale));
   --text-h2--font-weight: 500;
-  --text-h3: var(--fs-h3);
-  --text-h3--line-height: 1.4;
+  --text-h3: calc(var(--fs-h3) * var(--type-scale));
+  --text-h3--line-height: calc(1.4 / var(--type-scale));
   --text-h3--font-weight: 500;
-  --text-h4: var(--fs-h4);
-  --text-h4--line-height: 1.45;
+  --text-h4: calc(var(--fs-h4) * var(--type-scale));
+  --text-h4--line-height: calc(1.45 / var(--type-scale));
   --text-h4--font-weight: 500;
-  --text-body-l: var(--fs-body-l);
-  --text-body-l--line-height: 1.75;
-  --text-body-m: 1rem;
-  --text-body-m--line-height: 1.7;
-  --text-body-s: 0.875rem;
-  --text-body-s--line-height: 1.65;
-  --text-caption: 0.75rem;
-  --text-caption--line-height: 1.6;
-  --text-label-m: 0.9375rem;
-  --text-label-m--line-height: 1.4;
+  --text-body-l: calc(var(--fs-body-l) * var(--type-scale));
+  --text-body-l--line-height: calc(1.75 / var(--type-scale));
+  --text-body-m: calc(1rem * var(--type-scale));
+  --text-body-m--line-height: calc(1.7 / var(--type-scale));
+  --text-body-s: calc(0.875rem * var(--type-scale));
+  --text-body-s--line-height: calc(1.65 / var(--type-scale));
+  --text-caption: calc(0.75rem * var(--type-scale));
+  --text-caption--line-height: calc(1.6 / var(--type-scale));
+  --text-label-m: calc(0.9375rem * var(--type-scale));
+  --text-label-m--line-height: calc(1.4 / var(--type-scale));
   --text-label-m--font-weight: 500;
-  --text-label-s: 0.8125rem;
-  --text-label-s--line-height: 1.4;
+  --text-label-s: calc(0.8125rem * var(--type-scale));
+  --text-label-s--line-height: calc(1.4 / var(--type-scale));
   --text-label-s--font-weight: 500;
-  --text-number-xl: var(--fs-number-xl);
-  --text-number-xl--line-height: 1;
+  --text-number-xl: calc(var(--fs-number-xl) * var(--type-scale));
+  --text-number-xl--line-height: calc(1 / var(--type-scale));
   --text-number-xl--font-weight: 500;
-  --text-number-l: var(--fs-number-l);
-  --text-number-l--line-height: 1;
+  --text-number-l: calc(var(--fs-number-l) * var(--type-scale));
+  --text-number-l--line-height: calc(1 / var(--type-scale));
   --text-number-l--font-weight: 500;
-  --text-number-m: 2rem;
-  --text-number-m--line-height: 1.1;
+  --text-number-m: calc(2rem * var(--type-scale));
+  --text-number-m--line-height: calc(1.1 / var(--type-scale));
   --text-number-m--font-weight: 500;
   --text-overline: 0.75rem;
   --text-overline--line-height: 1.4;
@@ -276,6 +285,12 @@ html[lang="ar"] {
   &:dir(ltr) {
     transform: scaleX(-1);
   }
+}
+
+/* Decorative earth ring (mobile menu): an annulus mask over the earth photo. */
+@utility earth-ring {
+  -webkit-mask-image: radial-gradient(closest-side, transparent 80%, #000 80.4%, #000 99.4%, transparent 100%);
+  mask-image: radial-gradient(closest-side, transparent 80%, #000 80.4%, #000 99.4%, transparent 100%);
 }
 
 @utility glass {

@@ -72,55 +72,69 @@
     "backToProjects": "Back to projects",
     "relatedProjectsHeading": "Other projects by this entity"
   },
-  "LocaleSwitcher": {
-    "label": "Language",
-    "switchToEnglish": "EN",
-    "switchToArabic": "AR"
-  },
   "Layout": {
     "brand": {
-      "logoAlt": "OMRAN Advanced Company logo"
+      "logoAlt": "OMRAN Advanced Company for Engineering Consultancy logo"
     },
-    "topBar": {
-      "email": "info@omranconsult.com",
-      "phoneDisplay": "+966 11 499 9925",
-      "phoneTel": "+966114999925",
-      "phoneSecondaryDisplay": "+966 54 326 4982",
-      "phoneSecondaryTel": "+966543264982"
-    },
+    "skipToContent": "Skip to content",
+    "breadcrumbLabel": "Breadcrumb",
     "nav": {
-      "primaryLabel": "Primary navigation",
+      "primaryLabel": "Main navigation",
       "home": "Home",
       "about": "About",
-      "services": "Our Services",
+      "services": "Services",
       "projects": "Projects",
-      "careers": "Careers",
-      "contact": "Contact Us",
-      "toggleMenu": "Toggle menu",
-      "closeMenu": "Close menu"
+      "certificates": "Certificates",
+      "media": "Media Center",
+      "contact": "Contact us",
+      "consultation": "Request a consultation",
+      "toggleMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "menuLabel": "Menu"
     },
     "footer": {
-      "tagline": "A first-grade classified consultancy supporting integrated asset and facility management, development, and automation in the Kingdom for more than 21 years.",
-      "quickLinks": "Quick Links",
-      "contactHeading": "Contact Us",
-      "address": "King Abdulaziz Road, Al Rabi District, Riyadh, Saudi Arabia",
-      "phoneDisplay": "+966 11 499 9925",
-      "phoneTel": "+966114999925",
-      "phoneSecondaryDisplay": "+966 54 326 4982",
-      "phoneSecondaryTel": "+966543264982",
-      "email": "info@omranconsult.com",
-      "copyright": "© 2026 OMRAN Advanced Company. All rights reserved."
+      "label": "Site footer",
+      "companyHeading": "Company",
+      "servicesHeading": "Services",
+      "contactHeading": "Contact",
+      "newsletterHeading": "Newsletter",
+      "about": "About us",
+      "vision": "Vision and mission",
+      "orgChart": "Organizational chart",
+      "credentials": "Certificates and licenses",
+      "assetManagement": "Asset and facility management",
+      "engineeringConsulting": "Engineering consulting",
+      "engineeringDesign": "Engineering and design",
+      "digitalTransformation": "Digital transformation",
+      "projects": "Projects",
+      "certificates": "Certificates",
+      "assetManagementShort": "Asset management",
+      "consultingShort": "Consulting",
+      "copyright": "© {year} {name}. All rights reserved."
+    },
+    "newsletter": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@company.com",
+      "submit": "Subscribe",
+      "consent": "By subscribing, you agree that we use your email to send the newsletter.",
+      "invalidEmail": "Enter a valid email address",
+      "error": "We could not subscribe you. Please try again.",
+      "tooMany": "Too many attempts. Wait a minute and try again."
     },
     "theme": {
       "switchToDark": "Switch to dark mode",
       "switchToLight": "Switch to light mode"
     },
-    "social": {
-      "facebook": "Facebook",
-      "twitter": "X",
-      "linkedin": "LinkedIn",
-      "instagram": "Instagram"
+    "language": {
+      "label": "Language",
+      "switchShort": "ع",
+      "switchLong": "العربية"
     },
-    "breadcrumbLabel": "Breadcrumb"
+    "notFound": {
+      "title": "Page not found",
+      "text": "The page may have moved or its link changed. You can go back to the home page.",
+      "home": "Back to home",
+      "metaTitle": "Page not found"
+    }
   }
 }

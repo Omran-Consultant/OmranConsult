@@ -72,55 +72,69 @@
     "backToProjects": "العودة إلى المشاريع",
     "relatedProjectsHeading": "مشاريع أخرى لنفس الجهة"
   },
-  "LocaleSwitcher": {
-    "label": "اللغة",
-    "switchToEnglish": "EN",
-    "switchToArabic": "AR"
-  },
   "Layout": {
     "brand": {
       "logoAlt": "شعار شركة العمران المتقدم للاستشارات الهندسية"
     },
-    "topBar": {
-      "email": "info@omranconsult.com",
-      "phoneDisplay": "+966 11 499 9925",
-      "phoneTel": "+966114999925",
-      "phoneSecondaryDisplay": "+966 54 326 4982",
-      "phoneSecondaryTel": "+966543264982"
-    },
+    "skipToContent": "تخطَّ إلى المحتوى",
+    "breadcrumbLabel": "مسار التنقل",
     "nav": {
       "primaryLabel": "التنقل الرئيسي",
       "home": "الرئيسية",
       "about": "من نحن",
       "services": "خدماتنا",
-      "projects": "مشاريعنا",
-      "careers": "الوظائف",
-      "contact": "اتصل بنا",
+      "projects": "المشاريع",
+      "certificates": "الشهادات",
+      "media": "المركز الإعلامي",
+      "contact": "تواصل معنا",
+      "consultation": "اطلب استشارة",
       "toggleMenu": "فتح القائمة",
-      "closeMenu": "إغلاق القائمة"
+      "closeMenu": "إغلاق القائمة",
+      "menuLabel": "القائمة"
     },
     "footer": {
-      "tagline": "نحن شركة استشارية مصنفة من الدرجة الأولى تدعم التكامل في إدارة الأصول والمرافق وأعمال التطوير والأتمتة بالمملكة لأكثر من 21 عاما.",
-      "quickLinks": "روابط سريعة",
-      "contactHeading": "معلومات الاتصال",
-      "address": "الرياض، المملكة العربية السعودية - حي الربيع - طريق الملك عبدالعزيز",
-      "phoneDisplay": "+966 11 499 9925",
-      "phoneTel": "+966114999925",
-      "phoneSecondaryDisplay": "+966 54 326 4982",
-      "phoneSecondaryTel": "+966543264982",
-      "email": "info@omranconsult.com",
-      "copyright": "© 2026 شركة العمران المتقدم للاستشارات الهندسية. جميع الحقوق محفوظة."
+      "label": "تذييل الموقع",
+      "companyHeading": "الشركة",
+      "servicesHeading": "الخدمات",
+      "contactHeading": "تواصل",
+      "newsletterHeading": "النشرة البريدية",
+      "about": "من نحن",
+      "vision": "الرؤية والرسالة",
+      "orgChart": "الهيكل التنظيمي",
+      "credentials": "الشهادات والتراخيص",
+      "assetManagement": "إدارة الأصول والمرافق",
+      "engineeringConsulting": "الاستشارات الهندسية",
+      "engineeringDesign": "الهندسة والتصميم",
+      "digitalTransformation": "التحول الرقمي",
+      "projects": "المشاريع",
+      "certificates": "الشهادات",
+      "assetManagementShort": "إدارة الأصول",
+      "consultingShort": "الاستشارات",
+      "copyright": "© {year} {name}. جميع الحقوق محفوظة."
+    },
+    "newsletter": {
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "name@company.com",
+      "submit": "اشتراك",
+      "consent": "بالاشتراك، توافق على استخدام بريدك الإلكتروني لإرسال النشرة البريدية.",
+      "invalidEmail": "أدخل بريداً إلكترونياً صحيحاً",
+      "error": "تعذّر إتمام الاشتراك، حاول مرة أخرى.",
+      "tooMany": "محاولات كثيرة، انتظر دقيقة ثم حاول مجدداً."
     },
     "theme": {
       "switchToDark": "التبديل إلى الوضع الداكن",
       "switchToLight": "التبديل إلى الوضع الفاتح"
     },
-    "social": {
-      "facebook": "فيسبوك",
-      "twitter": "X",
-      "linkedin": "لينكدإن",
-      "instagram": "إنستغرام"
+    "language": {
+      "label": "اللغة",
+      "switchShort": "EN",
+      "switchLong": "English"
     },
-    "breadcrumbLabel": "مسار التنقل"
+    "notFound": {
+      "title": "الصفحة غير موجودة",
+      "text": "ربما نُقلت الصفحة أو تغيّر رابطها. يمكنك العودة إلى الصفحة الرئيسية.",
+      "home": "العودة إلى الرئيسية",
+      "metaTitle": "الصفحة غير موجودة"
+    }
   }
 }

@@ -1,85 +1,107 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
-import { Link } from "@/i18n/navigation";
+import { getCurrentYear } from "@/core/format/current-year";
+import { formatPhoneForDisplay, formatPhoneTelLink } from "@/core/format/phone";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
-import { FOOTER_QUICK_LINKS } from "@/features/layout/navigation";
-import { Icon } from "@/core/ui/icon";
+import { NewsletterForm } from "@/features/layout/components/newsletter-form";
+import { FOOTER_COLUMNS, FOOTER_COLUMNS_COMPACT } from "@/features/layout/navigation";
+import { getLayoutData } from "@/features/layout/services/get-layout-data";
+import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 
-const footerLinkClassName =
-  "text-secondary transition-colors hover:text-accent";
+const headingClass = "text-label-m text-primary";
+const linkClass = "text-body-s text-muted transition-colors duration-150 hover:text-primary";
 
+type ColumnProps = {
+  readonly title: string;
+  readonly links: readonly { readonly href: string; readonly label: string }[];
+  readonly className?: string;
+};
+
+function FooterColumn({ title, links, className }: ColumnProps) {
+  return (
+    <div className={className}>
+      <h2 className={headingClass}>{title}</h2>
+      <ul className="mt-4 flex flex-col gap-4 text-body-s max-md:mt-3 max-md:gap-3">
+        {links.map((link) => (
+          <li key={`${link.href}-${link.label}`}>
+            <Link className={linkClass} href={link.href}>
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Figma "Footer": brand, Company, Services, Contact and Newsletter columns, the giant "OMRAN"
+ * wordmark, and the bottom bar. Mobile follows the 390 frame: brand, two columns, copyright.
+ */
 export async function SiteFooter() {
-  const t = await getTranslations("Layout.footer");
-  const brandT = await getTranslations("Layout.brand");
-  const navT = await getTranslations("Layout.nav");
-
-  const phones = [
-    { tel: t("phoneTel"), display: t("phoneDisplay") },
-    { tel: t("phoneSecondaryTel"), display: t("phoneSecondaryDisplay") },
-  ] as const;
+  const locale = (await getLocale()) as AppLocale;
+  const t = await getTranslations("Layout");
+  const data = await getLayoutData(locale);
+  const footerLinks = (column: readonly { href: string; messageKey: string }[]) =>
+    column.map((item) => ({ href: item.href, label: t(`footer.${item.messageKey}`) }));
+  const copyright = t("footer.copyright", { year: await getCurrentYear(), name: data.companyName ?? "" });
 
   return (
-    <footer className="bg-surface text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <div className="mb-4 flex items-center gap-3">
-              <Link className="block" href="/">
-                <BrandLogo
-                  alt={brandT("logoAlt")}
-                  className="h-12 w-auto sm:h-14"
-                  surface="onDark"
-                />
-              </Link>
-            </div>
-            <p className="mb-4 text-secondary">{t("tagline")}</p>
-            {/* U26: social URLs are pending, so icons stay hidden for now. */}
+    <footer aria-label={t("footer.label")} className="bg-surface pt-12 pb-10 md:pt-25" data-section="footer">
+      <div className="container-page">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:gap-12 lg:grid-cols-[340fr_149fr_149fr_149fr_300fr]">
+          <div className="col-span-2 flex flex-col gap-6 lg:col-span-1">
+            <Link className="self-start" href="/">
+              <BrandLogo alt={t("brand.logoAlt")} className="h-auto w-37.5 md:w-45" surface="adaptive" />
+            </Link>
+            {data.footerAbout ? <p className="hidden max-w-85 text-body-s text-secondary md:block">{data.footerAbout}</p> : null}
           </div>
 
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">{t("quickLinks")}</h3>
-            <ul className="space-y-2">
-              {FOOTER_QUICK_LINKS.map((item) => (
-                <li key={item.href}>
-                  <Link className={footerLinkClassName} href={item.href}>
-                    {navT(item.messageKey)}
-                  </Link>
+          <FooterColumn className="hidden md:block" links={footerLinks(FOOTER_COLUMNS.company)} title={t("footer.companyHeading")} />
+          <FooterColumn className="hidden md:block" links={footerLinks(FOOTER_COLUMNS.services)} title={t("footer.servicesHeading")} />
+          <FooterColumn className="md:hidden" links={footerLinks(FOOTER_COLUMNS_COMPACT.company)} title={t("footer.companyHeading")} />
+          <FooterColumn className="md:hidden" links={footerLinks(FOOTER_COLUMNS_COMPACT.services)} title={t("footer.servicesHeading")} />
+
+          <div className="hidden md:block">
+            <h2 className={headingClass}>{t("footer.contactHeading")}</h2>
+            <ul className="mt-4 flex flex-col gap-4 text-body-s text-muted">
+              {data.address ? <li>{data.address}</li> : null}
+              {data.phones.map((phone) => (
+                <li key={phone}>
+                  <a className="num-isolate transition-colors duration-150 hover:text-primary" dir="ltr" href={`tel:${formatPhoneTelLink(phone)}`}>
+                    {formatPhoneForDisplay(phone)}
+                  </a>
                 </li>
               ))}
+              {data.email ? (
+                <li>
+                  <a className="transition-colors duration-150 hover:text-primary" dir="ltr" href={`mailto:${data.email}`}>
+                    {data.email}
+                  </a>
+                </li>
+              ) : null}
             </ul>
           </div>
 
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">{t("contactHeading")}</h3>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 text-secondary">
-                <Icon className="mt-1 size-5 shrink-0 text-accent" name="map-pin" />
-                <span>{t("address")}</span>
-              </div>
-              {phones.map((phone) => (
-                <div className="flex items-center gap-3 text-secondary" key={phone.tel}>
-                  <Icon className="size-5 shrink-0 text-accent" name="phone" />
-                  <a
-                    className="hover:text-accent"
-                    dir="ltr"
-                    href={`tel:${phone.tel}`}
-                  >
-                    {phone.display}
-                  </a>
-                </div>
-              ))}
-              <div className="flex items-center gap-3 text-secondary">
-                <Icon className="size-5 shrink-0 text-accent" name="mail" />
-                <a className="hover:text-accent" href={`mailto:${t("email")}`}>
-                  {t("email")}
-                </a>
-              </div>
-            </div>
+          <div className="hidden md:block">
+            <h2 className={headingClass}>{t("footer.newsletterHeading")}</h2>
+            {data.newsletterText ? <p className="mt-4 text-body-s text-muted">{data.newsletterText}</p> : null}
+            <NewsletterForm className="mt-4" />
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-8 text-center">
-          <p className="text-secondary">{t("copyright")}</p>
+        <p
+          aria-hidden="true"
+          className="mt-16 hidden bg-linear-to-b from-tint to-transparent bg-clip-text text-center font-latin text-[min(18.75rem,21vw)] leading-[0.9] font-bold tracking-tight text-transparent select-none md:block"
+          dir="ltr"
+        >
+          OMRAN
+        </p>
+
+        <div className="mt-7 flex flex-col gap-2 border-t border-line pt-5 text-caption text-muted md:mt-16 md:flex-row md:items-center md:justify-between md:pt-6">
+          <p>{copyright}</p>
+          {data.tagline ? <p className="hidden md:block">{data.tagline}</p> : null}
         </div>
       </div>
     </footer>

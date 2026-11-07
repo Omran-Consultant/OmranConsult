@@ -6,6 +6,7 @@ import {
   documentsResponseSchema,
   expertsResponseSchema,
   homeResponseSchema,
+  pageResponseSchema,
   orgChartResponseSchema,
   partnersResponseSchema,
   projectDetailResponseSchema,
@@ -69,6 +70,21 @@ export async function fetchPublicHome(locale: AppLocale) {
 
   return homeResponseSchema.parse(
     await serverApiRequest<unknown>("/api/home", {
+      headers: withLocaleHeaders(locale),
+      cache: "force-cache",
+    }),
+  );
+}
+
+export type PublicPageKey = "home" | "about" | "services" | "projects" | "contact" | "media" | "layout";
+
+export async function fetchPublicPage(locale: AppLocale, page: PublicPageKey) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("pages", `pages:${page}`);
+
+  return pageResponseSchema.parse(
+    await serverApiRequest<unknown>(`/api/pages/${page}`, {
       headers: withLocaleHeaders(locale),
       cache: "force-cache",
     }),

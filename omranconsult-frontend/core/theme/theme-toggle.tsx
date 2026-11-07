@@ -2,26 +2,27 @@
 
 import { useTranslations } from "next-intl";
 
-import { useTheme } from "@/core/theme/theme-provider";
+import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
+import { useTheme } from "@/core/theme/theme-provider";
 
-export function ThemeToggle() {
+/** Icon button in the header style (not in the Figma file; kept per D1). */
+export function ThemeToggle({ className }: { readonly className?: string }) {
   const t = useTranslations("Layout.theme");
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
 
   return (
     <button
-      type="button"
-      onClick={toggleTheme}
-      className="flex size-10 items-center justify-center rounded-full bg-surface text-primary transition-colors hover:bg-line "
       aria-label={isDark ? t("switchToLight") : t("switchToDark")}
-    >
-      {isDark ? (
-        <Icon className="size-5" name="sun" />
-      ) : (
-        <Icon className="size-5" name="moon" />
+      className={classNames(
+        "flex size-11 items-center justify-center rounded-full text-secondary transition-colors duration-150 hover:bg-tint hover:text-primary",
+        className,
       )}
+      onClick={toggleTheme}
+      type="button"
+    >
+      <Icon name={isDark ? "sun" : "moon"} />
     </button>
   );
 }
