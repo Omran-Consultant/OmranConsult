@@ -10,6 +10,7 @@ use App\Modules\Content\Presentation\Http\Controllers\HomeController;
 use App\Modules\Content\Presentation\Http\Controllers\SettingsController;
 use App\Modules\Documents\Presentation\Http\Controllers\DocumentsController;
 use App\Modules\Inquiries\Presentation\Http\Controllers\InquiriesController;
+use App\Modules\Newsletter\Presentation\Http\Controllers\NewsletterController;
 use App\Modules\Partners\Presentation\Http\Controllers\PartnersController;
 use App\Modules\Projects\Presentation\Http\Controllers\ClientsController;
 use App\Modules\Projects\Presentation\Http\Controllers\ProjectsController;
@@ -39,6 +40,7 @@ Route::middleware(SetPublicLocale::class)->group(function (): void {
 
     // Public writes (SDD §7.2): 5 per minute per IP (AppServiceProvider), honeypot field `website`.
     Route::post('/inquiries', InquiriesController::class)->middleware('throttle:inquiries');
+    Route::post('/newsletter', NewsletterController::class)->middleware('throttle:newsletter');
 });
 
 Route::prefix('admin')->group(function (): void {
