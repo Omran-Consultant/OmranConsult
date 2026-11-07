@@ -1,0 +1,66 @@
+import { getTranslations } from "next-intl/server";
+
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  MailIcon,
+  PhoneIcon,
+  TwitterIcon,
+} from "@/features/layout/components/site-icons";
+
+export async function SiteHeaderTopBar() {
+  const t = await getTranslations("Layout.topBar");
+  const socialT = await getTranslations("Layout.social");
+
+  const socialLinks = [
+    { label: socialT("facebook"), Icon: FacebookIcon },
+    { label: socialT("twitter"), Icon: TwitterIcon },
+    { label: socialT("linkedin"), Icon: LinkedInIcon },
+    { label: socialT("instagram"), Icon: InstagramIcon },
+  ] as const;
+
+  const phones = [
+    { tel: t("phoneTel"), display: t("phoneDisplay") },
+    { tel: t("phoneSecondaryTel"), display: t("phoneSecondaryDisplay") },
+  ] as const;
+
+  return (
+    <div className="relative z-50 hidden bg-brand-gradient py-2 text-white shadow-md md:block">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
+        <div className="flex items-center gap-4 text-xs sm:text-sm">
+          <a
+            className="flex items-center gap-2 rounded-full px-3 py-1 transition-all hover:bg-brand-navy/90"
+            href={`mailto:${t("email")}`}
+          >
+            <MailIcon className="size-3 sm:size-4" />
+            <span>{t("email")}</span>
+          </a>
+          {phones.map((phone) => (
+            <a
+              className="flex items-center gap-2 rounded-full px-3 py-1 transition-all hover:bg-brand-navy/90"
+              href={`tel:${phone.tel}`}
+              key={phone.tel}
+            >
+              <PhoneIcon className="size-3 sm:size-4" />
+              <span dir="ltr">{phone.display}</span>
+            </a>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          {socialLinks.map(({ label, Icon }) => (
+            <a
+              key={label}
+              aria-label={label}
+              className="rounded-full bg-white/10 p-1.5 transition-all hover:bg-white/20 sm:p-2"
+              href="#"
+              rel="noopener noreferrer"
+            >
+              <Icon className="size-3 sm:size-4" />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,68 @@
+{
+  "Metadata": {
+    "title": "شركة العمران المتقدم للاستشارات الهندسية",
+    "description": "نحن شركة استشارية مصنفة من الدرجة الأولى تدعم التكامل في إدارة الأصول والمرافق وأعمال التطوير والأتمتة بالمملكة لأكثر من 21 عاما."
+  },
+  "Home": {
+    "phaseLabel": "المرحلة 2",
+    "title": "omranconsult — نقطة الدخول العامة",
+    "description": "هيكل الموقع بهوية بروفايل الشركة 2029. محتوى الصفحات يُبنى في المرحلة 4."
+  },
+  "ApiConnectivity": {
+    "sectionLabel": "اتصال واجهة برمجة التطبيقات",
+    "heading": "Laravel API (جلب من الخادم)",
+    "checking": "جاري التحقق من اتصال Laravel API…",
+    "ok": "استجاب GET /api/health بحالة ok.",
+    "unavailable": "فحص صحة API غير متاح (شغّل Laravel على http://localhost:8000 للتحقق محليًا)."
+  },
+  "LocaleSwitcher": {
+    "label": "اللغة",
+    "switchToEnglish": "EN",
+    "switchToArabic": "AR"
+  },
+  "Layout": {
+    "brand": {
+      "logoAlt": "شعار شركة العمران المتقدم للاستشارات الهندسية"
+    },
+    "topBar": {
+      "email": "info@omranconsult.com",
+      "phoneDisplay": "+966 11 499 9925",
+      "phoneTel": "+966114999925",
+      "phoneSecondaryDisplay": "+966 54 326 4982",
+      "phoneSecondaryTel": "+966543264982"
+    },
+    "nav": {
+      "primaryLabel": "التنقل الرئيسي",
+      "home": "الرئيسية",
+      "about": "من نحن",
+      "services": "خدماتنا",
+      "projects": "مشاريعنا",
+      "careers": "الوظائف",
+      "contact": "اتصل بنا",
+      "toggleMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "footer": {
+      "tagline": "نحن شركة استشارية مصنفة من الدرجة الأولى تدعم التكامل في إدارة الأصول والمرافق وأعمال التطوير والأتمتة بالمملكة لأكثر من 21 عاما.",
+      "quickLinks": "روابط سريعة",
+      "contactHeading": "معلومات الاتصال",
+      "address": "الرياض، المملكة العربية السعودية - حي الربيع - طريق الملك عبدالعزيز",
+      "phoneDisplay": "+966 11 499 9925",
+      "phoneTel": "+966114999925",
+      "phoneSecondaryDisplay": "+966 54 326 4982",
+      "phoneSecondaryTel": "+966543264982",
+      "email": "info@omranconsult.com",
+      "copyright": "© 2026 شركة العمران المتقدم للاستشارات الهندسية. جميع الحقوق محفوظة."
+    },
+    "theme": {
+      "switchToDark": "التبديل إلى الوضع الداكن",
+      "switchToLight": "التبديل إلى الوضع الفاتح"
+    },
+    "social": {
+      "facebook": "فيسبوك",
+      "twitter": "X",
+      "linkedin": "لينكدإن",
+      "instagram": "إنستغرام"
+    }
+  }
+}

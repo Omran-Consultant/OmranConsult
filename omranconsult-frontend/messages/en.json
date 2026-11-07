@@ -1,0 +1,68 @@
+{
+  "Metadata": {
+    "title": "OMRAN Advanced Company",
+    "description": "A first-grade classified consultancy supporting integrated asset and facility management, development, and automation in the Kingdom for more than 21 years."
+  },
+  "Home": {
+    "phaseLabel": "Phase 2",
+    "title": "omranconsult — public entry",
+    "description": "Layout shell with the Corporate Profile 2029 identity. Page content is built in Phase 4."
+  },
+  "ApiConnectivity": {
+    "sectionLabel": "API connectivity",
+    "heading": "Laravel API (server fetch)",
+    "checking": "Checking Laravel API connectivity…",
+    "ok": "GET /api/health responded with status ok.",
+    "unavailable": "API health check unavailable (start Laravel on http://localhost:8000 for local verification)."
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "switchToEnglish": "EN",
+    "switchToArabic": "AR"
+  },
+  "Layout": {
+    "brand": {
+      "logoAlt": "OMRAN Advanced Company logo"
+    },
+    "topBar": {
+      "email": "info@omranconsult.com",
+      "phoneDisplay": "+966 11 499 9925",
+      "phoneTel": "+966114999925",
+      "phoneSecondaryDisplay": "+966 54 326 4982",
+      "phoneSecondaryTel": "+966543264982"
+    },
+    "nav": {
+      "primaryLabel": "Primary navigation",
+      "home": "Home",
+      "about": "About",
+      "services": "Our Services",
+      "projects": "Projects",
+      "careers": "Careers",
+      "contact": "Contact Us",
+      "toggleMenu": "Toggle menu",
+      "closeMenu": "Close menu"
+    },
+    "footer": {
+      "tagline": "A first-grade classified consultancy supporting integrated asset and facility management, development, and automation in the Kingdom for more than 21 years.",
+      "quickLinks": "Quick Links",
+      "contactHeading": "Contact Us",
+      "address": "King Abdulaziz Road, Al Rabi District, Riyadh, Saudi Arabia",
+      "phoneDisplay": "+966 11 499 9925",
+      "phoneTel": "+966114999925",
+      "phoneSecondaryDisplay": "+966 54 326 4982",
+      "phoneSecondaryTel": "+966543264982",
+      "email": "info@omranconsult.com",
+      "copyright": "© 2026 OMRAN Advanced Company. All rights reserved."
+    },
+    "theme": {
+      "switchToDark": "Switch to dark mode",
+      "switchToLight": "Switch to light mode"
+    },
+    "social": {
+      "facebook": "Facebook",
+      "twitter": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+/*
+!/.gitignore
+!/omranconsult-frontend/
+!/omranconsult-backend/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets and local environment (never commit)
+.env
+.env.*
+!.env.example
+!.env.*.example
+auth.json
+
+# Dependencies and build output
+**/node_modules/
+**/vendor/
+**/.next/
+**/out/
+**/public/build
+**/public/hot
+
+# PHP / Laravel local artifacts
+**/.phpunit.result.cache
+**/.phpunit.cache/
+**/storage/pail/
+**/storage/logs/*.log
+**/database/*.sqlite*
+**/database/*.sqlite-journal
+
+# Frontend generated
+**/next-env.d.ts
+**/*.tsbuildinfo
+
+# IDE (optional local; keep repo clean)
+.idea/
+.vscode/
+.phpactor.json
+
+# Local backup folders inside workspace (if any)
+.git-backup/
