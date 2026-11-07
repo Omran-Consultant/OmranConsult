@@ -1,16 +1,17 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
-import { Card } from "@/core/ui/card";
 import { EmptyState } from "@/core/ui/empty-state";
 import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
 import { JsonLd } from "@/core/seo/json-ld";
 import { PageHeader } from "@/core/ui/page-header";
-import { Section } from "@/core/ui/section";
-import { ClientLogo } from "@/features/media/client-logo";
-import { ProjectOwnerLogo } from "@/features/media/project-owner-logo";
-import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
-import { getClientLogo } from "@/features/media/brand-logos";
-import { RegionsMapFilter } from "@/features/projects/components/regions-map-filter";
+import { SECTION_BACKGROUND_IMAGES, getProfileImageAlt } from "@/features/media/profile-images";
+import {
+  featuredProjectImage,
+  groupFeaturedProjects,
+  PROJECT_LAYOUT_CLASS,
+} from "@/features/home/lib/featured-projects";
+import { ProjectsPageMapPanel } from "@/features/projects/components/projects-page-map-panel";
 import type { ProjectsFilters } from "@/features/projects/services/get-projects-page-data";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
@@ -42,9 +43,15 @@ function buildQuery(filters: ProjectsFilters): string {
 
 export async function ProjectsPageContent({ locale, data, filters }: ProjectsPageContentProps) {
   const t = await getTranslations("ProjectsPage");
+  const homeT = await getTranslations("HomePage");
   const clients = data.clients.filter((client) => client.slug && client.projectsCount > 0 && client.name);
-  const clientLogoStrip = data.clients.filter((client) => client.inClientList);
+  const listedClients = data.clients.filter((client) => client.inClientList);
   const regions = data.regions.filter((region) => region.name);
+  const hasActiveFilter = Boolean(filters.client || filters.region);
+  const clientOrder = new Map(
+    data.clients.filter((client) => client.slug).map((client) => [client.slug as string, client.sortOrder]),
+  );
+  const entityGroups = groupFeaturedProjects(data.projects.projects, clientOrder);
   const breadcrumbs = buildBreadcrumbJsonLd(locale, [
     { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
     { name: t("headerTitle"), path: "/projects" },
@@ -53,15 +60,27 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
   return (
     <main className="flex flex-1 flex-col">
       <JsonLd data={breadcrumbs} />
-      <PageHeader
-        description={t("headerDescription")}
-        image={SECTION_BACKGROUND_IMAGES.featured_projects}
-        locale={locale}
-        title={t("headerTitle")}
-      />
 
-      <Section heading={t("filtersHeading")}>
-        <form action="" className="grid gap-4 rounded-xl border border-border bg-surface p-4 md:grid-cols-4">
+      <div data-section="header">
+        <PageHeader
+          description={t("headerDescription")}
+          image={SECTION_BACKGROUND_IMAGES.featured_projects}
+          locale={locale}
+          title={t("headerTitle")}
+        />
+      </div>
+
+      <section
+        className="bg-brand-green-strong px-(--oc-page-margin) py-(--oc-section-y) text-white"
+        data-section="map"
+      >
+        <h2 className="font-display text-(--text-oc-h2) leading-tight font-bold">{t("mapHeading")}</h2>
+        <ProjectsPageMapPanel regions={regions} selectedRegion={filters.region} />
+      </section>
+
+      <section className="px-(--oc-page-margin) py-(--oc-section-y)" data-section="filters">
+        <h2 className="font-display text-2xl font-bold text-heading">{t("filtersHeading")}</h2>
+        <form action="" className="mt-6 grid gap-4 md:grid-cols-4">
           <label className="space-y-1 text-sm">
             <span className="text-muted">{t("clientFilterLabel")}</span>
             <select className="w-full rounded-lg border border-border bg-surface p-2" defaultValue={filters.client ?? ""} name="client">
@@ -86,91 +105,115 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
           </label>
           <input name="page" type="hidden" value="1" />
           <div className="flex items-end gap-2 md:col-span-2">
-            <button className="rounded-lg bg-brand-green-strong px-4 py-2 text-sm font-semibold text-white" type="submit">
+            <button className="min-h-11 rounded-full bg-brand-green-strong px-5 py-2.5 text-sm font-semibold text-white" type="submit">
               {t("applyFilters")}
             </button>
-            <Link className="rounded-lg border border-border px-4 py-2 text-sm font-semibold" href="/projects">
+            <Link className="inline-flex min-h-11 items-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold" href="/projects">
               {t("clearFilters")}
             </Link>
           </div>
         </form>
-      </Section>
+      </section>
 
-      <Section heading={t("projectsHeading")}>
+      <section className="px-(--oc-page-margin) pb-(--oc-section-y)" data-section="grid">
+        <h2 className="font-display text-2xl font-bold text-heading">{t("projectsHeading")}</h2>
+
         {data.projects.projects.length === 0 ? (
-          <EmptyState description={t("emptyDescription")} title={t("emptyTitle")} />
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {data.projects.projects.map((project) => {
-              const ownerHasLogo = project.client?.slug
-                ? Boolean(getClientLogo(project.client.slug, 0))
-                : false;
-
-              return (
-              <Card data-owner-has-logo={ownerHasLogo ? "true" : undefined} key={project.slug}>
-                {project.client ? (
-                  <ProjectOwnerLogo
-                    locale={locale}
-                    name={project.client.name}
-                    slug={project.client.slug}
-                  />
+          <div className="mt-6">
+            <EmptyState description={t("emptyDescription")} title={t("emptyTitle")} />
+          </div>
+        ) : hasActiveFilter ? (
+          <ul className="mt-8 space-y-6">
+            {data.projects.projects.map((project) => (
+              <li className="border-b border-border pb-6" key={project.slug}>
+                {project.client?.name ? (
+                  <p className="text-sm font-bold text-brand-green-strong">{project.client.name}</p>
                 ) : null}
-                <h2 className="font-display text-lg font-semibold text-heading">{project.title}</h2>
-                {project.client?.name && project.client.slug ? (
-                  <p className="mt-2 text-sm text-muted">
-                    <Link href={`/projects?${new URLSearchParams({ client: project.client.slug }).toString()}`}>
-                      {project.client.name}
-                    </Link>
-                  </p>
-                ) : null}
-                {project.regions.length > 0 ? (
-                  <p className="mt-1 text-sm text-muted">
-                    {project.regions.map((region) => region.name ?? region.slug).join(" - ")}
-                  </p>
-                ) : null}
-                <Link className="mt-4 inline-flex text-sm font-semibold text-brand-green-strong" href={`/projects/${project.slug}`}>
-                  {t("detailLink")}
+                <Link
+                  className="mt-1 block text-lg font-semibold text-heading underline-offset-4 hover:text-brand-green-strong hover:underline"
+                  href={`/projects/${project.slug}`}
+                >
+                  {project.title}
                 </Link>
-              </Card>
-            );
+                {project.regions.length > 0 ? (
+                  <p className="mt-2 text-sm text-muted">
+                    {project.regions.map((region) => region.name ?? region.slug).join(" · ")}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="mt-(--oc-section-y) flex flex-col gap-20">
+            {entityGroups.map((group, index) => {
+              const layout = PROJECT_LAYOUT_CLASS[index % PROJECT_LAYOUT_CLASS.length];
+              const image = featuredProjectImage(index);
+              return (
+                <article className={`home-proj ${layout} grid grid-cols-12 items-center gap-6`} key={group.clientSlug ?? index}>
+                  <figure className="relative m-0 overflow-hidden rounded-(--oc-radius-brand)">
+                    <Image
+                      alt={getProfileImageAlt(image, locale)}
+                      className="h-full w-full object-cover"
+                      height={image.height}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      src={image.src}
+                      width={image.width}
+                    />
+                  </figure>
+                  <div className="home-proj-text">
+                    {group.clientName ? (
+                      <p className="mb-2 text-sm font-bold text-brand-green-strong">{group.clientName}</p>
+                    ) : null}
+                    <ul className="mt-2 space-y-2">
+                      {group.projects.map((project) => (
+                        <li key={project.slug}>
+                          <Link
+                            className="text-lg leading-relaxed text-heading underline-offset-4 hover:text-brand-green-strong hover:underline"
+                            href={`/projects/${project.slug}`}
+                          >
+                            {project.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              );
             })}
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2">
-          {Array.from({ length: data.projects.meta.last_page }, (_, index) => {
-            const page = index + 1;
-            return (
-              <Link
-                className="rounded-lg border border-border px-3 py-1 text-sm"
-                href={`/projects${buildQuery({ ...filters, page })}`}
-                key={page}
-              >
-                {page}
-              </Link>
-            );
-          })}
-        </div>
-      </Section>
+        {data.projects.meta.last_page > 1 ? (
+          <nav aria-label={t("projectsHeading")} className="mt-10 flex flex-wrap gap-2">
+            {Array.from({ length: data.projects.meta.last_page }, (_, index) => {
+              const page = index + 1;
+              return (
+                <Link
+                  className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-sm font-medium"
+                  href={`/projects${buildQuery({ ...filters, page })}`}
+                  key={page}
+                >
+                  {page}
+                </Link>
+              );
+            })}
+          </nav>
+        ) : null}
+      </section>
 
-      <Section heading={t("mapHeading")}>
-        <RegionsMapFilter regions={regions} selectedRegion={filters.region} />
-        {filters.region ? <p className="text-sm text-muted">{t("regionSoonNotice")}</p> : null}
-      </Section>
-
-      <Section heading={t("clientsHeading")}>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-6">
-          {clientLogoStrip.map((client) => (
-            <ClientLogo
-              key={client.sortOrder}
-              locale={locale}
-              name={client.name}
-              slug={client.slug}
-              sortOrder={client.sortOrder}
-            />
+      <section
+        className="bg-brand-navy px-(--oc-page-margin) py-(--oc-section-y) text-white"
+        data-section="clients"
+      >
+        <h2 className="font-display text-3xl font-bold md:text-4xl">{t("clientsHeading")}</h2>
+        <ul className="mt-8 columns-2 gap-8 text-base leading-snug md:columns-3 xl:columns-4">
+          {listedClients.map((client) => (
+            <li className="mb-2 break-inside-avoid" key={`${client.sortOrder}-${client.slug ?? "client"}`}>
+              {client.name?.trim() ? client.name : homeT("unnamedClient")}
+            </li>
           ))}
-        </div>
-      </Section>
+        </ul>
+      </section>
     </main>
   );
 }
