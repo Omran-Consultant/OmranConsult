@@ -34,7 +34,7 @@ type ImageKey =
   | "xMuqbil"
   | "xWaseem";
 
-const PROFILE_IMAGES: Record<ImageKey, ProfileImage> = {
+export const PROFILE_IMAGES: Record<ImageKey, ProfileImage> = {
   blueprint: {
     src: "/images/profile/blueprint.jpg",
     width: 1500,

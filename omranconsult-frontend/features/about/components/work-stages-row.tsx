@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { classNames } from "@/core/ui/class-names";
-import { PROFILE_IMAGES, getProfileImageAlt } from "@/features/media/profile-images";
+import { getProfileImageAlt, type ProfileImage } from "@/features/media/profile-images";
 import type { AppLocale } from "@/i18n/routing";
 
 type WorkStageCard = {
@@ -13,28 +13,13 @@ type WorkStageCard = {
   readonly title?: string;
   readonly body?: string;
   readonly tags: readonly string[];
-  readonly image: (typeof PROFILE_IMAGES)[keyof typeof PROFILE_IMAGES];
+  readonly image: ProfileImage;
 };
 
 type WorkStagesRowProps = {
   readonly locale: AppLocale;
   readonly cards: readonly WorkStageCard[];
 };
-
-const STAGE_IMAGES = [
-  PROFILE_IMAGES.facade,
-  PROFILE_IMAGES.plant,
-  PROFILE_IMAGES.team,
-  PROFILE_IMAGES.kafd,
-  PROFILE_IMAGES.engineerSkyline,
-  PROFILE_IMAGES.blueprint,
-  PROFILE_IMAGES.cad,
-  PROFILE_IMAGES.riyadhDay,
-] as const;
-
-export function mapWorkStageImages(index: number) {
-  return STAGE_IMAGES[index % STAGE_IMAGES.length];
-}
 
 export function WorkStagesRow({ cards, locale }: WorkStagesRowProps) {
   const t = useTranslations("AboutPage");

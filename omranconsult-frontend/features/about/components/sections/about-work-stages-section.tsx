@@ -1,9 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
-import {
-  WorkStagesRow,
-  mapWorkStageImages,
-} from "@/features/about/components/work-stages-row";
+import { WorkStagesRow } from "@/features/about/components/work-stages-row";
+import { mapWorkStageImages } from "@/features/about/lib/work-stage-images";
 import { asObject, asString, asStringList } from "@/features/home/lib/block-helpers";
 
 type AboutWorkStagesSectionProps = {

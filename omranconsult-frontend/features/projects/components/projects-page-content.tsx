@@ -5,6 +5,8 @@ import { EmptyState } from "@/core/ui/empty-state";
 import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
 import { JsonLd } from "@/core/seo/json-ld";
 import { PageHeader } from "@/core/ui/page-header";
+import { getClientLogo } from "@/features/media/brand-logos";
+import { ProjectOwnerLogo } from "@/features/media/project-owner-logo";
 import { SECTION_BACKGROUND_IMAGES, getProfileImageAlt } from "@/features/media/profile-images";
 import {
   featuredProjectImage,
@@ -148,8 +150,13 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
             {entityGroups.map((group, index) => {
               const layout = PROJECT_LAYOUT_CLASS[index % PROJECT_LAYOUT_CLASS.length];
               const image = featuredProjectImage(index);
+              const ownerHasLogo = group.clientSlug ? Boolean(getClientLogo(group.clientSlug, 0)) : false;
               return (
-                <article className={`home-proj ${layout} grid grid-cols-12 items-center gap-6`} key={group.clientSlug ?? index}>
+                <article
+                  className={`home-proj ${layout} grid grid-cols-12 items-center gap-6`}
+                  data-owner-has-logo={ownerHasLogo ? "true" : undefined}
+                  key={group.clientSlug ?? index}
+                >
                   <figure className="relative m-0 overflow-hidden rounded-(--oc-radius-brand)">
                     <Image
                       alt={getProfileImageAlt(image, locale)}
@@ -161,6 +168,13 @@ export async function ProjectsPageContent({ locale, data, filters }: ProjectsPag
                     />
                   </figure>
                   <div className="home-proj-text">
+                    {group.clientSlug ? (
+                      <ProjectOwnerLogo
+                        locale={locale}
+                        name={group.clientName}
+                        slug={group.clientSlug}
+                      />
+                    ) : null}
                     {group.clientName ? (
                       <p className="mb-2 text-sm font-bold text-brand-green-strong">{group.clientName}</p>
                     ) : null}
