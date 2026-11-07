@@ -32,6 +32,23 @@ final class PublicLocale
     }
 
     /**
+     * Resolve a per-locale list ({"ar": [...], "en": [...]}) to the requested locale's strings.
+     *
+     * @param  array<string, mixed>|null  $map
+     * @return array<int, string>
+     */
+    public static function pickList(?array $map, ?string $locale = null): array
+    {
+        $items = $map[$locale ?? app()->getLocale()] ?? null;
+
+        if (! is_array($items)) {
+            return [];
+        }
+
+        return array_values(array_filter($items, fn (mixed $item): bool => is_string($item) && $item !== ''));
+    }
+
+    /**
      * Resolve every translation map inside a nested payload (content blocks, settings).
      */
     public static function resolveTree(mixed $value, ?string $locale = null): mixed

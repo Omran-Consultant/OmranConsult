@@ -28,6 +28,8 @@ class ProjectResource extends JsonResource
                 'slug' => $this->sector->slug,
                 'name' => PublicLocale::pick($this->sector->name),
             ] : null,
+            'year' => $this->year,
+            'image' => $this->imageKey(),
             'regions' => RegionResource::collection($this->whenLoaded('regions')),
         ];
     }

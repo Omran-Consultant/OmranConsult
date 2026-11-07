@@ -5,9 +5,11 @@ namespace App\Modules\Projects\Presentation\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Modules\Projects\Presentation\Http\Requests\ProjectIndexRequest;
+use App\Modules\Projects\Presentation\Http\Resources\ProjectDetailResource;
 use App\Modules\Projects\Presentation\Http\Resources\ProjectResource;
 use App\Support\Content\PublicLocale;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -17,6 +19,8 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class ProjectsController extends Controller
 {
     private const LIKE = " LIKE ? ESCAPE '!'";
+
+    private const RELATED_LIMIT = 3;
 
     public function index(ProjectIndexRequest $request): AnonymousResourceCollection
     {
@@ -42,13 +46,41 @@ class ProjectsController extends Controller
         return ProjectResource::collection($projects)->additional(['locale' => app()->getLocale()]);
     }
 
-    public function show(string $slug): ProjectResource
+    public function show(string $slug): ProjectDetailResource
     {
         $project = $this->publicQuery()->where('slug', $slug)->first();
 
         abort_if($project === null, 404, 'Not found.');
 
-        return (new ProjectResource($project))->additional(['locale' => app()->getLocale()]);
+        return (new ProjectDetailResource($project, $this->related($project)))->additional(['locale' => app()->getLocale()]);
+    }
+
+    /**
+     * Up to three published projects: the same sector first, then the same owner (SDD §7.1).
+     *
+     * @return Collection<int, Project>
+     */
+    private function related(Project $project): Collection
+    {
+        $related = new Collection;
+
+        foreach (['sector_id', 'client_id'] as $column) {
+            if ($related->count() >= self::RELATED_LIMIT || $project->{$column} === null) {
+                continue;
+            }
+
+            $related = $related->merge(
+                $this->publicQuery()
+                    ->where($column, $project->{$column})
+                    ->whereKeyNot([$project->getKey(), ...$related->modelKeys()])
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->limit(self::RELATED_LIMIT - $related->count())
+                    ->get(),
+            );
+        }
+
+        return $related;
     }
 
     /**

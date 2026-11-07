@@ -2,13 +2,17 @@
 
 namespace App\Modules\Projects\Infrastructure\Models;
 
+use App\Modules\Projects\Domain\DeliveryStatus;
 use App\Support\Content\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['slug', 'client_id', 'sector_id', 'title', 'sort_order', 'status', 'published_at'])]
+#[Fillable([
+    'slug', 'client_id', 'sector_id', 'title', 'year', 'location', 'service_type', 'delivery_status',
+    'overview', 'scope', 'gallery', 'sort_order', 'status', 'published_at',
+])]
 class Project extends Model
 {
     use Publishable;
@@ -20,7 +24,24 @@ class Project extends Model
     {
         return [
             'title' => 'array',
+            'year' => 'integer',
+            'location' => 'array',
+            'service_type' => 'array',
+            'delivery_status' => DeliveryStatus::class,
+            'overview' => 'array',
+            'scope' => 'array',
+            'gallery' => 'array',
         ];
+    }
+
+    /**
+     * Cover image key: the first gallery image, else the sector's default (SDD P18).
+     */
+    public function imageKey(): ?string
+    {
+        $first = $this->gallery[0] ?? null;
+
+        return is_string($first) && $first !== '' ? $first : $this->sector?->default_image;
     }
 
     /**
