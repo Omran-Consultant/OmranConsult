@@ -19,6 +19,7 @@ class PartnerResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'name' => PublicLocale::pick($this->name),
             'field' => PublicLocale::pick($this->field),
         ];
