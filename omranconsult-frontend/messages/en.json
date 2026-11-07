@@ -3,10 +3,18 @@
     "title": "OMRAN Advanced Company",
     "description": "A first-grade classified consultancy supporting integrated asset and facility management, development, and automation in the Kingdom for more than 21 years."
   },
-  "HomePlaceholder": {
-    "eyebrow": "Phase 4A",
-    "title": "Public website foundation ready",
-    "description": "The full home sections land in the next checkpoint."
+  "HomePage": {
+    "aboutCta": "Learn more about us",
+    "servicesCta": "Explore all services",
+    "projectsCta": "View all projects",
+    "expertsCta": "Meet our experts",
+    "contactCta": "Contact us",
+    "contactHeading": "Get in touch",
+    "licensesCount": "Licenses",
+    "certificatesCount": "ISO certificates",
+    "partnersCount": "Strategic partners",
+    "clientsCount": "{count} listed clients",
+    "mapAlt": "Map of Saudi Arabia regions"
   },
   "LocaleSwitcher": {
     "label": "Language",

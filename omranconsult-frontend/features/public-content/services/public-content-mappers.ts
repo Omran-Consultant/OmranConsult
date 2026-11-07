@@ -131,7 +131,7 @@ export function mapRegionsToUiModel(payload: RegionsResponse) {
 export function mapExpertsToUiModel(payload: ExpertsResponse) {
   return payload.data.map((expert) => ({
     id: expert.id,
-    slug: expert.slug,
+    slug: mapOptionalText(expert.slug) ?? `expert-${expert.id}`,
     name: mapOptionalText(expert.name),
     title: mapOptionalText(expert.title),
     bio: mapOptionalText(expert.bio),

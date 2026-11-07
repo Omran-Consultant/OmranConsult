@@ -146,7 +146,7 @@ export const expertsResponseSchema = z.object({
   data: z.array(
     z.object({
       id: z.number().int().positive(),
-      slug: z.string(),
+      slug: nullableStringSchema,
       name: nullableStringSchema,
       title: nullableStringSchema,
       bio: nullableStringSchema,
