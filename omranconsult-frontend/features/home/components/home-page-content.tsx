@@ -13,6 +13,7 @@ import {
   getProfileImageAlt,
   HERO_SLIDE_IMAGES,
 } from "@/features/media/profile-images";
+import { formatPhoneForDisplay, formatPhoneTelLink } from "@/core/format/phone";
 import { formatStatisticValue } from "@/features/home/services/statistic-formatter";
 import { ProjectOwnerLogo } from "@/features/media/project-owner-logo";
 import type { AppLocale } from "@/i18n/routing";
@@ -124,7 +125,7 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
         </LinkButton>
       </Section>
 
-      <Section heading={asString(asObject(strategyBlock?.vision)?.title)} tone="dark">
+      <Section heading={slidesByKey.get("vision")?.headline} tone="dark">
         <div className="grid gap-6 md:grid-cols-3">
           {(["vision", "mission", "objectives"] as const).map((key) => {
             const block = asObject(strategyBlock?.[key]);
@@ -156,7 +157,7 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
         </LinkButton>
       </Section>
 
-      <Section heading={asString(sectionTitles?.featured_projects)} tone="light">
+      <Section heading={slidesByKey.get("projects")?.headline ?? asString(sectionTitles?.featured_projects)} tone="light">
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {data.projects.projects.map((project) => (
             <Card key={project.slug}>
@@ -257,8 +258,8 @@ export async function HomePageContent({ locale, data }: HomePageContentProps) {
           ) : null}
           {data.settings.contact.phones.map((phone) => (
             <p dir="ltr" key={phone}>
-              <a className="hover:text-brand-green-light" href={`tel:${phone}`}>
-                {phone}
+              <a className="hover:text-brand-green-light" href={`tel:${formatPhoneTelLink(phone)}`}>
+                {formatPhoneForDisplay(phone)}
               </a>
             </p>
           ))}

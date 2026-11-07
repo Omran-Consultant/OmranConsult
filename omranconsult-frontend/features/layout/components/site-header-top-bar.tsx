@@ -1,24 +1,9 @@
 import { getTranslations } from "next-intl/server";
 
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  MailIcon,
-  PhoneIcon,
-  TwitterIcon,
-} from "@/features/layout/components/site-icons";
+import { MailIcon, PhoneIcon } from "@/features/layout/components/site-icons";
 
 export async function SiteHeaderTopBar() {
   const t = await getTranslations("Layout.topBar");
-  const socialT = await getTranslations("Layout.social");
-
-  const socialLinks = [
-    { label: socialT("facebook"), Icon: FacebookIcon },
-    { label: socialT("twitter"), Icon: TwitterIcon },
-    { label: socialT("linkedin"), Icon: LinkedInIcon },
-    { label: socialT("instagram"), Icon: InstagramIcon },
-  ] as const;
 
   const phones = [
     { tel: t("phoneTel"), display: t("phoneDisplay") },
@@ -47,19 +32,7 @@ export async function SiteHeaderTopBar() {
             </a>
           ))}
         </div>
-        <div className="flex items-center gap-3">
-          {socialLinks.map(({ label, Icon }) => (
-            <a
-              key={label}
-              aria-label={label}
-              className="rounded-full bg-white/10 p-1.5 transition-all hover:bg-white/20 sm:p-2"
-              href="#"
-              rel="noopener noreferrer"
-            >
-              <Icon className="size-3 sm:size-4" />
-            </a>
-          ))}
-        </div>
+        {/* U26: social profile URLs are not approved yet; keep icons out of the top bar. */}
       </div>
     </div>
   );

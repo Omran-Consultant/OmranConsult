@@ -73,8 +73,8 @@ const PROFILE_IMAGES: Record<ImageKey, ProfileImage> = {
   },
   earth: {
     src: "/images/profile/earth.jpg",
-    width: 2560,
-    height: 1280,
+    width: 1920,
+    height: 960,
     alt: {
       ar: "صورة بانورامية للأرض من الفضاء",
       en: "Panoramic image of Earth from space",

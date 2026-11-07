@@ -12,7 +12,7 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "API_BASE_URL=http://localhost:8000 npm run build && API_BASE_URL=http://localhost:8000 npm run start -- --hostname 127.0.0.1 --port 3000",
+      "API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 npm run build && API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 npm run start -- --hostname 127.0.0.1 --port 3000",
     url: "http://127.0.0.1:3000/en",
     reuseExistingServer: false,
     timeout: 240_000,

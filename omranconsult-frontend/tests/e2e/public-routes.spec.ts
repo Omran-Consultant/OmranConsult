@@ -48,6 +48,12 @@ for (const { locale, dir } of LOCALES) {
   }
 }
 
+test("arabic statistics keep suffix after the number", async ({ page }) => {
+  await page.goto("/ar");
+  const stats = page.locator('[dir="ltr"]').filter({ hasText: "+" });
+  await expect(stats.first()).toContainText("204+");
+});
+
 test("projects filters update URL", async ({ page }) => {
   await page.goto("/en/projects");
   await page.selectOption('select[name="region"]', "riyadh");

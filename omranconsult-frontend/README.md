@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Local API and cache
+
+- Run a single Laravel API on **port 8000** (`php artisan serve --port=8000`).
+- After `php artisan migrate:fresh --seed`, clear stale Next.js payloads: `rm -rf .next`.
+- Set `API_BASE_URL=http://localhost:8000` for builds, e2e, and production `next start`.
+
 ## Getting Started
 
 First, run the development server:

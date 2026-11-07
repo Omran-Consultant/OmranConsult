@@ -38,6 +38,7 @@ for (const shot of shots) {
   const context = await browser.newContext({ viewport: shot.viewport });
   const page = await context.newPage();
   if (shot.dark) {
+    await page.emulateMedia({ colorScheme: "dark" });
     await page.addInitScript(() => {
       document.documentElement.classList.add("dark");
       try {
@@ -47,7 +48,30 @@ for (const shot of shots) {
       }
     });
   }
-  await page.goto(`${BASE}/${shot.locale}${shot.route}`, { waitUntil: "networkidle" });
+  await page.goto(`${BASE}/${shot.locale}${shot.route}`, { waitUntil: "domcontentloaded" });
+  await page.evaluate(async () => {
+    const step = Math.max(window.innerHeight, 400);
+    for (let y = 0; y < document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+    }
+    window.scrollTo(0, document.body.scrollHeight);
+    await new Promise((resolve) => {
+      const deadline = Date.now() + 8000;
+      const check = () => {
+        const pending = Array.from(document.images).some((img) => !img.complete);
+        if (!pending || Date.now() > deadline) {
+          resolve();
+          return;
+        }
+        requestAnimationFrame(check);
+      };
+      check();
+    });
+    window.scrollTo(0, 0);
+  });
+  if (shot.dark) {
+    await page.waitForFunction(() => document.documentElement.classList.contains("dark"));
+  }
   await page.screenshot({ path: path.join(OUT, fileName(shot)), fullPage: true });
   await context.close();
 }

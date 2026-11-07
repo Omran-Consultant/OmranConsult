@@ -9,6 +9,7 @@ import { Section } from "@/core/ui/section";
 import { ExpertsExplorer } from "@/features/about/components/experts-explorer";
 import { PartnerLogo } from "@/features/media/partner-logo";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
+import { resolveOrgGroupHeading } from "@/features/public-content/services/org-group-headings";
 import type { AppLocale } from "@/i18n/routing";
 
 type AboutPageData = Awaited<
@@ -40,10 +41,6 @@ function asStringList(value: unknown): string[] {
     return [];
   }
   return value.filter((item): item is string => typeof item === "string");
-}
-
-function firstString(value: unknown): string | undefined {
-  return asStringList(value)[0];
 }
 
 function buildOrgTree(nodes: AboutPageData["orgChart"]): OrgNode[] {
@@ -101,6 +98,8 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
   const credentials = asObject(blocks.credentials);
   const sectionTitles = asObject(blocks.section_titles);
   const orgGroupTitles = asObject(sectionTitles?.org_groups);
+  const slidesByKey = new Map(data.home.heroSlides.map((slide) => [slide.key, slide]));
+  const aboutSlideSubline = slidesByKey.get("integrated_solutions")?.subline;
   const orgRoots = buildOrgTree(data.orgChart);
   const groupedOrg = new Map<string, OrgNode[]>();
   const pageTitle = asString(aboutBlock?.heading) ?? t("titleFallback");
@@ -120,13 +119,13 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
     <main className="flex flex-1 flex-col">
       <JsonLd data={breadcrumbs} />
       <PageHeader
-        description={firstString(aboutBlock?.body)}
+        description={aboutSlideSubline ?? undefined}
         image={SECTION_BACKGROUND_IMAGES.about}
         locale={locale}
         title={pageTitle}
       />
 
-      <Section heading={asString(aboutBlock?.heading)}>
+      <Section>
         <div className="space-y-4 text-muted">
           {asStringList(aboutBlock?.body).map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
@@ -145,7 +144,7 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
         </div>
       </Section>
 
-      <Section heading={asString(asObject(strategy?.vision)?.title)} tone="dark">
+      <Section heading={slidesByKey.get("vision")?.headline} tone="dark">
         <div className="grid gap-6 md:grid-cols-3">
           {(["vision", "mission", "objectives"] as const).map((key) => {
             const block = asObject(strategy?.[key]);
@@ -203,18 +202,22 @@ export async function AboutPageContent({ locale, data }: AboutPageContentProps) 
 
       <Section id="org-chart" heading={asString(sectionTitles?.org_chart)}>
         <div className="space-y-6">
-          {Array.from(groupedOrg.entries()).map(([group, nodes]) => (
+          {Array.from(groupedOrg.entries()).map(([group, nodes]) => {
+            const groupHeading = resolveOrgGroupHeading(orgGroupTitles, group);
+
+            return (
             <div key={group}>
-              <h3 className="mb-3 font-display text-xl font-semibold text-heading">
-                {asString(orgGroupTitles?.[group]) ?? group}
-              </h3>
+              {groupHeading ? (
+                <h3 className="mb-3 font-display text-xl font-semibold text-heading">{groupHeading}</h3>
+              ) : null}
               <ul className="space-y-3">
                 {nodes.map((node) => (
                   <OrgNodeItem key={node.id} node={node} />
                 ))}
               </ul>
             </div>
-          ))}
+            );
+          })}
         </div>
       </Section>
 
