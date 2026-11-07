@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Admin\PingController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Middleware\SetPublicLocale;
 use App\Modules\Content\Presentation\Http\Controllers\HomeController;
+use App\Modules\Content\Presentation\Http\Controllers\PagesController;
 use App\Modules\Content\Presentation\Http\Controllers\SettingsController;
 use App\Modules\Documents\Presentation\Http\Controllers\DocumentsController;
 use App\Modules\Inquiries\Presentation\Http\Controllers\InquiriesController;
@@ -28,6 +29,7 @@ Route::get('/health', HealthController::class);
 Route::middleware(SetPublicLocale::class)->group(function (): void {
     Route::get('/settings', SettingsController::class);
     Route::get('/home', HomeController::class);
+    Route::get('/pages/{page}', PagesController::class);
     Route::get('/services', ServicesController::class);
     Route::get('/projects', [ProjectsController::class, 'index']);
     Route::get('/projects/{slug}', [ProjectsController::class, 'show']);

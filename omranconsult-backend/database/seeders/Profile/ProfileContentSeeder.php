@@ -3,6 +3,7 @@
 namespace Database\Seeders\Profile;
 
 use App\Modules\Content\Infrastructure\Models\SiteSetting;
+use Database\Seeders\Design\DesignCopySeeder;
 use Database\Seeders\Design\NewsDemoSeeder;
 use Illuminate\Database\Seeder;
 
@@ -32,6 +33,7 @@ class ProfileContentSeeder extends Seeder
             PartnersSeeder::class,
             ContentDisputesSeeder::class,
             NewsDemoSeeder::class,
+            DesignCopySeeder::class,
         ]);
     }
 }

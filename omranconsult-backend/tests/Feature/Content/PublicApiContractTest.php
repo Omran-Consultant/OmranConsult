@@ -94,6 +94,7 @@ class PublicApiContractTest extends TestCase
             'news categories' => '/api/news-categories',
             'news' => '/api/news?per_page=50',
             'news post' => '/api/news/omran-cop16-technical-audit',
+            'page' => '/api/pages/about',
         ]);
     }
 

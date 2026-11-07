@@ -44,8 +44,10 @@ class ProfileContentSeederTest extends TestCase
         return [
             'site settings' => ['site_settings', 2],
             'hero and section dividers (§3.1)' => ['hero_slides', 14],
-            'statistics (§3.4)' => ['statistics', 5],
-            'home content blocks' => ['content_blocks', 12],
+            // §3.4 (5) + years_experience and group_experience from the profile text (P22).
+            'statistics (§3.4 + 2 text facts)' => ['statistics', 7],
+            // 12 profile blocks + 7 design copy pages + home service highlights (P22).
+            'content blocks (12 profile + 8 design)' => ['content_blocks', 20],
             'service categories (3 axes + 2)' => ['service_categories', 5],
             'services (24 + 10 + 12)' => ['services', 46],
             'clients (30 + Bin Jarallah owner)' => ['clients', 31],

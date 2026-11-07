@@ -95,7 +95,7 @@ class PublicContentApiTest extends TestCase
             ->assertJsonPath('data.hero_slides.1.key', 'hero')
             ->assertJsonPath('data.hero_slides.1.headline', 'Building asset efficiency')
             ->assertJsonPath('data.hero_slides.0.subline', null)
-            ->assertJsonCount(5, 'data.statistics')
+            ->assertJsonCount(7, 'data.statistics')
             ->assertJsonPath('data.statistics.0.value', 204)
             ->assertJsonPath('data.statistics.0.suffix', '+')
             ->assertJsonPath('data.statistics.1.value', 15)
@@ -110,7 +110,8 @@ class PublicContentApiTest extends TestCase
 
         $this->assertSame(
             ['about', 'education_goals', 'core_offerings', 'flexible_model', 'strategy', 'credentials',
-                'work_stages', 'esg', 'tools', 'engineering_design', 'multi_phase_approach', 'section_titles'],
+                'work_stages', 'esg', 'tools', 'engineering_design', 'multi_phase_approach', 'section_titles',
+                'design_copy', 'service_highlights'],
             array_keys($response->json('data.blocks')),
         );
     }
