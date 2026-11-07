@@ -1,10 +1,14 @@
 import { getTranslations } from "next-intl/server";
 
-import { Card } from "@/core/ui/card";
 import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
 import { JsonLd } from "@/core/seo/json-ld";
 import { PageHeader } from "@/core/ui/page-header";
-import { Section } from "@/core/ui/section";
+import { asObject, asString, asStringList } from "@/features/home/lib/block-helpers";
+import { ServicesApproachSection } from "@/features/services/components/sections/services-approach-section";
+import { ServicesAssetManagementSection } from "@/features/services/components/sections/services-asset-management-section";
+import { ServicesAxesSection } from "@/features/services/components/sections/services-axes-section";
+import { ServicesEngineeringSection } from "@/features/services/components/sections/services-engineering-section";
+import { ServicesOfferingsSection } from "@/features/services/components/sections/services-offerings-section";
 import { SECTION_BACKGROUND_IMAGES } from "@/features/media/profile-images";
 import type { AppLocale } from "@/i18n/routing";
 
@@ -17,22 +21,27 @@ type ServicesPageContentProps = {
   readonly data: ServicesPageData;
 };
 
-function asObject(value: unknown): Record<string, unknown> | undefined {
-  if (!value || typeof value !== "object") {
-    return undefined;
-  }
-  return value as Record<string, unknown>;
-}
-
-function asString(value: unknown): string | undefined {
-  return typeof value === "string" && value.trim().length > 0 ? value : undefined;
-}
-
-function asStringList(value: unknown): string[] {
-  if (!Array.isArray(value)) {
+function mapBlockItems(block: Record<string, unknown> | undefined) {
+  const raw = block?.items;
+  if (!Array.isArray(raw)) {
     return [];
   }
-  return value.filter((item): item is string => typeof item === "string");
+  return raw
+    .map((item) => {
+      if (!item || typeof item !== "object") {
+        return undefined;
+      }
+      return { title: asString((item as Record<string, unknown>).title) };
+    })
+    .filter((item): item is { title: string | undefined } => Boolean(item));
+}
+
+function joinSlideHeadline(headline?: string, subline?: string): string | undefined {
+  const parts = [headline, subline].filter((part): part is string => Boolean(part?.trim()));
+  if (parts.length === 0) {
+    return undefined;
+  }
+  return parts.join(" ");
 }
 
 export async function ServicesPageContent({ locale, data }: ServicesPageContentProps) {
@@ -44,104 +53,73 @@ export async function ServicesPageContent({ locale, data }: ServicesPageContentP
   const engineering = asObject(blocks.engineering_design);
   const multiPhase = asObject(blocks.multi_phase_approach);
 
-  const axisCategories = data.services.filter((category) => category.kind === "axis");
   const assetCategory = data.services.find((category) => category.kind === "asset_management");
   const engineeringCategory = data.services.find((category) => category.kind === "engineering_design");
-  const title = slidesByKey.get("services")?.headline ?? t("titleFallback");
+
+  const servicesSlide = slidesByKey.get("services");
+  const title = servicesSlide?.headline ?? t("titleFallback");
+  const integratedSlide = slidesByKey.get("integrated_solutions");
+  const assetSlide = slidesByKey.get("asset_management");
+  const engineeringSlide = slidesByKey.get("engineering");
+  const approachSlide = slidesByKey.get("approach");
+
   const breadcrumbs = buildBreadcrumbJsonLd(locale, [
     { name: locale === "ar" ? "الرئيسية" : "Home", path: "" },
     { name: title, path: "/services" },
   ]);
 
+  const coreItems = mapBlockItems(coreOfferings);
+  const flexibleItems = mapBlockItems(flexibleModel);
+  const steps = asStringList(multiPhase?.steps);
+  const outputs = asStringList(multiPhase?.outputs);
+
   return (
     <main className="flex flex-1 flex-col">
       <JsonLd data={breadcrumbs} />
-      <PageHeader
-        description={slidesByKey.get("services")?.subline}
-        image={SECTION_BACKGROUND_IMAGES.services}
+      <div data-section="header">
+        <PageHeader
+          description={servicesSlide?.subline}
+          image={SECTION_BACKGROUND_IMAGES.services}
+          locale={locale}
+          title={title}
+        />
+      </div>
+
+      <ServicesAxesSection
+        categories={data.services}
+        heading={joinSlideHeadline(integratedSlide?.headline, integratedSlide?.subline)}
         locale={locale}
-        title={title}
       />
 
-      <Section heading={t("axesHeading")}>
-        <div className="grid gap-6 md:grid-cols-3">
-          {axisCategories.map((category) => (
-            <Card key={category.slug}>
-              <h2 className="font-display text-xl font-semibold text-heading">{category.title}</h2>
-              <ul className="mt-3 space-y-2 text-muted">
-                {category.services.map((service) => (
-                  <li key={service.slug}>- {service.title}</li>
-                ))}
-              </ul>
-            </Card>
-          ))}
-        </div>
-      </Section>
+      {assetCategory ? (
+        <ServicesAssetManagementSection
+          description={assetSlide?.subline}
+          heading={assetSlide?.headline ?? assetCategory.title}
+          services={assetCategory.services}
+        />
+      ) : null}
 
-      <Section heading={asString(coreOfferings?.section_title)}>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <h3 className="font-display text-xl font-semibold text-heading">{asString(coreOfferings?.section_title)}</h3>
-            <ul className="mt-3 space-y-2 text-muted">
-              {(coreOfferings?.items as Array<Record<string, unknown>> | undefined)?.map((item, index) => (
-                <li key={index}>- {asString(item.title)}</li>
-              ))}
-            </ul>
-          </Card>
-          <Card>
-            <h3 className="font-display text-xl font-semibold text-heading">{asString(flexibleModel?.section_title)}</h3>
-            <ul className="mt-3 space-y-2 text-muted">
-              {(flexibleModel?.items as Array<Record<string, unknown>> | undefined)?.map((item, index) => (
-                <li key={index}>- {asString(item.title)}</li>
-              ))}
-            </ul>
-          </Card>
-        </div>
-      </Section>
+      <ServicesOfferingsSection
+        coreItems={coreItems}
+        coreTitle={asString(coreOfferings?.section_title)}
+        flexibleItems={flexibleItems}
+        flexibleTitle={asString(flexibleModel?.section_title)}
+        locale={locale}
+      />
 
-      <Section heading={slidesByKey.get("asset_management")?.headline}>
-        <Card>
-          <h3 className="font-display text-xl font-semibold text-heading">{assetCategory?.title}</h3>
-          <ul className="mt-3 grid gap-2 text-muted md:grid-cols-2">
-            {assetCategory?.services.map((service) => (
-              <li key={service.slug}>- {service.title}</li>
-            ))}
-          </ul>
-        </Card>
-      </Section>
+      {engineeringCategory ? (
+        <ServicesEngineeringSection
+          body={asString(engineering?.body)}
+          disciplines={engineeringCategory.services}
+          heading={asString(engineering?.section_title) ?? engineeringSlide?.headline}
+        />
+      ) : null}
 
-      <Section heading={slidesByKey.get("engineering")?.headline}>
-        <Card>
-          <h3 className="font-display text-xl font-semibold text-heading">{engineeringCategory?.title}</h3>
-          <p className="mt-2 text-muted">{asString(engineering?.body)}</p>
-          <ul className="mt-3 grid gap-2 text-muted md:grid-cols-2">
-            {engineeringCategory?.services.map((service) => (
-              <li key={service.slug}>- {service.title}</li>
-            ))}
-          </ul>
-        </Card>
-      </Section>
-
-      <Section heading={asString(multiPhase?.section_title)} tone="dark">
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="bg-white/5 text-white">
-            <h3 className="font-display text-xl font-semibold">{t("stepsHeading")}</h3>
-            <ol className="mt-3 space-y-2 text-muted-on-dark">
-              {asStringList(multiPhase?.steps).map((step) => (
-                <li key={step}>{step}</li>
-              ))}
-            </ol>
-          </Card>
-          <Card className="bg-white/5 text-white">
-            <h3 className="font-display text-xl font-semibold">{t("outputsHeading")}</h3>
-            <ul className="mt-3 space-y-2 text-muted-on-dark">
-              {asStringList(multiPhase?.outputs).map((output) => (
-                <li key={output}>- {output}</li>
-              ))}
-            </ul>
-          </Card>
-        </div>
-      </Section>
+      <ServicesApproachSection
+        heading={asString(multiPhase?.section_title) ?? approachSlide?.headline}
+        outputs={outputs}
+        steps={steps}
+      />
     </main>
   );
 }
