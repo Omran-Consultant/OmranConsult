@@ -24,19 +24,29 @@ export function ServiceCard({ number, title, description, icon, href, linkLabel,
       <div className="flex flex-1 flex-col px-7.5 pt-7.5 pb-6.5">
         <Numeral featured={featured} value={number} />
         <IconTile featured={featured} name={icon} />
-        <h3 className={classNames("mt-6.5 line-clamp-2 font-display text-h3 font-bold", featured ? "text-white" : "text-primary")}>{title}</h3>
-        {description ? (
-          <p className={classNames("mt-2.5 line-clamp-3 text-[0.969rem] leading-[1.75]", featured ? "text-[var(--navy-200)]" : "text-secondary")}>
-            {description}
-          </p>
-        ) : null}
+        <h3
+          className={classNames(
+            "mt-6.5 line-clamp-2 min-h-[64px] font-display text-[length:var(--text-h3)] leading-[32px] font-bold",
+            featured ? "text-white" : "text-primary",
+          )}
+        >
+          {title}
+        </h3>
+        <p
+          className={classNames(
+            "mt-2.5 line-clamp-3 min-h-[72px] text-[length:var(--text-body-s)] leading-[24px]",
+            featured ? "text-[var(--navy-200)]" : "text-secondary",
+          )}
+        >
+          {description ?? ""}
+        </p>
         {linkLabel ? (
           <div className="mt-auto pt-5.5" data-card-footer="">
             <div
               className={
                 featured
-                  ? "flex items-center justify-between border-t border-white/10 pt-4.5 text-[0.9375rem] font-medium text-green-300"
-                  : "flex items-center justify-between border-t border-line pt-4.5 text-[0.9375rem] font-medium text-accent"
+                  ? "flex items-center justify-between border-t border-white/10 pt-4.5 text-[0.9375rem] leading-[24px] font-medium text-green-300"
+                  : "flex items-center justify-between border-t border-line pt-4.5 text-[0.9375rem] leading-[24px] font-medium text-accent"
               }
             >
               <span>{linkLabel}</span>
@@ -65,10 +75,17 @@ export function AxisCard({ number, title, icon, items, countLabel, featured = fa
       <div className="flex flex-1 flex-col px-7.5 pt-7.5 pb-6.5">
         <Numeral featured={featured} value={number} />
         <IconTile featured={featured} name={icon} />
-        <h3 className={classNames("mt-6.5 line-clamp-2 font-display text-h3 font-bold", featured ? "text-white" : "text-primary")}>{title}</h3>
+        <h3
+          className={classNames(
+            "mt-6.5 line-clamp-2 min-h-[64px] font-display text-[length:var(--text-h3)] leading-[32px] font-bold",
+            featured ? "text-white" : "text-primary",
+          )}
+        >
+          {title}
+        </h3>
         <ul className="mt-4 grid gap-x-4 gap-y-2.5 lg:grid-cols-2">
           {items.map((item) => (
-            <li className={classNames("flex items-start gap-2 text-body-s", featured ? "text-[var(--navy-200)]" : "text-secondary")} key={item}>
+            <li className={classNames("flex items-start gap-2 text-[length:var(--text-body-s)] leading-[24px]", featured ? "text-[var(--navy-200)]" : "text-secondary")} key={item}>
               <Icon className={classNames("mt-0.5 size-4 shrink-0", featured ? "text-green-300" : "text-accent")} name="check" />
               <span>{item}</span>
             </li>
@@ -78,8 +95,8 @@ export function AxisCard({ number, title, icon, items, countLabel, featured = fa
           <p
             className={
               featured
-                ? "border-t border-white/10 pt-4.5 text-[0.9375rem] font-medium text-green-300"
-                : "border-t border-line pt-4.5 text-[0.9375rem] font-medium text-accent"
+                ? "border-t border-white/10 pt-4.5 text-[0.9375rem] leading-[24px] font-medium text-green-300"
+                : "border-t border-line pt-4.5 text-[0.9375rem] leading-[24px] font-medium text-accent"
             }
           >
             {countLabel}

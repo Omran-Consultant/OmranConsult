@@ -22,15 +22,26 @@ const WIDTHS = [768, 1024, 1440] as const;
 
 type Measured = { readonly top: number; readonly height: number; readonly footerTop: number | null };
 
+/** Layout Y: ignore reveal translateY so a 600ms stagger cannot look like a 2px footer gap. */
 async function measure(page: Page, grid: Grid): Promise<Measured[]> {
   return page.locator(grid.list).first().evaluate((list, footerSelector) => {
+    const documentY = (el: Element): number => {
+      let y = el.getBoundingClientRect().top + window.scrollY;
+      for (let node: Element | null = el; node; node = node.parentElement) {
+        const transform = getComputedStyle(node).transform;
+        if (transform && transform !== "none") {
+          y -= new DOMMatrixReadOnly(transform).m42;
+        }
+      }
+      return y;
+    };
+
     return Array.from(list.children).map((item) => {
-      const box = item.getBoundingClientRect();
       const footer = footerSelector ? item.querySelector(footerSelector) : null;
       return {
-        top: Math.round(box.top + window.scrollY),
-        height: Math.round(box.height),
-        footerTop: footer ? Math.round(footer.getBoundingClientRect().top + window.scrollY) : null,
+        top: Math.round(documentY(item)),
+        height: Math.round(item.getBoundingClientRect().height),
+        footerTop: footer ? Math.round(documentY(footer)) : null,
       };
     });
   }, grid.footer ?? null);
@@ -43,7 +54,6 @@ for (const locale of ["en", "ar"] as const) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`/${locale}${grid.path}`);
         await page.locator(grid.list).first().scrollIntoViewIfNeeded();
-        await page.waitForTimeout(400);
 
         const cards = await measure(page, grid);
         expect(cards.length, `${grid.name} @${width}`).toBeGreaterThan(1);

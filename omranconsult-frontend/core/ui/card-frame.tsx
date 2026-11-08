@@ -124,7 +124,7 @@ export function ArrowDisc({ featured = false }: ArrowDiscProps) {
         "md:group-hover:border-green-700 md:group-hover:bg-green-700 md:group-hover:text-white",
         "md:group-focus-visible:border-green-700 md:group-focus-visible:bg-green-700 md:group-focus-visible:text-white",
         "max-md:group-active:border-green-700 max-md:group-active:bg-green-700 max-md:group-active:text-white",
-        featured ? "border-transparent bg-green-700 text-white" : "border border-accent-strong/25 text-accent",
+        featured ? "border border-transparent bg-green-700 text-white" : "border border-accent-strong/25 text-accent",
       )}
     >
       <Icon className="size-4.5" name="arrow" />
