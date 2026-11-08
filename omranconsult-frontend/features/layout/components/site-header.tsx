@@ -20,8 +20,9 @@ type SiteHeaderProps = {
 };
 
 /**
- * Figma "Site Header": transparent over a photo hero; after 80 px of scroll it gets bg/base at
- * 85 %, blur 24 and a bottom border (200 ms). Solid bg/base on pages without a photo hero.
+ * Figma "Site Header": glass over a photo hero so nav labels stay readable above the earth
+ * ring; after 80 px of scroll the glass follows the page canvas. Solid bg/base on pages
+ * without a photo hero.
  */
 export function SiteHeader({ email }: SiteHeaderProps) {
   const t = useTranslations("Layout");
@@ -52,7 +53,7 @@ export function SiteHeader({ email }: SiteHeaderProps) {
       <header
         className={classNames(
           "fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-200 ease-in-out",
-          transparent && "scheme-dark border-white/10 bg-transparent",
+          transparent && "scheme-dark border-white/10 bg-header-glass backdrop-blur-[24px]",
           !transparent && overHero && "border-line bg-header-glass backdrop-blur-[24px]",
           !transparent && !overHero && (scrolled ? "border-line bg-canvas" : "border-transparent bg-canvas"),
         )}
