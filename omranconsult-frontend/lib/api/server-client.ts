@@ -25,6 +25,11 @@ export async function serverApiRequest<T>(
 ): Promise<T> {
   const method = options.method ?? "GET";
 
+  // Production keeps the caller's cache mode. In development, force-cache would reuse
+  // `.next/dev/cache/fetch-cache` for up to a year, so a documents body saved before
+  // `slug` existed kept failing Zod on later requests. Dev always reads the live API.
+  const cache = process.env.NODE_ENV === "production" ? (options.cache ?? "no-store") : "no-store";
+
   const response = await fetch(buildServerUrl(path), {
     method,
     headers: {
@@ -33,7 +38,7 @@ export async function serverApiRequest<T>(
       ...(options.headers ?? {}),
     },
     body: options.json === undefined ? undefined : JSON.stringify(options.json),
-    cache: options.cache ?? "no-store",
+    cache,
     next: options.next,
     signal: options.signal,
   });
