@@ -7,8 +7,10 @@ import type { ProjectDetailView } from "@/features/projects/services/get-project
 
 /**
  * Figma Project Details "Hero" (820 desktop, 520 mobile): project photo, navy 55 → 35 → 100 %,
- * breadcrumb, sector badge and the Display/L title (900 wide). WCAG deviation: the badge is a
- * green tint with green/300 text; the design's green/300 on solid green/600 is 1.9:1.
+ * breadcrumb, sector badge and the Display/L title (900 wide). From 1024 px the height is capped
+ * by the viewport so the title stays above the fold on a short laptop; taller screens keep 820.
+ * WCAG deviation: the badge is a green tint with green/300 text; the design's green/300 on solid
+ * green/600 is 1.9:1.
  */
 export async function ProjectDetailHero({ project, title }: { readonly project: ProjectDetailView; readonly title: string }) {
   const t = await getTranslations("Layout");
@@ -16,7 +18,7 @@ export async function ProjectDetailHero({ project, title }: { readonly project: 
 
   return (
     <header
-      className="scheme-dark relative isolate flex min-h-130 items-end overflow-hidden bg-canvas pt-36 pb-10 text-primary lg:min-h-205 lg:pb-20"
+      className="scheme-dark relative isolate flex min-h-130 items-end overflow-hidden bg-canvas pt-36 pb-10 text-primary lg:min-h-[min(820px,100svh)] lg:pb-20"
       data-section="hero"
     >
       <Image alt={project.heroImage.alt} className="-z-20 object-cover" fill priority quality={60} sizes="100vw" src={project.heroImage.src} />

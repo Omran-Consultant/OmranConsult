@@ -81,6 +81,22 @@ test("project inquiry validates and posts source=project", async ({ page }) => {
   expect(body).toMatchObject({ source: "project", project_slug: "king-saud-university-operation-and-maintenance-efficiency", name: "مهندس تجربة" });
 });
 
+for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }]) {
+  test.describe(`laptop ${viewport.width}x${viewport.height}`, () => {
+    test.use({ viewport });
+
+    test("project title stays above the fold", async ({ page }) => {
+      for (const path of [DETAIL, "/en/projects/king-saud-university-operation-and-maintenance-efficiency"]) {
+        await page.goto(path);
+        const title = page.locator('[data-section="hero"] h1');
+        await expect(title).toBeVisible();
+        const box = await title.boundingBox();
+        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+      }
+    });
+  });
+}
+
 test("unknown project slug renders the not-found page", async ({ page }) => {
   await page.goto("/en/projects/not-a-real-project");
   await expect(page.getByRole("link", { name: "Back to home" })).toBeVisible();

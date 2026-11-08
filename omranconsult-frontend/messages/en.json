@@ -5,6 +5,15 @@
   },
   "AboutPage": {
     "expertYears": "{years}+ years of experience",
+    "expertFilter": "Filter experts by specialty",
+    "expertGroupAll": "All",
+    "expertGroupDesign": "Engineering & Design",
+    "expertGroupQuality": "Quality Management",
+    "expertGroupData": "Data",
+    "expertsEmpty": "No experts in this specialty.",
+    "expertsCarousel": "Experts",
+    "expertsCarouselHint": "Use the arrow keys to move between experts",
+    "expertsSlide": "{index} of {total}",
     "viewAllExperts": "View all experts",
     "showFewerExperts": "Show fewer",
     "readBio": "Biography: {name}",
@@ -187,6 +196,10 @@
       "home": "Back to home",
       "metaTitle": "Page not found"
     }
+  },
+  "Credentials": {
+    "viewDocument": "View {name}",
+    "closeDocument": "Close"
   },
   "Home": {
     "scroll": "SCROLL TO EXPLORE",

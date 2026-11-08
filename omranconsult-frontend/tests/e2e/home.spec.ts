@@ -5,6 +5,8 @@ test("home renders the Figma sections in order", async ({ page }) => {
   const sections = await page.locator("main [data-section]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-section")));
   expect(sections).toEqual(["hero", "stats", "about", "services", "projects", "coverage", "trust", "cta"]);
   await expect(page.locator('[data-section="hero"] h1')).toContainText("كفاءة");
+  await expect(page.locator('[data-section="trust"] [data-credential-scan]')).toHaveCount(8);
+  await expect(page.locator('[data-section="trust"]').getByText("منتهية")).toHaveCount(0);
   await expect(page.locator('[data-section="hero"]').getByRole("link", { name: "استكشف مشاريعنا" })).toHaveAttribute("href", "/ar/projects");
 });
 
@@ -51,6 +53,11 @@ test.describe("mobile", () => {
     await expect.poll(() => track.evaluate((node) => node.scrollLeft)).not.toBe(before);
     await expect(track.locator('li[aria-roledescription="slide"]')).toHaveCount(6);
   });
+});
+
+test("home does not show the expired-certificate badge", async ({ page }) => {
+  await page.goto("/en");
+  await expect(page.locator('[data-section="trust"]').getByText("Expired")).toHaveCount(0);
 });
 
 test("profile download button links to the API file", async ({ page }) => {

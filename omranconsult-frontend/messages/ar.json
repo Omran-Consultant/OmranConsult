@@ -5,6 +5,15 @@
   },
   "AboutPage": {
     "expertYears": "خبرة {years}+ عاماً",
+    "expertFilter": "تصفية الخبراء حسب التخصص",
+    "expertGroupAll": "الكل",
+    "expertGroupDesign": "الهندسة والتصميم",
+    "expertGroupQuality": "إدارة الجودة",
+    "expertGroupData": "البيانات",
+    "expertsEmpty": "لا يوجد خبراء في هذا التخصص.",
+    "expertsCarousel": "الخبراء",
+    "expertsCarouselHint": "استخدم الأسهم للتنقل بين الخبراء",
+    "expertsSlide": "{index} من {total}",
     "viewAllExperts": "عرض جميع الخبراء",
     "showFewerExperts": "عرض أقل",
     "readBio": "السيرة الذاتية: {name}",
@@ -187,6 +196,10 @@
       "home": "العودة إلى الرئيسية",
       "metaTitle": "الصفحة غير موجودة"
     }
+  },
+  "Credentials": {
+    "viewDocument": "عرض {name}",
+    "closeDocument": "إغلاق"
   },
   "Home": {
     "scroll": "SCROLL TO EXPLORE",

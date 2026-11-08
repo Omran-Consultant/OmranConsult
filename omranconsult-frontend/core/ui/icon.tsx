@@ -8,7 +8,8 @@ import { classNames } from "@/core/ui/class-names";
  * icons are drawn for this project (they are not Lucide), so the icons the design uses
  * but did not export are drawn here in the same style (PHASE4C Q8):
  * phone, map-pin, clock, drone, car, monitor, total-station, trending-up, list,
- * chevron-left, chevron-right, chevron-down, sun, moon, check, quote, plus, link.
+ * chevron-left, chevron-right, chevron-down, sun, moon, check, quote, plus, link,
+ * mountain, send, target.
  */
 const PATHS = {
   arrow: <path d="M14 6L6 14M6 14H12.5M6 14V7.5" />,
@@ -152,6 +153,26 @@ const PATHS = {
   ),
   plus: <path d="M10 4v12M4 10h12" />,
   link: <path d="M8.5 11.5a3 3 0 0 0 4.2 0l2.6-2.6a3 3 0 0 0-4.2-4.2l-.9.9M11.5 8.5a3 3 0 0 0-4.2 0l-2.6 2.6a3 3 0 0 0 4.2 4.2l.9-.9" />,
+  mountain: (
+    <>
+      <path d="M2 16.5 6.8 9.5l2.6 3.2 2.8-5.2L17.8 16.5Z" />
+      <path d="M12.2 7.5V3.4" />
+      <path d="M12.2 3.4h3.6L14.3 5h-2.1" />
+    </>
+  ),
+  send: (
+    <>
+      <path d="m2.8 9.4 14.4-6.6-5.8 14.4-2.4-5.6-6.2-2.2Z" />
+      <path d="M8.8 11.8 17.2 2.8" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="10" cy="10" r="6.5" />
+      <circle cx="10" cy="10" r="3.25" />
+      <circle cx="10" cy="10" fill="currentColor" r="1" stroke="none" />
+    </>
+  ),
 } satisfies Record<string, ReactElement>;
 
 export type IconName = keyof typeof PATHS;

@@ -5,6 +5,7 @@ import { groupRegions } from "@/features/home/lib/coverage-groups";
 import { shortStandardCode } from "@/core/format/standard-code";
 import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/public-content/services/home-copy";
 import { formatStatisticValue } from "@/core/format/statistic";
+import { certificateScan } from "@/features/media/credential-scans";
 import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type {
   mapDocumentsToUiModel,
@@ -118,12 +119,16 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
     coverage: groupRegions(sources.regions.map((region) => ({ slug: region.slug, name: region.name }))),
     certificates: sources.certificates
       .filter((document) => document.standardCode)
-      .map((document) => ({
-        id: document.id,
-        code: shortStandardCode(document.standardCode as string),
-        label: document.title,
-        expired: document.isExpired,
-      })),
+      .map((document) => {
+        const code = shortStandardCode(document.standardCode as string);
+        return {
+          id: document.id,
+          code,
+          label: document.title,
+          expired: document.isExpired,
+          image: certificateScan(document.slug ?? code) ?? certificateScan(code),
+        };
+      }),
     partners: sources.partners
       .filter((partner) => partner.slug && partner.name)
       .map((partner): HomePartner => ({

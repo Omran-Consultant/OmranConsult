@@ -172,6 +172,7 @@ html[lang="ar"] {
 
   --shadow-*: initial;
   --shadow-elevated: 0 24px 48px rgb(0 0 0 / 0.35);
+  --shadow-lift: 0 12px 28px rgb(0 0 0 / 0.28);
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
   --default-transition-duration: 150ms;

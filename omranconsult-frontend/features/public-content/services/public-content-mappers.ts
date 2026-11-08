@@ -182,6 +182,7 @@ export function mapDocumentsToUiModel(payload: DocumentsResponse) {
   return payload.data.map((document) => ({
     id: document.id,
     kind: document.kind,
+    slug: mapOptionalText(document.slug),
     title: mapOptionalText(document.title),
     standardCode: mapOptionalText(document.standard_code),
     issuer: mapOptionalText(document.issuer),

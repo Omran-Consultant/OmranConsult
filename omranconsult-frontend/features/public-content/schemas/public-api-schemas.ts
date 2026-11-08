@@ -212,6 +212,7 @@ export const documentsResponseSchema = z.object({
     z.object({
       id: z.number().int().positive(),
       kind: z.enum(["license", "iso_certificate"]),
+      slug: nullableStringSchema,
       title: nullableStringSchema,
       standard_code: nullableStringSchema,
       issuer: nullableStringSchema,

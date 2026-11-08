@@ -2,6 +2,7 @@ import { formatStats } from "@/core/format/statistic";
 import { aboutBlocksSchema, aboutCopySchema, clientLogos, partnerCards } from "@/features/about/services/about-view";
 import { homeCopySchema } from "@/features/public-content/services/home-copy";
 import { shortStandardCode } from "@/core/format/standard-code";
+import { certificateScan, licenseScan } from "@/features/media/credential-scans";
 import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import {
   mapClientsToUiModel,
@@ -26,7 +27,7 @@ import {
 } from "@/lib/api/public-content";
 
 export async function getAboutPageData(locale: AppLocale) {
-  const [settings, home, page, experts, orgChart, documents, partners, partnersEn, clients] = await Promise.all([
+  const [settings, home, page, experts, orgChart, documents, partners, clients] = await Promise.all([
     fetchPublicSettings(locale),
     fetchPublicHome(locale),
     fetchPublicPage(locale, "about"),
@@ -34,7 +35,6 @@ export async function getAboutPageData(locale: AppLocale) {
     fetchPublicOrgChart(locale),
     fetchPublicDocuments(locale),
     fetchPublicPartners(locale),
-    fetchPublicPartners("en"),
     fetchPublicClients(locale),
   ]);
 
@@ -43,7 +43,6 @@ export async function getAboutPageData(locale: AppLocale) {
   const homeCopy = homeCopySchema.parse(homeModel.blocks.design_copy ?? {});
   const docs = mapDocumentsToUiModel(documents);
   const slides = new Map(homeModel.heroSlides.map((slide) => [slide.key, slide]));
-  const englishNames = new Map(mapPartnersToUiModel(partnersEn).map((partner) => [partner.slug, partner.name]));
   const partnerModels = mapPartnersToUiModel(partners);
 
   return {
@@ -62,15 +61,19 @@ export async function getAboutPageData(locale: AppLocale) {
     orgChart: mapOrgChartToUiModel(orgChart),
     certificates: docs
       .filter((doc) => doc.kind === "iso_certificate" && doc.standardCode)
-      .map((doc) => ({ id: doc.id, code: shortStandardCode(doc.standardCode as string), label: doc.title, expired: doc.isExpired })),
-    licenses: docs.filter((doc) => doc.kind === "license" && doc.title).map((doc) => ({ id: doc.id, label: doc.title as string })),
-    wordmarks: partnerModels
-      .filter((partner) => partner.slug)
-      .map((partner) => ({
-        key: partner.slug as string,
-        title: partner.name,
-        wordmark: (englishNames.get(partner.slug) ?? partner.name ?? "").split(" — ")[0]?.trim().toUpperCase() ?? "",
-      })),
+      .map((doc) => {
+        const code = shortStandardCode(doc.standardCode as string);
+        return {
+          id: doc.id,
+          code,
+          label: doc.title,
+          expired: doc.isExpired,
+          image: certificateScan(doc.slug ?? code) ?? certificateScan(code),
+        };
+      }),
+    licenses: docs
+      .filter((doc) => doc.kind === "license" && doc.title && doc.slug)
+      .map((doc) => ({ id: doc.id, label: doc.title as string, image: licenseScan(doc.slug as string) })),
     partners: partnerCards(partnerModels),
     clients: clientLogos(mapClientsToUiModel(clients)),
     images: {

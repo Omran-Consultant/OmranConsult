@@ -3,9 +3,12 @@ import Image from "next/image";
 import { SectionHeader } from "@/core/ui/section-header";
 import type { AboutView } from "@/features/about/services/get-about-page-data";
 
-/** ✚ Partners (D5): four glass cards with the logo (white artwork in dark where one exists), name and field. */
+/**
+ * ✚ Partners (D5). The heading is the profile page title («شركاؤنا»). The divider slide
+ * «شراكات نوعية» stays in the data and is not a second heading above the same four logos.
+ */
 export function AboutPartners({ view }: { readonly view: AboutView }) {
-  const title = view.slides.partners?.headline;
+  const title = view.homeCopy.trust.partners_label;
   if (view.partners.length === 0 || !title) {
     return null;
   }
