@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable([
     'slug', 'client_id', 'sector_id', 'title', 'year', 'location', 'service_type', 'delivery_status',
-    'overview', 'scope', 'gallery', 'sort_order', 'status', 'published_at',
+    'overview', 'scope', 'gallery', 'is_featured', 'featured_order', 'sort_order', 'status', 'published_at',
 ])]
 class Project extends Model
 {
@@ -31,6 +31,8 @@ class Project extends Model
             'overview' => 'array',
             'scope' => 'array',
             'gallery' => 'array',
+            'is_featured' => 'boolean',
+            'featured_order' => 'integer',
         ];
     }
 

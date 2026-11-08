@@ -38,6 +38,7 @@ class ProjectsController extends Controller
                 fn (Builder $sector) => $sector->published()->where('slug', $slug),
             ))
             ->when($request->validated('q'), fn (Builder $query, string $term) => $this->search($query, $term))
+            ->when($request->validated('featured'), fn (Builder $query) => $query->where('is_featured', true)->orderBy('featured_order'))
             ->orderBy('sort_order')
             ->orderBy('id')
             ->paginate((int) $request->validated('per_page', ProjectIndexRequest::DEFAULT_PER_PAGE))

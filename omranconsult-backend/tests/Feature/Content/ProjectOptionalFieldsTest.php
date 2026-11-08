@@ -33,16 +33,25 @@ class ProjectOptionalFieldsTest extends TestCase
         $this->assertNull($data['delivery_status']);
         $this->assertNull($data['overview']);
         $this->assertSame([], $data['scope']);
-        $this->assertSame([], $data['gallery']);
+        $this->assertSame(['wave'], $data['gallery']);
+    }
+
+    public function test_image_is_the_first_gallery_image(): void
+    {
+        $list = collect($this->getJson('/api/projects?per_page=100')->json('data'))->keyBy('slug');
+
+        $this->assertSame('wave', $list['cop16-technical-audit']['image']);
+        $this->assertSame('tablet', $list['king-saud-university-operation-and-maintenance-efficiency']['image']);
+        $this->assertNull($list['cop16-technical-audit']['year']);
     }
 
     public function test_image_falls_back_to_the_sector_default(): void
     {
+        Project::query()->where('slug', 'cop16-technical-audit')->update(['gallery' => null]);
+
         $list = collect($this->getJson('/api/projects?per_page=100')->json('data'))->keyBy('slug');
 
         $this->assertSame('aerial', $list['cop16-technical-audit']['image']);
-        $this->assertSame('control', $list['king-saud-university-operation-and-maintenance-efficiency']['image']);
-        $this->assertNull($list['cop16-technical-audit']['year']);
     }
 
     public function test_optional_facts_resolve_to_the_requested_locale(): void

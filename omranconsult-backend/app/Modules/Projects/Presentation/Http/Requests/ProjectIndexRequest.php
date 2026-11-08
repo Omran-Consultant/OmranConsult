@@ -19,6 +19,8 @@ class ProjectIndexRequest extends FormRequest
             'client' => ['sometimes', 'string', 'max:255'],
             'region' => ['sometimes', 'string', 'max:255'],
             'sector' => ['sometimes', 'string', 'max:255'],
+            // 1: the Home featured projects only, in featured_order (SDD P24).
+            'featured' => ['sometimes', 'in:1'],
             // Search in title and owner name, both locales (SDD §7.1, P17).
             'q' => ['sometimes', 'string', 'min:2', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
