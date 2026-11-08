@@ -154,11 +154,9 @@ function ExpertCard({
   readonly yearsLabel: string;
   readonly onOpen: (expert: ExpertCardModel) => void;
 }) {
-  const t = useTranslations("AboutPage");
   return (
     <button
       aria-haspopup="dialog"
-      aria-label={expert.bio ? t("readBio", { name: expert.name }) : undefined}
       className="group flex h-full w-full items-center gap-4 rounded-lg border border-line-strong bg-surface p-4 text-start transition-[transform,border-color,background-color,box-shadow] duration-150 hover:border-line-accent hover:bg-elevated hover:shadow-lift motion-safe:md:hover:-translate-y-1 md:gap-5 md:p-5"
       disabled={!expert.bio}
       onClick={() => onOpen(expert)}

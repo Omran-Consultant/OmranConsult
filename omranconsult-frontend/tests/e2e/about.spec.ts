@@ -26,7 +26,7 @@ test("credentials show every certificate and license scan", async ({ page }) => 
   const section = page.locator("#credentials");
   await expect(section.locator("[data-credential-scan]")).toHaveCount(13);
   await expect(section.getByText("منتهية")).toHaveCount(0);
-  const card = section.getByRole("button", { name: "عرض ISO 9001" });
+  const card = section.getByRole("button", { name: /ISO 9001/ });
   await card.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();

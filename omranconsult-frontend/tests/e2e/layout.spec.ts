@@ -47,6 +47,21 @@ test("language switch keeps the path", async ({ page }) => {
   await expect(page).toHaveURL(/\/ar\/services$/);
 });
 
+test("light is the default and the theme toggle persists dark mode", async ({ page }) => {
+  const initialResponse = await page.request.get("/en");
+  expect(await initialResponse.text()).not.toMatch(/<html[^>]*class="[^"]*\bdark\b/);
+
+  await page.goto("/en");
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
+
+  await page.getByRole("button", { name: "Switch to dark mode" }).click();
+  await expect(page.locator("html")).toHaveClass(/dark/);
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await expect(page.getByRole("button", { name: "Switch to light mode" })).toBeVisible();
+});
+
 for (const locale of ["en", "ar"] as const) {
   test(`${locale} unknown path renders the localized 404`, async ({ page }) => {
     const response = await page.goto(`/${locale}/does-not-exist`);

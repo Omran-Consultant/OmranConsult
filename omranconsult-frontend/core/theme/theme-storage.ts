@@ -46,10 +46,10 @@ export function readCookieTheme(): ThemePreference | null {
   }
 }
 
-/** Dark is the default theme (SDD A29, D1); a stored choice wins. */
-export const DEFAULT_THEME: ThemePreference = "dark";
+/** Light is the default theme (A35); a stored choice wins. */
+export const DEFAULT_THEME: ThemePreference = "light";
 
-/** Client-only: localStorage → cookie → dark default. */
+/** Client-only: localStorage → cookie → light default. */
 export function readClientThemePreference(): ThemePreference {
   const fromStorage = readStoredTheme();
   if (fromStorage) {

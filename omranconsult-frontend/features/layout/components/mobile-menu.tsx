@@ -79,7 +79,7 @@ export function MobileMenu({ open, onClose, returnFocusRef, email }: MobileMenuP
         {t("nav.menuLabel")}
       </h2>
 
-      <span aria-hidden="true" className="earth-ring pointer-events-none absolute -end-105 top-105 size-175 overflow-hidden rounded-full">
+      <span aria-hidden="true" className="earth-ring pointer-events-none absolute -end-105 top-105 size-175 overflow-hidden rounded-full opacity-(--decorative-media-opacity)">
         {/* Loaded only while the menu is open, so the hidden menu costs nothing on page load. */}
         {open ? <Image alt="" className="object-cover" fill quality={60} sizes="700px" src={SITE_IMAGES.earth.src} /> : null}
       </span>

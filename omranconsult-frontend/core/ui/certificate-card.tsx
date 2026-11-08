@@ -37,13 +37,11 @@ function ScanCard({ code, label, badge, image, className }: CertificateCardProps
   const t = useTranslations("Credentials");
   const titleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const name = code ?? label ?? "";
 
   return (
     <>
       <button
         aria-haspopup="dialog"
-        aria-label={t("viewDocument", { name })}
         className={classNames(
           "glass relative flex h-full w-full flex-col items-center gap-3 rounded-lg border border-line p-3 text-center transition-colors duration-150 hover:border-line-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           className,

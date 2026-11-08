@@ -7,7 +7,7 @@
 /*
  * Design tokens — Figma handoff (SDD A30, docs/DESIGN_BASELINE.md §2–§4).
  * Primitives are raw values; components use the semantic names only.
- * Dark is the default theme (A29); `.scheme-dark` re-declares the dark values
+ * Light is the default theme (A35); `.scheme-dark` re-declares the dark values
  * on a subtree so photographic heroes stay dark in the light theme.
  */
 
@@ -48,8 +48,8 @@
   --text-inverse: var(--neutral-0);
   --accent-default: var(--green-700);
   --accent-strong: var(--green-600);
-  --border-subtle: rgb(8 19 34 / 0.1);
-  --border-strong: rgb(8 19 34 / 0.2);
+  --border-subtle: rgb(8 19 34 / 0.16);
+  --border-strong: rgb(8 19 34 / 0.28);
   --border-accent: rgb(14 132 66 / 0.4);
   --overlay-glass: rgb(8 19 34 / 0.04);
   --overlay-tint: rgb(8 19 34 / 0.06);
@@ -61,6 +61,10 @@
   --status-danger-label: var(--red-700);
   --status-info: var(--navy-600);
   --header-glass: rgb(242 244 247 / 0.85);
+  --elevation-popup: 0 24px 48px rgb(8 19 34 / 0.16);
+  --elevation-lift: 0 12px 28px rgb(8 19 34 / 0.14);
+  --decorative-media-opacity: 0.18;
+  --reveal-start-opacity: 1;
   color-scheme: light;
 
   /* Layout */
@@ -109,6 +113,10 @@
   --status-danger-label: var(--neutral-0);
   --status-info: var(--blue-400);
   --header-glass: rgb(8 19 34 / 0.85);
+  --elevation-popup: 0 24px 48px rgb(0 0 0 / 0.35);
+  --elevation-lift: 0 12px 28px rgb(0 0 0 / 0.28);
+  --decorative-media-opacity: 1;
+  --reveal-start-opacity: 0;
   color-scheme: dark;
 }
 
@@ -171,8 +179,6 @@ html[lang="ar"] {
   --radius-xl: 32px;
 
   --shadow-*: initial;
-  --shadow-elevated: 0 24px 48px rgb(0 0 0 / 0.35);
-  --shadow-lift: 0 12px 28px rgb(0 0 0 / 0.28);
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
   --default-transition-duration: 150ms;
@@ -218,6 +224,8 @@ html[lang="ar"] {
   --color-danger: var(--status-danger);
   --color-danger-label: var(--status-danger-label);
   --color-info: var(--status-info);
+  --shadow-elevated: var(--elevation-popup);
+  --shadow-lift: var(--elevation-lift);
 
   /* Typography */
   --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
@@ -338,7 +346,7 @@ html[lang="ar"] {
 /* Section reveal (motion table): only when JS runs (html.js) and motion is allowed. */
 @media (prefers-reduced-motion: no-preference) {
   html.js [data-reveal] {
-    opacity: 0;
+    opacity: var(--reveal-start-opacity);
     transform: translateY(24px);
     transition:
       opacity 600ms var(--ease-out),
@@ -366,7 +374,7 @@ html[lang="ar"] {
 /* Above-the-fold reveal: plays on first paint so the hero headline (Home LCP) never waits for JS. */
 @keyframes reveal-in {
   from {
-    opacity: 0;
+    opacity: var(--reveal-start-opacity);
     transform: translateY(24px);
   }
 }

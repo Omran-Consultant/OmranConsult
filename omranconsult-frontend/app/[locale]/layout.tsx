@@ -90,9 +90,9 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={direction}
-      // Dark is the default theme (A29): rendered dark so there is no light flash; the
-      // pre-paint script switches to light only for a stored light preference.
-      className={`${publicFontVariables} h-full dark`}
+      // Light is the default theme (A35); the pre-paint script adds dark only for a
+      // stored dark preference, before the page becomes visible.
+      className={`${publicFontVariables} h-full`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">

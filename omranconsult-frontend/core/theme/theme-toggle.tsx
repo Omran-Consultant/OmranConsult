@@ -6,7 +6,7 @@ import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import { useTheme } from "@/core/theme/theme-provider";
 
-/** Icon button in the header style (not in the Figma file; kept per D1). */
+/** Icon button in the header style; light defaults and dark remains available per A35. */
 export function ThemeToggle({ className }: { readonly className?: string }) {
   const t = useTranslations("Layout.theme");
   const { theme, toggleTheme } = useTheme();

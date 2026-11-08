@@ -21,7 +21,7 @@ describe("resolveTheme", () => {
     assert.equal(resolveTheme("dark"), "dark");
   });
 
-  it("defaults to dark when nothing is stored (D1)", () => {
-    assert.equal(resolveTheme(null), "dark");
+  it("defaults to light when nothing is stored (A35)", () => {
+    assert.equal(resolveTheme(null), "light");
   });
 });
