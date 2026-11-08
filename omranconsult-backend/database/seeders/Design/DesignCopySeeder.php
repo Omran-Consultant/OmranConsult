@@ -350,6 +350,11 @@ class DesignCopySeeder extends ProfileSeeder
                     'شركة العمران المتقدم للاستشارات الهندسية، شركة استشارية مصنفة من الدرجة الأولى، مدعومة بخبرات مجموعة بن جارالله القابضة الممتدة لأكثر من 50 عاماً.',
                     'OMRAN Advanced Company for Engineering Consultancy is a first-grade classified consultancy backed by more than 50 years of Bin Jarallah Holding Group experience.',
                 ),
+                // Shorter variant from the 390 frame (About — Mobile 390).
+                'intro_short' => self::t(
+                    'شركة استشارية مصنفة من الدرجة الأولى بخبرة تتجاوز 21 عاماً.',
+                    'A first-grade classified consultancy with more than 21 years of experience.',
+                ),
             ],
             'intro' => [
                 'overline' => self::latin('WHO WE ARE'),
@@ -391,9 +396,12 @@ class DesignCopySeeder extends ProfileSeeder
                     'نموذج عمل مرن يغطي دورة حياة الأصل كاملة: من الدراسات والتصميم، إلى الإشراف وإدارة المشاريع، وصولاً إلى التشغيل والتحسين المستمر.',
                     'A flexible operating model covering the whole asset lifecycle: from studies and design, through supervision and project management, to operation and continuous improvement.',
                 ),
+                // Shorter variants from the 390 frame (Services — Mobile 390).
+                'intro_short' => self::t('نموذج عمل مرن يغطي دورة حياة الأصل كاملة.', 'A flexible operating model covering the whole asset lifecycle.'),
             ],
             'pillars' => [
                 'overline' => self::latin('01 — WHAT WE DO'),
+                'overline_short' => self::latin('WHAT WE DO'),
                 'title' => self::t('ثلاثة محاور لخدمة مشاريعك', 'Three pillars that serve your projects'),
                 'subtitle' => self::t(
                     'منظومة خدمات تكاملية تجمع الخبرة الهندسية والإدارية والرقمية تحت سقف واحد.',
@@ -402,6 +410,7 @@ class DesignCopySeeder extends ProfileSeeder
             ],
             'asset_management' => [
                 'overline' => self::latin('02 — ASSET & FACILITY MANAGEMENT'),
+                'overline_short' => self::latin('ASSET MANAGEMENT'),
                 'title' => self::t('أصول مستدامة: إدارة ذكية وكفاءة متجددة', 'Sustainable assets: smart management, renewed efficiency'),
                 'subtitle' => self::t(
                     'عشر خدمات متخصصة تغطي دورة حياة الأصل وفق الدليل الوطني لإدارة الأصول والمرافق.',
@@ -414,7 +423,9 @@ class DesignCopySeeder extends ProfileSeeder
             ],
             'approach' => [
                 'overline' => self::latin('04 — OUR APPROACH'),
+                'overline_short' => self::latin('OUR APPROACH'),
                 'title' => self::t('نهج متعدد المراحل: من التخطيط إلى التميّز التشغيلي', 'A multi-phase approach: from planning to operational excellence'),
+                'title_short' => self::t('نهج متعدد المراحل', 'A multi-phase approach'),
                 'subtitle' => self::t(
                     'نعمل جنباً إلى جنب مع المالك لفهم المتطلبات والأهداف، ثم نحوّلها إلى استراتيجيات قابلة للقياس والتحسين المستمر.',
                     'We work side by side with the owner to understand requirements and goals, then turn them into strategies that can be measured and continuously improved.',
@@ -435,6 +446,11 @@ class DesignCopySeeder extends ProfileSeeder
                 'intro' => self::t(
                     'أكثر من 204 مشروع استشاري وإشرافي في التعليم والصحة والمياه والبنية التحتية، بشراكة مع جهات حكومية وخاصة رائدة.',
                     'More than 204 consulting and supervision projects in education, health, water and infrastructure, in partnership with leading government and private entities.',
+                ),
+                // Shorter variant from the 390 frame (Projects — Mobile 390).
+                'intro_short' => self::t(
+                    'أكثر من 204 مشروع استشاري وإشرافي في مختلف مناطق المملكة.',
+                    'More than 204 consulting and supervision projects across the regions of the Kingdom.',
                 ),
                 'stat_labels' => [
                     'completed_projects' => self::t('مشروع منجز', 'Projects delivered'),
@@ -469,6 +485,8 @@ class DesignCopySeeder extends ProfileSeeder
                 'فريقنا من المهندسين والمستشارين جاهز لمساعدتك في رفع كفاءة أصولك ومرافقك. تواصل معنا عبر النموذج أو قنوات التواصل المباشرة.',
                 'Our engineers and consultants are ready to help you raise the efficiency of your assets and facilities. Contact us through the form or our direct channels.',
             ),
+            // Shorter variant from the 390 frame (Contact — Mobile 390).
+            'intro_short' => self::t('فريقنا جاهز لمساعدتك في رفع كفاءة أصولك ومرافقك.', 'Our team is ready to help you raise the efficiency of your assets and facilities.'),
             'form_title' => self::t('أرسل استفسارك', 'Send your inquiry'),
         ];
     }

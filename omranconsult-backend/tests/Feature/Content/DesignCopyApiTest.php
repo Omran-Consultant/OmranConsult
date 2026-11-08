@@ -43,6 +43,18 @@ class DesignCopyApiTest extends TestCase
         $this->assertSame('03 — PROJECTS', $copy['projects']['overline_short']);
     }
 
+    public function test_page_mobile_variants_from_the_390_frames(): void
+    {
+        $copy = fn (string $page) => $this->getJson("/api/pages/{$page}", ['Accept-Language' => 'ar'])->json('data.blocks.design_copy');
+
+        $this->assertSame('شركة استشارية مصنفة من الدرجة الأولى بخبرة تتجاوز 21 عاماً.', $copy('about')['hero']['intro_short']);
+        $this->assertSame('نموذج عمل مرن يغطي دورة حياة الأصل كاملة.', $copy('services')['hero']['intro_short']);
+        $this->assertSame('WHAT WE DO', $copy('services')['pillars']['overline_short']);
+        $this->assertSame('نهج متعدد المراحل', $copy('services')['approach']['title_short']);
+        $this->assertSame('أكثر من 204 مشروع استشاري وإشرافي في مختلف مناطق المملكة.', $copy('projects')['hero']['intro_short']);
+        $this->assertSame('فريقنا جاهز لمساعدتك في رفع كفاءة أصولك ومرافقك.', $copy('contact')['intro_short']);
+    }
+
     public function test_english_design_copy_is_present(): void
     {
         $copy = $this->getJson('/api/home', ['Accept-Language' => 'en'])->json('data.blocks.design_copy');
