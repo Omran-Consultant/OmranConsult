@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * A contact or project inquiry (SDD §6.7 P19). Operational inbox: not publishable.
  */
 #[Fillable([
-    'name', 'organisation', 'email', 'phone', 'service_type', 'message', 'consent',
+    'name', 'organisation', 'email', 'phone', 'service_type', 'message', 'consented_at',
     'source', 'project_id', 'locale', 'status', 'ip_hash',
 ])]
 class Inquiry extends Model
@@ -24,7 +24,7 @@ class Inquiry extends Model
     protected function casts(): array
     {
         return [
-            'consent' => 'boolean',
+            'consented_at' => 'datetime',
             'source' => InquirySource::class,
             'status' => InquiryStatus::class,
         ];

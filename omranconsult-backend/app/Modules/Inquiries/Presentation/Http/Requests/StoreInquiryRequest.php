@@ -5,6 +5,7 @@ namespace App\Modules\Inquiries\Presentation\Http\Requests;
 use App\Modules\Inquiries\Domain\InquirySource;
 use App\Support\Content\PublicationStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 /**
@@ -20,6 +21,10 @@ class StoreInquiryRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $phone = $this->input('phone');
+
+        if (is_string($this->input('email'))) {
+            $this->merge(['email' => Str::lower(trim($this->input('email')))]);
+        }
 
         if (is_string($phone)) {
             $phone = preg_replace('/[\s\-]/', '', $phone);

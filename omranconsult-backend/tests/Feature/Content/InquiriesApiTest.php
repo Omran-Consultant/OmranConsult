@@ -37,7 +37,7 @@ class InquiriesApiTest extends TestCase
         return [
             'name' => 'Sara Ahmed',
             'organisation' => 'Ministry',
-            'email' => 'sara@example.com',
+            'email' => ' Sara@Example.com ',
             'phone' => '0551234567',
             'service_type' => 'engineering-consulting',
             'message' => 'We need a consultation.',
@@ -57,10 +57,15 @@ class InquiriesApiTest extends TestCase
         $this->assertSame(InquiryStatus::New, $inquiry->status);
         $this->assertSame(InquirySource::Contact, $inquiry->source);
         $this->assertSame('en', $inquiry->locale);
-        $this->assertTrue($inquiry->consent);
+        $this->assertSame('sara@example.com', $inquiry->email);
+        $this->assertNotNull($inquiry->consented_at);
         $this->assertNull($inquiry->project_id);
         $this->assertSame(64, strlen($inquiry->ip_hash));
         $this->assertStringNotContainsString('127.0.0.1', $inquiry->ip_hash);
+        $this->assertSame(
+            hash_hmac('sha256', '127.0.0.1', (string) config('app.key')),
+            $inquiry->ip_hash,
+        );
     }
 
     public function test_arabic_success_message(): void
@@ -82,7 +87,7 @@ class InquiriesApiTest extends TestCase
 
         $inquiry = Inquiry::query()->sole();
         $this->assertSame(Project::query()->where('slug', 'cop16-technical-audit')->value('id'), $inquiry->project_id);
-        $this->assertFalse($inquiry->consent);
+        $this->assertNull($inquiry->consented_at);
     }
 
     public function test_project_inquiry_needs_a_published_project(): void
@@ -142,9 +147,25 @@ class InquiriesApiTest extends TestCase
 
     public function test_honeypot_answers_normally_but_stores_nothing(): void
     {
-        $this->postJson('/api/inquiries', $this->contact(['website' => 'http://spam.example']))->assertCreated();
+        $human = $this->postJson('/api/inquiries', $this->contact())->assertCreated();
+        Inquiry::query()->delete();
+
+        $bot = $this->postJson('/api/inquiries', $this->contact(['website' => 'http://spam.example']))->assertCreated();
 
         $this->assertSame(0, Inquiry::query()->count());
+        $this->assertSame($human->json(), $bot->json());
+    }
+
+    public function test_input_cannot_override_status_or_ip_hash(): void
+    {
+        $this->postJson('/api/inquiries', $this->contact([
+            'status' => 'closed',
+            'ip_hash' => str_repeat('a', 64),
+        ]))->assertCreated();
+
+        $inquiry = Inquiry::query()->sole();
+        $this->assertSame(InquiryStatus::New, $inquiry->status);
+        $this->assertNotSame(str_repeat('a', 64), $inquiry->ip_hash);
     }
 
     public function test_sixth_request_in_a_minute_is_throttled(): void

@@ -33,7 +33,7 @@ class InquiriesController extends Controller
             'phone' => $request->validated('phone'),
             'service_type' => $request->validated('service_type'),
             'message' => $request->validated('message'),
-            'consent' => (bool) $request->validated('consent'),
+            'consented_at' => $request->boolean('consent') ? now() : null,
             'source' => $source,
             'project_id' => $source === InquirySource::Project && $projectSlug !== null
                 ? Project::query()->published()->where('slug', $projectSlug)->value('id')
