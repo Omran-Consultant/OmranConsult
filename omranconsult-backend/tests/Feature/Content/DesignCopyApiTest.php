@@ -55,6 +55,14 @@ class DesignCopyApiTest extends TestCase
         $this->assertSame('فريقنا جاهز لمساعدتك في رفع كفاءة أصولك ومرافقك.', $copy('contact')['intro_short']);
     }
 
+    public function test_projects_hero_title_from_the_design(): void
+    {
+        $title = fn (string $locale) => $this->getJson('/api/pages/projects', ['Accept-Language' => $locale])->json('data.blocks.design_copy.hero.title');
+
+        $this->assertSame('مشاريعنا', $title('ar'));
+        $this->assertSame('Our projects', $title('en'));
+    }
+
     public function test_english_design_copy_is_present(): void
     {
         $copy = $this->getJson('/api/home', ['Accept-Language' => 'en'])->json('data.blocks.design_copy');

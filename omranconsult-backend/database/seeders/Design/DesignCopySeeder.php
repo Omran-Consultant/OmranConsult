@@ -443,6 +443,7 @@ class DesignCopySeeder extends ProfileSeeder
     {
         return [
             'hero' => [
+                'title' => self::t('مشاريعنا', 'Our projects'),
                 'intro' => self::t(
                     'أكثر من 204 مشروع استشاري وإشرافي في التعليم والصحة والمياه والبنية التحتية، بشراكة مع جهات حكومية وخاصة رائدة.',
                     'More than 204 consulting and supervision projects in education, health, water and infrastructure, in partnership with leading government and private entities.',
