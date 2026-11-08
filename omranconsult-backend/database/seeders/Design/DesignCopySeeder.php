@@ -195,6 +195,12 @@ class DesignCopySeeder extends ProfileSeeder
         return [
             'hero' => [
                 'overline' => self::latin('OMRAN ADVANCED COMPANY'),
+                // Shorter variants from the 390 frame (Home — Mobile 390).
+                'overline_short' => self::latin('OMRAN ADVANCED'),
+                'lead_short' => self::t(
+                    'شركة استشارات هندسية مصنفة من الدرجة الأولى في إدارة الأصول والمرافق والتطوير والأتمتة لأكثر من 21 عاماً.',
+                    'A first-grade engineering consultancy in asset and facility management, development and automation for more than 21 years.',
+                ),
                 'headline' => self::t("نبني {accent}كفاءة{/accent} الأصول\nلمستقبل مستدام", "Building asset {accent}efficiency{/accent}\nfor a sustainable future"),
                 'lead' => self::t(
                     'شركة استشارات هندسية مصنفة من الدرجة الأولى، ندعم التكامل في إدارة الأصول والمرافق وأعمال التطوير والأتمتة في المملكة لأكثر من 21 عاماً.',
@@ -215,6 +221,14 @@ class DesignCopySeeder extends ProfileSeeder
                     'مدعومون بخبرات مجموعة بن جارالله القابضة الممتدة لأكثر من 50 عاماً في الإنشاءات والتطوير العقاري وإدارة المرافق.',
                     'Backed by more than 50 years of Bin Jarallah Holding Group experience in construction, real estate development and facility management.',
                 ),
+                // Short labels for the 2-column mobile grid (Home — Mobile 390).
+                'short_labels' => [
+                    'completed_projects' => self::t('مشروع منجز', 'Projects delivered'),
+                    'project_volume' => self::t('حجم المشاريع', 'Project volume'),
+                    'employees' => self::t('موظف خبير', 'Expert staff'),
+                    'local_content' => self::t('محتوى محلي', 'Local content'),
+                    'partnerships' => self::t('شراكات نوعية', 'Partnerships'),
+                ],
             ],
             'about' => [
                 'overline' => self::latin('01 — ABOUT US'),
@@ -230,6 +244,11 @@ class DesignCopySeeder extends ProfileSeeder
                     ['title' => self::t('حلول رقمية متقدمة', 'Advanced digital solutions'), 'text' => self::t('أنظمة CAFM ونظم المعلومات الجغرافية GIS ولوحات المؤشرات التنفيذية', 'CAFM systems, geographic information systems (GIS) and executive dashboards')],
                 ],
                 'link' => self::t('اقرأ المزيد عن عمران', 'Read more about OMRAN'),
+                'intro_short' => self::t(
+                    'نمتلك الخبرة العملية في إدارة الأصول والمرافق عبر الإشراف على مشاريع IFM وإنشاء منصة OSOOL 360.',
+                    'We bring hands-on asset and facility management experience from supervising IFM projects and building the OSOOL 360 platform.',
+                ),
+                'link_short' => self::t('اقرأ المزيد', 'Read more'),
             ],
             'services' => [
                 'overline' => self::latin('02 — SERVICES'),
@@ -241,6 +260,7 @@ class DesignCopySeeder extends ProfileSeeder
             ],
             'projects' => [
                 'overline' => self::latin('03 — FEATURED PROJECTS'),
+                'overline_short' => self::latin('03 — PROJECTS'),
                 'title' => self::t('مشاريع تصنع الأثر', 'Projects that make an impact'),
                 'subtitle' => self::t(
                     'أكثر من 204 مشروع استشاري وإشرافي في مختلف مناطق المملكة، مع جهات حكومية وخاصة رائدة.',
@@ -270,6 +290,7 @@ class DesignCopySeeder extends ProfileSeeder
                     'حدّثنا عن مشروعك، وسيتواصل معك فريق خبرائنا لتصميم الحل الأنسب لأصولك ومرافقك.',
                     'Tell us about your project, and our experts will contact you to design the right solution for your assets and facilities.',
                 ),
+                'text_short' => self::t('حدّثنا عن مشروعك وسيتواصل معك فريق خبرائنا.', 'Tell us about your project and our experts will contact you.'),
                 'primary' => self::t('اطلب استشارة', 'Request a consultation'),
                 'secondary' => self::t('حمّل الملف التعريفي', 'Download the company profile'),
             ],

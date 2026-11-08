@@ -33,6 +33,16 @@ class DesignCopyApiTest extends TestCase
         $this->assertSame('OMRAN ADVANCED COMPANY', $copy['hero']['overline']);
     }
 
+    public function test_mobile_variants_from_the_390_frame(): void
+    {
+        $copy = $this->getJson('/api/home', ['Accept-Language' => 'ar'])->json('data.blocks.design_copy');
+
+        $this->assertSame('OMRAN ADVANCED', $copy['hero']['overline_short']);
+        $this->assertSame('محتوى محلي', $copy['stats']['short_labels']['local_content']);
+        $this->assertSame('اقرأ المزيد', $copy['about']['link_short']);
+        $this->assertSame('03 — PROJECTS', $copy['projects']['overline_short']);
+    }
+
     public function test_english_design_copy_is_present(): void
     {
         $copy = $this->getJson('/api/home', ['Accept-Language' => 'en'])->json('data.blocks.design_copy');
