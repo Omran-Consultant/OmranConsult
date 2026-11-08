@@ -25,8 +25,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class);
 
-// Public content reads (SDD §7.1). Published rows only; locale from Accept-Language (default en).
-Route::middleware(SetPublicLocale::class)->group(function (): void {
+// Public content reads (SDD §7.1). 120/min/IP; production frontend egress IPs may be trusted.
+Route::middleware([SetPublicLocale::class, 'throttle:public-read'])->group(function (): void {
     Route::get('/settings', SettingsController::class);
     Route::get('/home', HomeController::class);
     Route::get('/pages/{page}', PagesController::class);
@@ -44,6 +44,9 @@ Route::middleware(SetPublicLocale::class)->group(function (): void {
     Route::get('/documents', DocumentsController::class);
     Route::get('/partners', PartnersController::class);
 
+});
+
+Route::middleware(SetPublicLocale::class)->group(function (): void {
     // Public writes (SDD §7.2): 5 per minute per IP (AppServiceProvider), honeypot field `website`.
     Route::post('/inquiries', InquiriesController::class)->middleware('throttle:inquiries');
     Route::post('/newsletter', NewsletterController::class)->middleware('throttle:newsletter');
