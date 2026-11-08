@@ -9,7 +9,12 @@ import { HeroRings } from "@/features/home/components/hero-rings";
 import type { HomeView } from "@/features/home/services/home-view";
 import { SITE_IMAGES } from "@/features/media/profile-images";
 
-/** Figma Home "Hero" (940 desktop, 760 laptop, 780 mobile). Text sits on photos: always dark. */
+/**
+ * Figma Home "Hero" (940 desktop, 760 laptop, 780 mobile). From 1024 px the height and the top
+ * padding are capped by the viewport height, and below 800 px of height the headline steps down to
+ * Display/L, so the stats bar stays above the fold on laptop screens. Taller screens get the design
+ * values. Text sits on photos: always dark.
+ */
 export async function HomeHero({ view }: { readonly view: HomeView }) {
   const t = await getTranslations("Home");
   const { hero } = view.copy;
@@ -17,7 +22,7 @@ export async function HomeHero({ view }: { readonly view: HomeView }) {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="scheme-dark relative isolate flex min-h-195 flex-col overflow-hidden bg-canvas text-primary lg:min-h-190 xl:min-h-235"
+      className="scheme-dark relative isolate flex min-h-195 flex-col overflow-hidden bg-canvas text-primary lg:min-h-[min(760px,100svh)] xl:min-h-[min(940px,100svh)]"
       data-section="hero"
     >
       {/* Desktop layers from OMRAN.fig: earth2 at 35 % opacity, then the "Shade" gradient. Mobile has neither. */}
@@ -28,12 +33,12 @@ export async function HomeHero({ view }: { readonly view: HomeView }) {
       <span aria-hidden="true" className="absolute inset-x-0 top-70 -z-10 h-125 bg-linear-to-b from-transparent to-canvas to-60% lg:hidden" />
       <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 hidden h-65 bg-linear-to-b from-transparent to-canvas lg:block" />
 
-      <div className="container-page flex flex-1 flex-col justify-end pt-95 pb-10 lg:justify-start lg:pt-62.5 lg:pb-16">
-        <div className="reveal-on-load flex max-w-170 flex-col gap-5 lg:gap-8">
+      <div className="container-page flex flex-1 flex-col justify-end pt-95 pb-10 lg:justify-start lg:pt-[clamp(8rem,24svh,15.625rem)] lg:pb-16">
+        <div className="reveal-on-load flex max-w-170 flex-col gap-5 lg:gap-8 lg:[@media(max-height:50rem)]:gap-6">
           {hero.overline ? <Overline className="max-md:hidden">{hero.overline}</Overline> : null}
           {hero.overline_short ?? hero.overline ? <Overline className="md:hidden">{hero.overline_short ?? hero.overline ?? ""}</Overline> : null}
           {hero.headline ? (
-            <h1 className="font-display text-display-xl" id="home-hero-title">
+            <h1 className="font-display text-display-xl lg:[@media(max-height:50rem)]:text-display-l" id="home-hero-title">
               <AccentText accentClassName="font-bold" value={hero.headline} />
             </h1>
           ) : null}

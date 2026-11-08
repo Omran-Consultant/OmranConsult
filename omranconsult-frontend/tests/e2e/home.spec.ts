@@ -24,6 +24,20 @@ test("sector chips filter the featured projects without a reload", async ({ page
   await expect(page).toHaveURL(/\/en$/);
 });
 
+for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }]) {
+  test.describe(`laptop ${viewport.width}x${viewport.height}`, () => {
+    test.use({ viewport });
+
+    test("hero stats bar is above the fold in Arabic", async ({ page }) => {
+      await page.goto("/ar");
+      const stats = page.locator('[data-section="hero"] dl');
+      await expect(stats).toBeVisible();
+      const box = await stats.boundingBox();
+      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+    });
+  });
+}
+
 test.describe("mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
