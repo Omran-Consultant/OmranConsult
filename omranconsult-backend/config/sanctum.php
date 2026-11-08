@@ -17,10 +17,14 @@ return [
     |
     */
 
-    'stateful' => array_values(array_filter(array_map(
+    'stateful' => array_values(array_unique(array_filter(array_map(
         trim(...),
-        explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:3000'))
-    ))),
+        explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:3000').(
+            env('APP_ENV') === 'local'
+                ? ',127.0.0.1:3000,localhost:3010,127.0.0.1:3010'
+                : ''
+        ))
+    )))),
 
     /*
     |--------------------------------------------------------------------------

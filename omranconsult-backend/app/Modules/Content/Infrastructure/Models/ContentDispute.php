@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 #[Fillable([
     'dispute_class', 'subject_type', 'subject_id', 'field_path', 'issue_code',
-    'description', 'reference_snapshot', 'status',
+    'description', 'reference_snapshot', 'status', 'blocks_publish',
 ])]
 class ContentDispute extends Model
 {
@@ -25,6 +25,7 @@ class ContentDispute extends Model
     {
         return [
             'reference_snapshot' => 'array',
+            'blocks_publish' => 'boolean',
             'resolved_at' => 'datetime',
         ];
     }

@@ -36,4 +36,14 @@ trait InteractsWithSanctumSpa
             'X-XSRF-TOKEN' => session()->token(),
         ]))->postJson($uri, $data);
     }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function patchSanctumSpaJson(string $uri, array $data = []): TestResponse
+    {
+        return $this->withHeaders(array_merge($this->sanctumSpaHeaders(), [
+            'X-XSRF-TOKEN' => session()->token(),
+        ]))->patchJson($uri, $data);
+    }
 }

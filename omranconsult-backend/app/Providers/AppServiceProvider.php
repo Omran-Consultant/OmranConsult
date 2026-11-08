@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Support\FrontendServerKey;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -24,10 +25,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $rememberMinutes = (int) config('cms.remember_minutes', 60 * 24 * 14);
+        $guard = Auth::guard('web');
+        if (method_exists($guard, 'setRememberDuration')) {
+            $guard->setRememberDuration($rememberMinutes);
+        }
+
         RateLimiter::for('admin-login', function (Request $request) {
             $email = Str::lower((string) $request->input('email'));
 
             return Limit::perMinute(5)->by($request->ip().'|'.$email);
+        });
+
+        RateLimiter::for('admin-mfa', function (Request $request) {
+            return Limit::perMinute(5)->by((string) $request->ip().'|'.$request->session()->get('admin_mfa.user_id', 'guest'));
+        });
+
+        RateLimiter::for('admin-media-upload', function (Request $request) {
+            return Limit::perMinute(30)->by('media|'.(string) ($request->user()?->id ?? $request->ip()));
         });
 
         RateLimiter::for('public-read', function (Request $request) {

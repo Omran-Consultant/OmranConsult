@@ -3,14 +3,19 @@
 namespace App\Modules\Projects\Presentation\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Content\Infrastructure\Models\PreviewToken;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Modules\Projects\Presentation\Http\Requests\ProjectIndexRequest;
 use App\Modules\Projects\Presentation\Http\Resources\ProjectDetailResource;
 use App\Modules\Projects\Presentation\Http\Resources\ProjectResource;
+use App\Support\Content\DraftStore;
+use App\Support\Content\PreviewTokenService;
+use App\Support\Content\PublicationStatus;
 use App\Support\Content\PublicLocale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
@@ -21,6 +26,11 @@ class ProjectsController extends Controller
     private const LIKE = " LIKE ? ESCAPE '!'";
 
     private const RELATED_LIMIT = 3;
+
+    public function __construct(
+        private readonly PreviewTokenService $previewTokens,
+        private readonly DraftStore $drafts,
+    ) {}
 
     public function index(ProjectIndexRequest $request): AnonymousResourceCollection
     {
@@ -47,13 +57,48 @@ class ProjectsController extends Controller
         return ProjectResource::collection($projects)->additional(['locale' => app()->getLocale()]);
     }
 
-    public function show(string $slug): ProjectDetailResource
+    public function show(Request $request, string $slug): ProjectDetailResource
     {
-        $project = $this->publicQuery()->where('slug', $slug)->first();
+        $project = Project::query()
+            ->with([
+                'client' => fn ($query) => $query->published(),
+                'sector' => fn ($query) => $query->published(),
+                'regions' => fn ($query) => $query->published()->orderBy('sort_order'),
+            ])
+            ->where('slug', $slug)
+            ->first();
 
         abort_if($project === null, 404, 'Not found.');
 
+        $preview = $this->matchingPreview($request, $project);
+        if ($preview === null && $project->status !== PublicationStatus::Published) {
+            abort(404, 'Not found.');
+        }
+
+        if ($preview !== null) {
+            $draft = $this->drafts->find($project);
+            if ($draft !== null) {
+                $fillable = array_intersect_key($draft->payload, array_flip($project->getFillable()));
+                $project->fill($fillable);
+            }
+        }
+
         return (new ProjectDetailResource($project, $this->related($project)))->additional(['locale' => app()->getLocale()]);
+    }
+
+    private function matchingPreview(Request $request, Project $project): ?PreviewToken
+    {
+        $plain = (string) $request->header('X-Preview-Token', '');
+        if ($plain === '') {
+            return null;
+        }
+
+        $token = $this->previewTokens->findValid($plain);
+        if ($token === null || ! $this->previewTokens->matches($token, $project)) {
+            return null;
+        }
+
+        return $token;
     }
 
     /**

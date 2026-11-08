@@ -39,14 +39,11 @@ class AdminAuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertExactJson([
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => 'admin@omranconsult.test',
-                    'roles' => [SuperAdminRole::NAME],
-                ],
-            ]);
+            ->assertJsonPath('user.id', $user->id)
+            ->assertJsonPath('user.email', 'admin@omranconsult.test')
+            ->assertJsonPath('user.roles', [SuperAdminRole::NAME])
+            ->assertJsonMissingPath('user.password')
+            ->assertJsonMissingPath('user.mfa_secret');
     }
 
     public function test_login_rejects_invalid_credentials_without_leaking_account_existence(): void
@@ -95,23 +92,19 @@ class AdminAuthenticationTest extends TestCase
 
     public function test_login_is_throttled_after_five_attempts_per_minute(): void
     {
-        $this->createSuperAdmin([
-            'email' => 'admin@omranconsult.test',
-        ]);
-
         RateLimiter::clear('admin-login');
 
         $this->initializeSanctumSpaSession();
 
         for ($attempt = 0; $attempt < 5; $attempt++) {
             $this->postSanctumSpaJson('/api/admin/login', [
-                'email' => 'admin@omranconsult.test',
+                'email' => 'missing@omranconsult.test',
                 'password' => 'wrong-password',
             ])->assertUnprocessable();
         }
 
         $this->postSanctumSpaJson('/api/admin/login', [
-            'email' => 'admin@omranconsult.test',
+            'email' => 'missing@omranconsult.test',
             'password' => 'wrong-password',
         ])->assertTooManyRequests();
     }
@@ -149,14 +142,11 @@ class AdminAuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertExactJson([
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => 'admin@omranconsult.test',
-                    'roles' => [SuperAdminRole::NAME],
-                ],
-            ]);
+            ->assertJsonPath('user.id', $user->id)
+            ->assertJsonPath('user.email', 'admin@omranconsult.test')
+            ->assertJsonPath('user.roles', [SuperAdminRole::NAME])
+            ->assertJsonMissingPath('user.password')
+            ->assertJsonMissingPath('user.mfa_secret');
     }
 
     public function test_logout_invalidates_the_session_and_regenerates_csrf_token(): void
