@@ -78,6 +78,37 @@
     "regionsLabel": "المناطق",
     "clientProjectsLink": "مشاريع أخرى للجهة نفسها"
   },
+  "ContactPage": {
+    "channelsLabel": "قنوات التواصل",
+    "addressLabel": "المقر الرئيسي",
+    "phoneLabel": "الهاتف",
+    "emailLabel": "البريد الإلكتروني",
+    "hoursLabel": "ساعات العمل",
+    "form": {
+      "nameLabel": "الاسم الكامل",
+      "namePlaceholder": "محمد العتيبي",
+      "organisationLabel": "الجهة / الشركة",
+      "organisationPlaceholder": "اسم الجهة",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "name@company.com",
+      "phoneLabel": "رقم الجوال",
+      "phonePlaceholder": "05X XXX XXXX",
+      "serviceLabel": "نوع الخدمة",
+      "servicePlaceholder": "اختر الخدمة المطلوبة",
+      "messageLabel": "تفاصيل المشروع",
+      "messagePlaceholder": "صف لنا مشروعك واحتياجاتك…",
+      "consent": "أوافق على سياسة الخصوصية ومعالجة بياناتي",
+      "submit": "إرسال الطلب",
+      "nameRequired": "أدخل اسمك",
+      "emailInvalid": "أدخل بريداً إلكترونياً صحيحاً",
+      "phoneInvalid": "أدخل رقم جوال سعودياً صحيحاً مثل 05XXXXXXXX",
+      "serviceInvalid": "اختر خدمة من القائمة",
+      "messageTooLong": "التفاصيل أطول من 2000 حرف",
+      "consentRequired": "يلزم الموافقة لإرسال الطلب",
+      "error": "تعذّر إرسال الطلب، حاول مرة أخرى.",
+      "tooMany": "محاولات كثيرة، انتظر دقيقة ثم حاول مجدداً."
+    }
+  },
   "Inquiry": {
     "nameLabel": "الاسم الكامل",
     "namePlaceholder": "اكتب اسمك",

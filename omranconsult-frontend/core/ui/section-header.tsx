@@ -18,6 +18,7 @@ type SectionHeaderProps = {
   readonly titleId?: string;
   readonly as?: "h1" | "h2";
   readonly className?: string;
+  readonly titleClassName?: string;
   /** Extra content at the end of the header column (rare). */
   readonly children?: ReactNode;
 };
@@ -33,13 +34,14 @@ export function SectionHeader({
   titleId,
   as: Heading = "h2",
   className,
+  titleClassName,
   children,
 }: SectionHeaderProps) {
   return (
     <div className={classNames("flex max-w-160 flex-col gap-5", className)}>
       {overline ? <Overline className={overlineShort ? "max-md:hidden" : undefined}>{overline}</Overline> : null}
       {overline && overlineShort ? <Overline className="md:hidden">{overlineShort}</Overline> : null}
-      <Heading className="font-display text-h1 text-primary" id={titleId}>
+      <Heading className={classNames("font-display text-h1 text-primary", titleClassName)} id={titleId}>
         {titleShort ? (
           <>
             <span className="max-md:hidden">

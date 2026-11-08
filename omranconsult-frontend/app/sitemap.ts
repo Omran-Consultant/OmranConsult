@@ -5,7 +5,7 @@ import { fetchPublicProjects } from "@/lib/api/public-content";
 
 const SITE_URL = getConfiguredPublicSiteOrigin() ?? "http://localhost:3000";
 
-const STATIC_ROUTES = ["", "/about", "/services", "/projects"] as const;
+const STATIC_ROUTES = ["", "/about", "/services", "/projects", "/contact"] as const;
 const LOCALES = ["en", "ar"] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

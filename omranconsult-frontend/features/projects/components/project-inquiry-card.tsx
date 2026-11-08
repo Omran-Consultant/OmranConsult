@@ -6,11 +6,10 @@ import { useId, useState, type FormEvent } from "react";
 import { Button } from "@/core/ui/button";
 import { Icon } from "@/core/ui/icon";
 import { InputField } from "@/core/ui/input-field";
+import { INQUIRY_LIMITS, isValidEmail } from "@/core/validation/inquiry";
 import type { AppLocale } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/errors";
 import { postInquiry } from "@/lib/api/public-writes";
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Field = "name" | "organisation" | "email";
 
@@ -43,7 +42,7 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
 
   const clientErrors: Partial<Record<Field, string>> = {
     name: values.name.trim() ? undefined : t("nameRequired"),
-    email: EMAIL_PATTERN.test(values.email.trim()) ? undefined : t("emailInvalid"),
+    email: isValidEmail(values.email) ? undefined : t("emailInvalid"),
   };
   const errorFor = (field: Field) => (touched[field] ? clientErrors[field] : undefined) ?? serverErrors[field];
 
@@ -101,13 +100,13 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
         <>
           {text ? <p className="text-body-s text-secondary max-md:hidden">{text}</p> : null}
           <form className="flex flex-col gap-4 md:gap-5" noValidate onSubmit={onSubmit}>
-            <InputField autoComplete="name" id={`${id}-name`} label={t("nameLabel")} maxLength={120} placeholder={t("namePlaceholder")} required {...bind("name")} />
+            <InputField autoComplete="name" id={`${id}-name`} label={t("nameLabel")} maxLength={INQUIRY_LIMITS.name} placeholder={t("namePlaceholder")} required {...bind("name")} />
             <InputField
               autoComplete="organization"
               className="max-md:hidden"
               id={`${id}-organisation`}
               label={t("organisationLabel")}
-              maxLength={160}
+              maxLength={INQUIRY_LIMITS.organisation}
               placeholder={t("organisationPlaceholder")}
               {...bind("organisation")}
             />
@@ -116,7 +115,7 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
               id={`${id}-email`}
               inputMode="email"
               label={t("emailLabel")}
-              maxLength={190}
+              maxLength={INQUIRY_LIMITS.email}
               placeholder={t("emailPlaceholder")}
               required
               type="email"

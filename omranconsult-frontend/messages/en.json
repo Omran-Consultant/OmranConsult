@@ -78,6 +78,37 @@
     "regionsLabel": "Regions",
     "clientProjectsLink": "Other projects by the same entity"
   },
+  "ContactPage": {
+    "channelsLabel": "Contact channels",
+    "addressLabel": "Head office",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "hoursLabel": "Working hours",
+    "form": {
+      "nameLabel": "Full name",
+      "namePlaceholder": "e.g. Mohammed Al-Otaibi",
+      "organisationLabel": "Organisation / company",
+      "organisationPlaceholder": "Organisation name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@company.com",
+      "phoneLabel": "Mobile number",
+      "phonePlaceholder": "05X XXX XXXX",
+      "serviceLabel": "Service type",
+      "servicePlaceholder": "Choose the service you need",
+      "messageLabel": "Project details",
+      "messagePlaceholder": "Tell us about your project and needs…",
+      "consent": "I agree to the privacy policy and the processing of my data",
+      "submit": "Send request",
+      "nameRequired": "Enter your name",
+      "emailInvalid": "Enter a valid email address",
+      "phoneInvalid": "Enter a valid Saudi mobile number, e.g. 05XXXXXXXX",
+      "serviceInvalid": "Choose a service from the list",
+      "messageTooLong": "The details are longer than 2,000 characters",
+      "consentRequired": "Your consent is required to send the request",
+      "error": "We could not send your request. Please try again.",
+      "tooMany": "Too many attempts. Wait a minute and try again."
+    }
+  },
   "Inquiry": {
     "nameLabel": "Full name",
     "namePlaceholder": "Enter your name",

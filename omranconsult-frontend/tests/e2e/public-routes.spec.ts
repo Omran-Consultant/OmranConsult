@@ -12,6 +12,7 @@ const ROUTES = [
   "/services",
   "/projects",
   "/projects/cop16-technical-audit",
+  "/contact",
 ] as const;
 
 for (const { locale, dir } of LOCALES) {

@@ -47,15 +47,17 @@ type InputFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "class
   readonly error?: string;
   readonly helper?: string;
   readonly className?: string;
+  /** Extra classes on the control, e.g. `rtl:text-right` for a `dir="ltr"` value in Arabic. */
+  readonly inputClassName?: string;
 };
 
-export function InputField({ id, label, error, helper, className, required, ...rest }: InputFieldProps) {
+export function InputField({ id, label, error, helper, className, inputClassName, required, ...rest }: InputFieldProps) {
   return (
     <FieldFrame className={className} error={error} helper={helper} id={id} label={label} requiredMark={required}>
       <input
         aria-describedby={error || helper ? `${id}-message` : undefined}
         aria-invalid={error ? true : undefined}
-        className={classNames(FIELD_CLASS, fieldState(error))}
+        className={classNames(FIELD_CLASS, fieldState(error), inputClassName)}
         id={id}
         required={required}
         {...rest}
@@ -70,15 +72,17 @@ type TextAreaFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "id"
   readonly error?: string;
   readonly helper?: string;
   readonly className?: string;
+  /** Height rule for the control; the default is a fixed 128 px box. */
+  readonly heightClassName?: string;
 };
 
-export function TextAreaField({ id, label, error, helper, className, required, ...rest }: TextAreaFieldProps) {
+export function TextAreaField({ id, label, error, helper, className, heightClassName = "min-h-32", required, ...rest }: TextAreaFieldProps) {
   return (
     <FieldFrame className={className} error={error} helper={helper} id={id} label={label} requiredMark={required}>
       <textarea
         aria-describedby={error || helper ? `${id}-message` : undefined}
         aria-invalid={error ? true : undefined}
-        className={classNames(FIELD_CLASS, "min-h-32 resize-y", fieldState(error))}
+        className={classNames(FIELD_CLASS, heightClassName, "resize-y", fieldState(error))}
         id={id}
         required={required}
         {...rest}

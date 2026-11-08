@@ -41,7 +41,7 @@ const PAGE_CONFIG = {
     route: "/projects/king-saud-university-operation-and-maintenance-efficiency",
     mobileAliases: { "Page Hero": "hero", Facts: "facts-bar" },
   },
-  contact: { frame: "Contact", file: "contact", route: "/contact" },
+  contact: { frame: "Contact", file: "contact", route: "/contact", mobileAliases: { Intro: "contact", Frame: "contact" } },
   about: { frame: "About", file: "about", route: "/about" },
   services: { frame: "Services", file: "services", route: "/services" },
   media: { frame: "Media Center", file: "media", route: "/media" },
