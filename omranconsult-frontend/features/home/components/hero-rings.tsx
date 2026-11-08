@@ -1,37 +1,84 @@
-import Image from "next/image";
+import { getImageProps } from "next/image";
 
 import { classNames } from "@/core/ui/class-names";
-import type { ImageAsset } from "@/core/ui/image-asset";
+import { annularSectorPath } from "@/features/home/lib/annular-sector";
 
-/**
- * Decorative hero element (Figma Hero): the earth photo inside two concentric rings (inner radius
- * 80 % and 62 %) and a thin accent arc, rotating in on load. Desktop: 1180 px at the reading end;
- * mobile: 620 px at the top, towards the start. Hidden from assistive technology.
+/*
+ * Figma Home "Hero" ellipses, decoded from OMRAN.fig (arcData: start/end angle in radians,
+ * inner radius ratio). Positions are relative to the 1440 (desktop) or 390 (mobile) frame.
  */
-export function HeroRings({ image }: { readonly image: ImageAsset }) {
-  const ring = (className: string, mask: string, sizes: string) => (
-    <span className={classNames("absolute overflow-hidden rounded-full", mask, className)}>
-      <Image alt="" className="object-cover" fill loading="eager" quality={60} sizes={sizes} src={image.src} />
-    </span>
-  );
+const DESKTOP = {
+  box: 1180,
+  outer: { start: -1.2, end: 3.6, inner: 0.8 },
+  inner: { offset: 180, size: 820, start: -1, end: 3.3, inner: 0.62 },
+  line: { inner: 0.995 },
+};
+
+const MOBILE = {
+  box: 620,
+  outer: { start: -1.3, end: 3, inner: 0.8 },
+  inner: { offset: 100, size: 420, start: -1.1, end: 2.8, inner: 0.62 },
+  line: undefined,
+};
+
+type Composition = typeof DESKTOP | typeof MOBILE;
+
+function Rings({ composition, href, id, mirror, className }: {
+  readonly composition: Composition;
+  readonly href: string;
+  readonly id: string;
+  readonly mirror: boolean;
+  readonly className: string;
+}) {
+  const { box, outer, inner, line } = composition;
+  // In LTR the shapes mirror to the other side; the photo itself is never flipped.
+  const flipOuter = mirror ? `matrix(-1 0 0 1 ${box} 0)` : undefined;
+  const flipInner = mirror ? `translate(${inner.offset} ${inner.offset}) matrix(-1 0 0 1 ${inner.size} 0)` : `translate(${inner.offset} ${inner.offset})`;
 
   return (
-    <span
-      aria-hidden="true"
-      className={classNames(
-        "pointer-events-none absolute -z-10 aspect-square animate-ring-in",
-        // Mobile and tablet (Figma Mobile Hero): 620 px, 120 px above the top, 190 px past the start.
-        "-start-[190px] -top-30 w-155",
-        // Laptop and desktop (Figma Hero): 1180 px, 120 px above the top, 500 px past the end.
-        "lg:start-auto lg:-end-[380px] lg:-top-[90px] lg:w-225 xl:-end-[500px] xl:-top-30 xl:w-295",
-      )}
-    >
-      {ring("inset-0", "ring-mask-80", "(min-width: 1280px) 1180px, (min-width: 1024px) 900px, 620px")}
-      {/* The inner shape is a full disc (Figma "img/earth" 820): the dark band between it and the outer ring is the gap. */}
-      <span className="absolute inset-[15.25%] overflow-hidden rounded-full">
-        <Image alt="" className="object-cover" fill loading="eager" quality={60} sizes="(min-width: 1280px) 820px, (min-width: 1024px) 625px, 420px" src={image.src} />
-      </span>
-      <span className="arc-fade absolute -inset-[3px] rounded-full border-[3px] border-accent" />
-    </span>
+    <svg aria-hidden="true" className={classNames("pointer-events-none absolute -z-10 aspect-square animate-ring-in", className)} focusable="false" viewBox={`0 0 ${box} ${box}`}>
+      <defs>
+        <clipPath id={`${id}-outer`}>
+          <path d={annularSectorPath(box, outer.start, outer.end, outer.inner)} transform={flipOuter} />
+        </clipPath>
+        <clipPath id={`${id}-inner`}>
+          <path d={annularSectorPath(inner.size, inner.start, inner.end, inner.inner)} transform={flipInner} />
+        </clipPath>
+      </defs>
+      <image clipPath={`url(#${id}-outer)`} height={box} href={href} preserveAspectRatio="xMidYMid slice" width={box} />
+      <image
+        clipPath={`url(#${id}-inner)`}
+        height={inner.size}
+        href={href}
+        preserveAspectRatio="xMidYMid slice"
+        width={inner.size}
+        x={inner.offset}
+        y={inner.offset}
+      />
+      {line ? <path className="fill-accent" d={annularSectorPath(box, outer.start, outer.end, line.inner)} transform={flipOuter} /> : null}
+    </svg>
+  );
+}
+
+/**
+ * Decorative hero rings: the earth photo in two concentric arcs with an angular gap (the sharp
+ * crescent) and, on desktop, the accent arc line. Desktop keeps the 1440 positions and scales
+ * with the viewport below 1440; mobile (< 1024) uses the 390 composition.
+ */
+export function HeroRings({ src, direction }: { readonly src: string; readonly direction: "rtl" | "ltr" }) {
+  const { props } = getImageProps({ alt: "", src, width: 1920, height: 960, quality: 60, sizes: "1920px" });
+  const mirror = direction === "ltr";
+
+  return (
+    <>
+      <Rings
+        className="hidden end-[max(-500px,-34.722vw)] top-[max(-120px,-8.333vw)] w-[min(1180px,81.944vw)] lg:block"
+        composition={DESKTOP}
+        href={props.src}
+        id="hero-rings-desktop"
+        mirror={mirror}
+      />
+      <Rings className="-end-10 -top-30 w-155 lg:hidden" composition={MOBILE} href={props.src} id="hero-rings-mobile" mirror={mirror} />
+    </>
   );
 }

@@ -6,9 +6,13 @@ import { Overline } from "@/core/ui/overline";
 
 type SectionHeaderProps = {
   readonly overline?: string;
+  /** Shorter overline below 768 px (the 390 frames). */
+  readonly overlineShort?: string;
   /** May contain one `{accent}` word and line breaks. */
   readonly title: string;
   readonly subtitle?: string;
+  /** Shorter subtitle below 768 px (the 390 frames). */
+  readonly subtitleShort?: string;
   readonly titleId?: string;
   readonly as?: "h1" | "h2";
   readonly className?: string;
@@ -19,8 +23,10 @@ type SectionHeaderProps = {
 /** Figma "Section Header": width 640, gap 20, Heading/H1 title, Body/L subtitle. */
 export function SectionHeader({
   overline,
+  overlineShort,
   title,
   subtitle,
+  subtitleShort,
   titleId,
   as: Heading = "h2",
   className,
@@ -28,11 +34,13 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className={classNames("flex max-w-160 flex-col gap-5", className)}>
-      {overline ? <Overline>{overline}</Overline> : null}
+      {overline ? <Overline className={overlineShort ? "max-md:hidden" : undefined}>{overline}</Overline> : null}
+      {overline && overlineShort ? <Overline className="md:hidden">{overlineShort}</Overline> : null}
       <Heading className="font-display text-h1 text-primary" id={titleId}>
         <AccentText value={title} />
       </Heading>
-      {subtitle ? <p className="text-body-l text-secondary">{subtitle}</p> : null}
+      {subtitle ? <p className={classNames("text-body-l text-secondary", subtitleShort && "max-md:hidden")}>{subtitle}</p> : null}
+      {subtitle && subtitleShort ? <p className="text-body-l text-secondary md:hidden">{subtitleShort}</p> : null}
       {children}
     </div>
   );

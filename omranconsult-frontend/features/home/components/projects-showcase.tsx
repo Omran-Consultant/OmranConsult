@@ -10,6 +10,9 @@ import type { HomeProject } from "@/features/home/services/home-view";
 const LIMIT = 6;
 
 type ProjectsShowcaseProps = {
+  /** «الكل»: the featured projects in the design order (H3). */
+  readonly featured: readonly HomeProject[];
+  /** A sector chip shows that sector's first six projects. */
   readonly projects: readonly HomeProject[];
   readonly sectors: readonly { readonly slug: string; readonly name: string }[];
   readonly titleId: string;
@@ -38,13 +41,13 @@ function card(project: HomeProject, className: string, sizes: string) {
  * stacked, then three) and the mobile carousel (scroll-snap, dots, arrow keys: in RTL the left
  * arrow means next).
  */
-export function ProjectsShowcase({ projects, sectors, titleId, header }: ProjectsShowcaseProps) {
+export function ProjectsShowcase({ featured, projects, sectors, titleId, header }: ProjectsShowcaseProps) {
   const t = useTranslations("Home");
   const [sector, setSector] = useState<string | undefined>(undefined);
   const [active, setActive] = useState(0);
   const trackRef = useRef<HTMLUListElement>(null);
 
-  const visible = projects.filter((project) => !sector || project.sectorSlug === sector).slice(0, LIMIT);
+  const visible = (sector ? projects.filter((project) => project.sectorSlug === sector) : featured).slice(0, LIMIT);
   const [first, second, third, ...rest] = visible;
 
   const chip = (slug: string | undefined, label: string) => {

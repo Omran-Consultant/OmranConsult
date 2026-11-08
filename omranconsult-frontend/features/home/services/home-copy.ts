@@ -5,29 +5,36 @@ import { z } from "zod";
  * missing string hides its element instead of breaking the page; no text is hard-coded.
  */
 const text = z.string().trim().min(1).optional().catch(undefined);
-const titled = z.object({ overline: text, title: text, subtitle: text }).catch({});
+const titled = z.object({ overline: text, overline_short: text, title: text, subtitle: text }).catch({});
 
 export const homeCopySchema = z
   .object({
     hero: z
       .object({
         overline: text,
+        overline_short: text,
         headline: text,
         lead: text,
+        lead_short: text,
         cta_primary: text,
         cta_secondary: text,
         stat_labels: z.record(text).catch({}).default({}),
       })
       .catch({ stat_labels: {} })
       .default({ stat_labels: {} }),
-    stats: z.object({ overline: text, title: text, side_text: text }).catch({}).default({}),
+    stats: z
+      .object({ overline: text, title: text, side_text: text, short_labels: z.record(text).catch({}).default({}) })
+      .catch({ short_labels: {} })
+      .default({ short_labels: {} }),
     about: z
       .object({
         overline: text,
         title: text,
         intro: text,
+        intro_short: text,
         badge_label: text,
         link: text,
+        link_short: text,
         features: z.array(z.object({ title: text, text: text })).catch([]).default([]),
       })
       .catch({ features: [] })
@@ -36,11 +43,11 @@ export const homeCopySchema = z
     projects: titled.default({}),
     coverage: titled.default({}),
     trust: titled.and(z.object({ partners_label: text }).catch({})).default({}),
-    cta: z.object({ title: text, text: text, primary: text, secondary: text }).catch({}).default({}),
+    cta: z.object({ title: text, text: text, text_short: text, primary: text, secondary: text }).catch({}).default({}),
   })
   .catch({
     hero: { stat_labels: {} },
-    stats: {},
+    stats: { short_labels: {} },
     about: { features: [] },
     services: {},
     projects: {},

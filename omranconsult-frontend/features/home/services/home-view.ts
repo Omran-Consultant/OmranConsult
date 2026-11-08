@@ -5,7 +5,6 @@ import { groupRegions } from "@/features/home/lib/coverage-groups";
 import { shortStandardCode } from "@/features/home/lib/standard-code";
 import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/home/services/home-copy";
 import { formatStatisticValue } from "@/features/home/services/statistic-formatter";
-import { getPartnerLogo, type BrandLogo } from "@/features/media/brand-logos";
 import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type {
   mapDocumentsToUiModel,
@@ -23,9 +22,11 @@ type HomeSources = {
   readonly home: ReturnType<typeof mapHomeToUiModel>;
   readonly sectors: ReturnType<typeof mapSectorsToUiModel>;
   readonly projects: ReturnType<typeof mapProjectsIndexToUiModel>["projects"];
+  readonly featured: ReturnType<typeof mapProjectsIndexToUiModel>["projects"];
   readonly regions: ReturnType<typeof mapRegionsToUiModel>;
   readonly certificates: ReturnType<typeof mapDocumentsToUiModel>;
   readonly partners: ReturnType<typeof mapPartnersToUiModel>;
+  readonly partnersEn: ReturnType<typeof mapPartnersToUiModel>;
 };
 
 export type HomeStat = { readonly key: string; readonly value: string; readonly label: string | undefined };
@@ -48,10 +49,13 @@ export type HomeServiceHighlight = {
   readonly href: string;
 };
 
-export type HomePartner = { readonly slug: string; readonly name: string; readonly logo?: BrandLogo };
+export type HomePartner = { readonly slug: string; readonly name: string; readonly wordmark: string };
 
 /** The five profile statistics in the profile order (Stats section). */
 const PROFILE_STAT_KEYS = ["completed_projects", "project_volume", "employees", "local_content", "partnerships"];
+
+/** The design's five sector chips on Home (H4); the Projects page lists every sector. */
+const HOME_SECTOR_SLUGS = ["education", "health", "water-and-environment", "infrastructure", "universities"];
 
 /** Hero mini-stats in reading order (21+ first in RTL, as designed). */
 const HERO_STAT_KEYS = ["years_experience", "completed_projects", "project_volume"];
@@ -73,9 +77,7 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
   const sectorNames = new Map(sources.sectors.map((sector) => [sector.slug, sector.name]));
   const fallbackImage = toImageAsset(SITE_IMAGES.building, locale);
 
-  const projects: HomeProject[] = sources.projects
-    .filter((project) => project.title)
-    .map((project) => {
+  const toProject = (project: HomeSources["projects"][number]): HomeProject => {
       const image = getSiteImage(project.imageKey);
       return {
         slug: project.slug,
@@ -86,7 +88,10 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
         year: project.year,
         image: image ? toImageAsset(image, locale) : fallbackImage,
       };
-    });
+  };
+  const projects = sources.projects.filter((project) => project.title).map(toProject);
+  const featured = sources.featured.filter((project) => project.title).map(toProject);
+  const englishNames = new Map(sources.partnersEn.map((partner) => [partner.slug, partner.name]));
 
   const highlights: HomeServiceHighlight[] = serviceHighlightsSchema
     .parse(sources.home.blocks.service_highlights ?? {})
@@ -106,8 +111,10 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
     stats: pick(PROFILE_STAT_KEYS),
     groupExperience: statsByKey.get("group_experience")?.value,
     highlights,
-    sectors: sources.sectors.filter((sector) => sector.name && sector.projectsCount > 0) as { slug: string; name: string; projectsCount: number }[],
+    sectors: HOME_SECTOR_SLUGS.map((slug) => sources.sectors.find((sector) => sector.slug === slug))
+      .filter((sector): sector is { slug: string; name: string; projectsCount: number } => Boolean(sector?.name && sector.projectsCount > 0)),
     projects,
+    featured,
     coverage: groupRegions(sources.regions.map((region) => ({ slug: region.slug, name: region.name }))),
     certificates: sources.certificates
       .filter((document) => document.standardCode)
@@ -122,7 +129,8 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
       .map((partner): HomePartner => ({
         slug: partner.slug as string,
         name: partner.name as string,
-        logo: getPartnerLogo(partner.slug),
+        // Latin wordmark: the English name before any " — " tagline, uppercased (H6).
+        wordmark: (englishNames.get(partner.slug) ?? partner.name ?? "").split(" — ")[0]?.trim().toUpperCase() ?? "",
       })),
     profilePdfUrl: sources.settings.profilePdfUrl,
     organization: {

@@ -2,6 +2,8 @@
 
 export type BrandLogo = {
   readonly src: string;
+  /** Variant for dark surfaces when the artwork itself is dark (or white-only). */
+  readonly onDarkSrc?: string;
   readonly width: number;
   readonly height: number;
 };
@@ -40,14 +42,14 @@ export const CLIENT_LOGOS: Record<string, BrandLogo> = {
 };
 
 /*
- * File names were swapped when the logos were cropped: tacent.png holds the Musanadah logo and
- * musanadah.png the blue-bar mark (Tacent, to be confirmed). oliver-wyman.png is a slide crop, not
- * a logo, so Oliver Wyman has no image until the company supplies one (PHASE4C report).
+ * Re-cropped from the profile p.42 at 400 dpi with transparency (PHASE4C_HOME_REVIEW H7). Oliver
+ * Wyman is vector artwork in the PDF: a white and a navy rendering for dark and light surfaces.
  */
 export const PARTNER_LOGOS: Record<string, BrandLogo> = {
-  "musanadah": { src: "/images/partners/tacent.png", width: 288, height: 172 },
-  "tacent": { src: "/images/partners/musanadah.png", width: 174, height: 167 },
-  "bureau-veritas": { src: "/images/partners/bureau-veritas.png", width: 186, height: 240 },
+  "oliver-wyman": { src: "/images/partners/oliver-wyman.png", onDarkSrc: "/images/partners/oliver-wyman-white.png", width: 480, height: 92 },
+  "musanadah": { src: "/images/partners/musanadah.png", width: 480, height: 283 },
+  "tacent": { src: "/images/partners/tacent.png", width: 440, height: 480 },
+  "bureau-veritas": { src: "/images/partners/bureau-veritas.png", width: 386, height: 480 },
 };
 
 const CLIENT_LOGO_FALLBACK_PREFIX = "client-";

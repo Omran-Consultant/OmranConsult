@@ -18,7 +18,7 @@ export function HomeAbout({ view }: { readonly view: HomeView }) {
       <div className="container-page grid gap-6 lg:grid-cols-[624fr_560fr] lg:gap-24">
         <div className="flex flex-col gap-9" data-reveal="">
           {about.title ? (
-            <SectionHeader overline={about.overline} subtitle={about.intro} title={about.title} titleId="home-about-title" />
+            <SectionHeader overline={about.overline} subtitle={about.intro} subtitleShort={about.intro_short} title={about.title} titleId="home-about-title" />
           ) : null}
           {about.features.length > 0 ? (
             <ul className="hidden lg:block">
@@ -34,9 +34,18 @@ export function HomeAbout({ view }: { readonly view: HomeView }) {
             </ul>
           ) : null}
           {about.link ? (
-            <LinkButton arrow className="self-start" href="/about" variant="secondary">
-              {about.link}
-            </LinkButton>
+            <>
+              <div className="self-start max-md:hidden">
+                <LinkButton arrow href="/about" variant="secondary">
+                  {about.link}
+                </LinkButton>
+              </div>
+              <div className="self-start md:hidden">
+                <LinkButton arrow href="/about" variant="secondary">
+                  {about.link_short ?? about.link}
+                </LinkButton>
+              </div>
+            </>
           ) : null}
         </div>
 

@@ -9,6 +9,8 @@ type CtaBoxProps = {
   readonly image: ImageAsset;
   readonly title: string;
   readonly text?: string;
+  /** Shorter text below 768 px (the 390 frames). */
+  readonly textShort?: string;
   readonly titleId?: string;
   /** Buttons (Primary first, then Light). */
   readonly actions: ReactNode;
@@ -16,7 +18,7 @@ type CtaBoxProps = {
 };
 
 /** Figma "CTA Box": radius xl, photo with a start-side scrim, Display/L title, body, buttons. */
-export function CtaBox({ image, title, text, titleId, actions, className }: CtaBoxProps) {
+export function CtaBox({ image, title, text, textShort, titleId, actions, className }: CtaBoxProps) {
   return (
     <div
       className={classNames(
@@ -31,7 +33,8 @@ export function CtaBox({ image, title, text, titleId, actions, className }: CtaB
         <h2 className="font-display text-h1 md:text-display-l" id={titleId}>
           <AccentText value={title} />
         </h2>
-        {text ? <p className="text-body-l text-secondary">{text}</p> : null}
+        {text ? <p className={classNames("text-body-l text-secondary", textShort && "max-md:hidden")}>{text}</p> : null}
+        {textShort ? <p className="text-body-l text-secondary md:hidden">{textShort}</p> : null}
         <div className="flex flex-wrap gap-4">{actions}</div>
       </div>
     </div>

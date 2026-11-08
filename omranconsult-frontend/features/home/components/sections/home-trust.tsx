@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { SectionHeader } from "@/core/ui/section-header";
@@ -32,7 +31,7 @@ export async function HomeTrust({ view }: { readonly view: HomeView }) {
                   {certificate.code}
                 </span>
                 {certificate.label ? <span className="text-caption text-muted">{certificate.label}</span> : null}
-                {certificate.expired ? <StatusBadge tone="danger">{t("expired")}</StatusBadge> : null}
+                {certificate.expired ? <StatusBadge tone="neutral">{t("expired")}</StatusBadge> : null}
               </li>
             ))}
           </ul>
@@ -41,23 +40,18 @@ export async function HomeTrust({ view }: { readonly view: HomeView }) {
         {view.partners.length > 0 ? (
           <div className="flex flex-col gap-6 border-t border-line pt-10 md:flex-row md:items-center md:gap-14">
             {copy.partners_label ? <h3 className="shrink-0 text-label-m text-secondary">{copy.partners_label}</h3> : null}
-            <ul className="flex flex-1 flex-wrap items-center justify-between gap-x-10 gap-y-6">
+            {/* Uniform Latin wordmarks, as designed (H6); the logo images are used on About. */}
+            <ul className="flex flex-1 flex-wrap items-center justify-between gap-x-10 gap-y-4">
               {view.partners.map((partner) => (
-                <li className="flex h-16 items-center" key={partner.slug}>
-                  {partner.logo ? (
-                    <Image
-                      alt={partner.name}
-                      className="h-full w-auto object-contain opacity-70 grayscale mix-blend-multiply on-dark:mix-blend-screen on-dark:invert"
-                      height={partner.logo.height}
-                      sizes="160px"
-                      src={partner.logo.src}
-                      width={partner.logo.width}
-                    />
-                  ) : (
-                    <span className="font-latin text-[1.375rem] font-bold tracking-wide text-muted uppercase" dir="ltr">
-                      {partner.name}
-                    </span>
-                  )}
+                <li key={partner.slug}>
+                  <span
+                    className="font-latin text-[1.375rem] leading-none font-semibold tracking-[0.04em] text-muted uppercase transition-colors duration-150 hover:text-primary"
+                    dir="ltr"
+                    lang="en"
+                    title={partner.name}
+                  >
+                    {partner.wordmark}
+                  </span>
                 </li>
               ))}
             </ul>

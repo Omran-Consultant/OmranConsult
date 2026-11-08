@@ -19,6 +19,7 @@ import {
 import { serverApiRequest } from "@/lib/api/server-client";
 
 type ProjectsQuery = {
+  featured?: boolean;
   client?: string;
   region?: string;
   sector?: string;
@@ -41,6 +42,9 @@ function buildProjectsQuery(query: ProjectsQuery = {}): string {
   }
   if (query.region) {
     params.set("region", query.region);
+  }
+  if (query.featured) {
+    params.set("featured", "1");
   }
   if (query.sector) {
     params.set("sector", query.sector);

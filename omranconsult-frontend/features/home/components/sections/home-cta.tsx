@@ -31,6 +31,7 @@ export function HomeCta({ view }: { readonly view: HomeView }) {
           }
           image={toImageAsset(SITE_IMAGES.night, view.locale)}
           text={cta.text}
+          textShort={cta.text_short}
           title={cta.title}
           titleId="home-cta-title"
         />

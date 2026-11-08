@@ -7,7 +7,7 @@ import { CountUp } from "@/core/ui/count-up";
 import { Overline } from "@/core/ui/overline";
 import { HeroRings } from "@/features/home/components/hero-rings";
 import type { HomeView } from "@/features/home/services/home-view";
-import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
+import { SITE_IMAGES } from "@/features/media/profile-images";
 
 /** Figma Home "Hero" (940 desktop, 760 laptop, 780 mobile). Text sits on photos: always dark. */
 export async function HomeHero({ view }: { readonly view: HomeView }) {
@@ -20,21 +20,25 @@ export async function HomeHero({ view }: { readonly view: HomeView }) {
       className="scheme-dark relative isolate flex min-h-195 flex-col overflow-hidden bg-canvas text-primary lg:min-h-190 xl:min-h-235"
       data-section="hero"
     >
-      {/* Seen through an 85 % scrim, so a low quality is enough; it is the LCP element. */}
-      <Image alt="" className="-z-30 object-cover" fill priority quality={40} sizes="100vw" src={SITE_IMAGES.earth2.src} />
-      <span aria-hidden="true" className="absolute inset-0 -z-20 bg-navy-950/85" />
-      <HeroRings image={toImageAsset(SITE_IMAGES.earth, view.locale)} />
-      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-125 bg-linear-to-b from-transparent to-canvas lg:h-65" />
+      {/* Desktop layers from OMRAN.fig: earth2 at 35 % opacity, then the "Shade" gradient. Mobile has neither. */}
+      <Image alt="" className="-z-30 hidden object-cover opacity-35 lg:block" fill priority quality={40} sizes="100vw" src={SITE_IMAGES.earth2.src} />
+      <span aria-hidden="true" className="hero-shade absolute inset-0 -z-20 hidden lg:block" />
+      <HeroRings direction={view.locale === "ar" ? "rtl" : "ltr"} src={SITE_IMAGES.earth.src} />
+      {/* "Bottom Fade" (desktop: last 260 px) and the mobile fade (from y 280, opaque at 60 %). */}
+      <span aria-hidden="true" className="absolute inset-x-0 top-70 -z-10 h-125 bg-linear-to-b from-transparent to-canvas to-60% lg:hidden" />
+      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 hidden h-65 bg-linear-to-b from-transparent to-canvas lg:block" />
 
       <div className="container-page flex flex-1 flex-col justify-end pt-95 pb-10 lg:justify-start lg:pt-62.5 lg:pb-16">
         <div className="flex max-w-170 flex-col gap-5 lg:gap-8" data-reveal="">
-          {hero.overline ? <Overline>{hero.overline}</Overline> : null}
+          {hero.overline ? <Overline className="max-md:hidden">{hero.overline}</Overline> : null}
+          {hero.overline_short ?? hero.overline ? <Overline className="md:hidden">{hero.overline_short ?? hero.overline ?? ""}</Overline> : null}
           {hero.headline ? (
             <h1 className="font-display text-display-xl" id="home-hero-title">
               <AccentText accentClassName="font-bold" value={hero.headline} />
             </h1>
           ) : null}
-          {hero.lead ? <p className="text-body-l text-secondary">{hero.lead}</p> : null}
+          {hero.lead ? <p className="text-body-l text-secondary max-md:hidden">{hero.lead}</p> : null}
+          {hero.lead_short ?? hero.lead ? <p className="text-body-l text-secondary md:hidden">{hero.lead_short ?? hero.lead}</p> : null}
           <div className="flex flex-col gap-5 sm:flex-row sm:gap-4">
             {hero.cta_primary ? (
               <LinkButton arrow className="w-full sm:w-auto" href="/projects">

@@ -14,7 +14,8 @@ export async function HomeProjects({ view }: { readonly view: HomeView }) {
   return (
     <section aria-labelledby={titleId} className="flex flex-col gap-6 bg-canvas py-16 lg:gap-16 lg:py-35" data-section="projects">
       <ProjectsShowcase
-        header={copy.title ? <SectionHeader className="max-lg:[&_p:last-child]:hidden" overline={copy.overline} subtitle={copy.subtitle} title={copy.title} titleId={titleId} /> : null}
+        header={copy.title ? <SectionHeader className="max-lg:[&_p:last-child]:hidden" overline={copy.overline} overlineShort={copy.overline_short} subtitle={copy.subtitle} title={copy.title} titleId={titleId} /> : null}
+        featured={view.featured}
         projects={view.projects}
         sectors={view.sectors}
         titleId={titleId}

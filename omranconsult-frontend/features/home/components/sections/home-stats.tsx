@@ -22,6 +22,7 @@ export function HomeStats({ view }: { readonly view: HomeView }) {
               className="max-lg:gap-1.5 max-lg:pt-5 max-lg:pb-5"
               key={stat.key}
               label={stat.label}
+              shortLabel={copy.short_labels[stat.key]}
               value={stat.value}
             />
           ))}

@@ -94,7 +94,7 @@ export async function AboutCredentialsSection({ blocks, documents, locale }: Abo
                     </span>
                   ) : null}
                   {certificate.isExpired ? (
-                    <StatusBadge className="ms-0 mt-2 sm:ms-2" tone="danger">
+                    <StatusBadge className="ms-0 mt-2 bg-transparent px-0 sm:ms-2" tone="neutral">
                       {t("expiredBadge")}
                     </StatusBadge>
                   ) : null}
