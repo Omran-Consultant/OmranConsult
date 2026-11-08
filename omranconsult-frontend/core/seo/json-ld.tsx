@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/core/seo/json-ld-serializer";
+
 type JsonLdProps = {
   readonly data: Record<string, unknown>;
 };
@@ -5,7 +7,7 @@ type JsonLdProps = {
 export function JsonLd({ data }: JsonLdProps) {
   return (
     <script
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
       type="application/ld+json"
     />
   );
