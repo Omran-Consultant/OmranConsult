@@ -30,7 +30,7 @@ export async function AboutWorkStages({ view }: { readonly view: AboutView }) {
             >
               <div className="flex items-start justify-between">
                 <span className="flex size-13.5 items-center justify-center rounded-[14px] border border-line-accent bg-accent-strong text-green-300">
-                  <Icon className="size-6" name={STAGE_ICONS[index] ?? "layers"} />
+                  <Icon className="size-6" name={STAGE_ICONS[index] ?? "layers"} weight="duotone" />
                 </span>
                 <span className="num-isolate mt-5 font-latin text-overline text-muted">{t("stage", { n: index + 1 })}</span>
               </div>

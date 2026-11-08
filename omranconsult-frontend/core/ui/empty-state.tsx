@@ -14,7 +14,7 @@ export function EmptyState({ title, description, icon = "search", action }: Empt
   return (
     <div className="flex flex-col items-center gap-4 rounded-lg border border-line px-6 py-16 text-center">
       <span className="flex size-14 items-center justify-center rounded-full bg-accent-strong/16 text-accent">
-        <Icon className="size-6" name={icon} />
+        <Icon className="size-6" name={icon} weight="duotone" />
       </span>
       <h2 className="font-display text-h4 text-primary">{title}</h2>
       {description ? <p className="max-w-md text-body-s text-secondary">{description}</p> : null}

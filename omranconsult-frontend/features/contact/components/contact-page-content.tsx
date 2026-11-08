@@ -91,7 +91,7 @@ function Channel({ icon, label, children }: ChannelProps) {
   return (
     <li className="flex items-center gap-5 rounded-[18px] border border-line bg-surface px-4.5 py-4 md:bg-glass md:px-6 md:py-5">
       <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-accent-strong/16 text-accent max-md:hidden">
-        <Icon name={icon} />
+        <Icon name={icon} weight="duotone" />
       </span>
       <div className="flex min-w-0 flex-col gap-1">
         <span className="text-caption text-muted">{label}</span>
