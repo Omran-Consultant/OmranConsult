@@ -22,6 +22,7 @@ type PageHeroProps = {
   readonly introShort?: string;
   readonly breadcrumbs: readonly BreadcrumbItem[];
   readonly breadcrumbLabel: string;
+  /** Hidden below 768 px (the 390 frames show none). */
   readonly stats?: readonly HeroStat[];
   /** Scrim utility from the Figma frame, for example `scrim-down-70` or `scrim-start-strong`. */
   readonly scrim?: string;
@@ -70,7 +71,7 @@ export function PageHero({
           {children}
         </div>
         {stats && stats.length > 0 ? (
-          <dl className="flex gap-14">
+          <dl className="flex gap-14 max-md:hidden">
             {stats.map((stat) => (
               <div className="flex flex-col-reverse gap-1" key={`${stat.value}-${stat.label}`}>
                 {stat.label ? <dt className="text-caption text-muted">{stat.label}</dt> : null}

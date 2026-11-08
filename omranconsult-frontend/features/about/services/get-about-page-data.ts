@@ -1,4 +1,5 @@
-import { aboutBlocksSchema, aboutCopySchema, clientLogos, formatStats, partnerCards } from "@/features/about/services/about-view";
+import { formatStats } from "@/core/format/statistic";
+import { aboutBlocksSchema, aboutCopySchema, clientLogos, partnerCards } from "@/features/about/services/about-view";
 import { homeCopySchema } from "@/features/home/services/home-copy";
 import { shortStandardCode } from "@/features/home/lib/standard-code";
 import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";

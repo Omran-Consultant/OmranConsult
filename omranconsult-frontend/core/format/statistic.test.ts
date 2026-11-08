@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { formatStatisticValue } from "./statistic-formatter.ts";
+import { formatStatisticValue } from "./statistic.ts";
 
 test("formats completed projects as 204+", () => {
   assert.equal(

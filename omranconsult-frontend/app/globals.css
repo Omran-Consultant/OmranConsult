@@ -410,6 +410,11 @@ html[lang="ar"] {
   }
 }
 
+/* Project Details hero (OMRAN.fig): navy at 55 % at the top, 35 % in the middle, opaque at the bottom. */
+@utility scrim-detail {
+  background-image: linear-gradient(to bottom, rgb(8 19 34 / 0.55) 0%, rgb(8 19 34 / 0.35) 50%, rgb(8 19 34 / 1) 100%);
+}
+
 /* Page hero scrims fading down to opaque navy: scrim-down-70 = 70 % at the top (About), -75 (Projects), -60 (mobile). */
 @utility scrim-down-* {
   background-image: linear-gradient(to bottom, rgb(8 19 34 / calc(--value(integer) * 1%)), rgb(8 19 34 / 1));

@@ -33,3 +33,17 @@ export function formatStatisticValue({
 
   return `${formattedNumber}${scaleLabel}${unitLabel}${suffixLabel}`;
 }
+
+type StatisticInput = { key: string; value: number; scale?: string; suffix?: string; unit?: string; label?: string };
+
+/** Formats the API statistics with these keys, in this order (missing keys are skipped). */
+export function formatStats(statistics: readonly StatisticInput[], keys: readonly string[], locale: AppLocale) {
+  return keys
+    .map((key) => statistics.find((stat) => stat.key === key))
+    .filter((stat): stat is StatisticInput => Boolean(stat))
+    .map((stat) => ({
+      key: stat.key,
+      value: formatStatisticValue({ value: stat.value, scale: stat.scale, suffix: stat.suffix, unit: stat.unit, locale }),
+      label: stat.label,
+    }));
+}

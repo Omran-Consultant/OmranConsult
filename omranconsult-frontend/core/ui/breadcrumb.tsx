@@ -25,13 +25,13 @@ export function Breadcrumb({ items, label }: BreadcrumbProps) {
                 /
               </li>
             ) : null}
-            <li>
+            <li className="min-w-0">
               {item.href ? (
                 <Link className="text-muted transition-colors duration-150 hover:text-primary" href={item.href}>
                   {item.label}
                 </Link>
               ) : (
-                <span aria-current="page" className="text-accent">
+                <span aria-current="page" className="line-clamp-1 text-accent">
                   {item.label}
                 </span>
               )}

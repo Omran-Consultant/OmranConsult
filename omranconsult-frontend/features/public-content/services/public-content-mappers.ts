@@ -75,50 +75,49 @@ export function mapServicesToUiModel(payload: ServicesResponse) {
   }));
 }
 
+function mapProjectSummary(project: ProjectsIndexResponse["data"][number]) {
+  return {
+    slug: project.slug,
+    title: mapOptionalText(project.title),
+    client: project.client
+      ? {
+          slug: mapOptionalText(project.client.slug),
+          name: mapOptionalText(project.client.name),
+        }
+      : undefined,
+    sector: project.sector ? { slug: project.sector.slug, name: mapOptionalText(project.sector.name) } : undefined,
+    year: project.year ?? undefined,
+    imageKey: mapOptionalText(project.image ?? null),
+    regions: project.regions.map((region) => ({
+      slug: region.slug,
+      code: mapOptionalText(region.code),
+      name: mapOptionalText(region.name),
+      projectsCount: region.projects_count,
+    })),
+  };
+}
+
 export function mapProjectsIndexToUiModel(payload: ProjectsIndexResponse) {
   return {
     locale: payload.locale,
-    projects: payload.data.map((project) => ({
-      slug: project.slug,
-      title: mapOptionalText(project.title),
-      client: project.client
-        ? {
-            slug: mapOptionalText(project.client.slug),
-            name: mapOptionalText(project.client.name),
-          }
-        : undefined,
-      sector: project.sector ? { slug: project.sector.slug, name: mapOptionalText(project.sector.name) } : undefined,
-      year: project.year ?? undefined,
-      imageKey: mapOptionalText(project.image ?? null),
-      regions: project.regions.map((region) => ({
-        slug: region.slug,
-        code: mapOptionalText(region.code),
-        name: mapOptionalText(region.name),
-        projectsCount: region.projects_count,
-      })),
-    })),
+    projects: payload.data.map(mapProjectSummary),
     links: payload.links,
     meta: payload.meta,
   };
 }
 
 export function mapProjectDetailToUiModel(payload: ProjectDetailResponse) {
+  const project = payload.data;
   return {
     locale: payload.locale,
-    slug: payload.data.slug,
-    title: mapOptionalText(payload.data.title),
-    client: payload.data.client
-      ? {
-          slug: mapOptionalText(payload.data.client.slug),
-          name: mapOptionalText(payload.data.client.name),
-        }
-      : undefined,
-    regions: payload.data.regions.map((region) => ({
-      slug: region.slug,
-      code: mapOptionalText(region.code),
-      name: mapOptionalText(region.name),
-      projectsCount: region.projects_count,
-    })),
+    ...mapProjectSummary(project),
+    location: mapOptionalText(project.location ?? null),
+    serviceType: mapOptionalText(project.service_type ?? null),
+    deliveryStatus: project.delivery_status ?? undefined,
+    overview: mapOptionalText(project.overview ?? null),
+    scope: (project.scope ?? []).map((item) => item.trim()).filter(Boolean),
+    gallery: project.gallery ?? [],
+    related: (project.related ?? []).map(mapProjectSummary),
   };
 }
 

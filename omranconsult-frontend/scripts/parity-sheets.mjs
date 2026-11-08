@@ -34,8 +34,13 @@ const ONLY_SECTIONS = args.sections ? new Set(args.sections.split(",")) : undefi
 /** Figma frame title prefix, render file key and route for each page. */
 const PAGE_CONFIG = {
   home: { frame: "Home", file: "home", route: "" },
-  projects: { frame: "Projects", file: "projects", route: "/projects" },
-  "project-detail": { frame: "Project Details", file: "project-detail", route: "/projects/king-saud-university-operation-and-maintenance-efficiency" },
+  projects: { frame: "Projects", file: "projects", route: "/projects", mobileAliases: { Filters: "filter-bar", Frame: "filter-bar", List: "grid" } },
+  "project-detail": {
+    frame: "Project Details",
+    file: "project-detail",
+    route: "/projects/king-saud-university-operation-and-maintenance-efficiency",
+    mobileAliases: { "Page Hero": "hero", Facts: "facts-bar" },
+  },
   contact: { frame: "Contact", file: "contact", route: "/contact" },
   about: { frame: "About", file: "about", route: "/about" },
   services: { frame: "Services", file: "services", route: "/services" },
@@ -48,8 +53,11 @@ const SECTION_ALIASES = { "Header Area": "header", "CTA Wrap": "cta", "Mobile He
 
 const toSection = (name) => SECTION_ALIASES[name] ?? name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-/** Top-level section frames of "<Page> — Desktop 1440" / "<Page> — Mobile 390" with their y-ranges. */
-async function figmaSections(frameTitle) {
+/**
+ * Top-level section frames of "<Page> — Desktop 1440" / "<Page> — Mobile 390" with their y-ranges.
+ * `aliases` maps frame names for one page; adjacent frames with the same section are merged.
+ */
+async function figmaSections(frameTitle, aliases = {}) {
   const lines = (await readFile(path.join(REFERENCE, "figma-structure.txt"), "utf8")).split("\n");
   const start = lines.findIndex((line) => line.startsWith(`  FRAME "${frameTitle}"`));
   if (start < 0) {
@@ -63,7 +71,13 @@ async function figmaSections(frameTitle) {
     const match = line.match(/^ {4}(?:FRAME|INSTANCE) "([^"]+)" \[-?\d+,(-?\d+) (\d+)x(\d+)\]/);
     if (match) {
       const [, name, y, , height] = match;
-      sections.push({ name, section: toSection(name), y: Number(y), height: Number(height) });
+      const section = aliases[name] ?? toSection(name);
+      const previous = sections.at(-1);
+      if (previous && previous.section === section) {
+        previous.height = Number(y) + Number(height) - previous.y;
+      } else {
+        sections.push({ name, section, y: Number(y), height: Number(height) });
+      }
     }
   }
   return sections;
@@ -145,7 +159,7 @@ for (const pageKey of PAGES) {
     const mobile = width < 768;
     const frameTitle = `${config.frame} — ${mobile ? "Mobile 390" : "Desktop 1440"}`;
     const render = `${mobile ? "mobile" : "desktop"}-${config.file}.png`;
-    const sections = await figmaSections(frameTitle);
+    const sections = await figmaSections(frameTitle, mobile ? config.mobileAliases : config.desktopAliases);
     if (sections.length === 0) {
       console.warn(`No Figma frame "${frameTitle}"; skipped.`);
       continue;

@@ -26,5 +26,5 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     notFound();
   }
 
-  return <ProjectDetailPageContent locale={locale} project={project} />;
+  return <ProjectDetailPageContent project={project} />;
 }

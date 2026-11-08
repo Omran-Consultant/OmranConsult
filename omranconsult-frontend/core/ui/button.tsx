@@ -91,12 +91,14 @@ export function Button({
 
 type LinkButtonProps = CommonProps & {
   readonly href: string;
+  /** `false` keeps the scroll position (for example «عرض المزيد»). */
+  readonly scroll?: boolean;
 };
 
 /** In-app navigation (locale-aware). */
-export function LinkButton({ href, children, variant = "primary", arrow = false, className }: LinkButtonProps) {
+export function LinkButton({ href, children, variant = "primary", arrow = false, className, scroll }: LinkButtonProps) {
   return (
-    <Link className={buttonClassName(variant, className)} href={href}>
+    <Link className={buttonClassName(variant, className)} href={href} scroll={scroll}>
       <Content arrow={arrow} variant={variant}>
         {children}
       </Content>

@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-import { formatStatisticValue } from "@/features/home/services/statistic-formatter";
 import { getClientLogo, getPartnerLogo } from "@/features/media/brand-logos";
-import type { AppLocale } from "@/i18n/routing";
 
 const text = z.string().trim().min(1).optional().catch(undefined);
 const texts = z.array(z.string()).catch([]).default([]);
@@ -63,19 +61,6 @@ export const aboutBlocksSchema = z.object({
 
 export type AboutBlocks = z.infer<typeof aboutBlocksSchema>;
 export type AboutCopy = z.infer<typeof aboutCopySchema>;
-
-type Statistic = { key: string; value: number; scale?: string; suffix?: string; unit?: string; label?: string };
-
-export function formatStats(statistics: readonly Statistic[], keys: readonly string[], locale: AppLocale) {
-  return keys
-    .map((key) => statistics.find((stat) => stat.key === key))
-    .filter((stat): stat is Statistic => Boolean(stat))
-    .map((stat) => ({
-      key: stat.key,
-      value: formatStatisticValue({ value: stat.value, scale: stat.scale, suffix: stat.suffix, unit: stat.unit, locale }),
-      label: stat.label,
-    }));
-}
 
 export function partnerCards(partners: readonly { slug?: string; name?: string; field?: string }[]) {
   return partners

@@ -145,7 +145,15 @@ export const projectsIndexResponseSchema = z.object({
 
 export const projectDetailResponseSchema = z.object({
   locale: localeSchema,
-  data: projectSchema,
+  data: projectSchema.extend({
+    location: nullableStringSchema.optional(),
+    service_type: nullableStringSchema.optional(),
+    delivery_status: z.enum(["completed", "ongoing"]).nullable().optional(),
+    overview: nullableStringSchema.optional(),
+    scope: z.array(z.string()).optional(),
+    gallery: z.array(z.string()).optional(),
+    related: z.array(projectSchema).optional(),
+  }),
 });
 
 export const clientsResponseSchema = z.object({

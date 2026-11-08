@@ -4,7 +4,7 @@ import type { ImageAsset } from "@/core/ui/image-asset";
 import { groupRegions } from "@/features/home/lib/coverage-groups";
 import { shortStandardCode } from "@/features/home/lib/standard-code";
 import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/home/services/home-copy";
-import { formatStatisticValue } from "@/features/home/services/statistic-formatter";
+import { formatStatisticValue } from "@/core/format/statistic";
 import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type {
   mapDocumentsToUiModel,

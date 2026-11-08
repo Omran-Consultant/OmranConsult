@@ -1,6 +1,7 @@
-import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 import { classNames } from "@/core/ui/class-names";
+import { Icon } from "@/core/ui/icon";
 
 const FIELD_CLASS =
   "w-full rounded-md border bg-glass px-[18px] py-4 text-body-m text-primary transition-[border-color,box-shadow] duration-150 placeholder:text-muted focus:border-accent focus:ring-3 focus:ring-accent/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40";
@@ -82,6 +83,36 @@ export function TextAreaField({ id, label, error, helper, className, required, .
         required={required}
         {...rest}
       />
+    </FieldFrame>
+  );
+}
+
+type SelectFieldProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, "id" | "className"> & {
+  readonly id: string;
+  readonly label: string;
+  readonly error?: string;
+  readonly helper?: string;
+  readonly className?: string;
+  readonly children: ReactNode;
+};
+
+/** Native select in the Input Field frame; the chevron sits at the inline end. */
+export function SelectField({ id, label, error, helper, className, required, children, ...rest }: SelectFieldProps) {
+  return (
+    <FieldFrame className={className} error={error} helper={helper} id={id} label={label} requiredMark={required}>
+      <span className="relative flex">
+        <select
+          aria-describedby={error || helper ? `${id}-message` : undefined}
+          aria-invalid={error ? true : undefined}
+          className={classNames(FIELD_CLASS, "appearance-none pe-12", fieldState(error))}
+          id={id}
+          required={required}
+          {...rest}
+        >
+          {children}
+        </select>
+        <Icon className="pointer-events-none absolute end-4.5 top-1/2 -translate-y-1/2 text-muted" name="chevron-down" />
+      </span>
     </FieldFrame>
   );
 }

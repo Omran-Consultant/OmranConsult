@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import { classNames } from "@/core/ui/class-names";
+import { filterChipClassName } from "@/core/ui/filter-chip";
 import { ProjectCard } from "@/core/ui/project-card";
 import type { HomeProject } from "@/features/home/services/home-view";
 
@@ -55,10 +56,7 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
     return (
       <button
         aria-pressed={selected}
-        className={classNames(
-          "min-h-10 rounded-full border px-4.5 py-2.5 text-label-s transition-colors duration-150",
-          selected ? "border-inverse bg-inverse text-on-inverse" : "border-line-strong text-secondary hover:border-accent hover:text-primary",
-        )}
+        className={filterChipClassName(selected)}
         key={slug ?? "all"}
         onClick={() => {
           setSector(slug);
