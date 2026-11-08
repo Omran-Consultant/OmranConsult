@@ -1,9 +1,9 @@
 import Image from "next/image";
 
+import { CardFrame } from "@/core/ui/card-frame";
 import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import type { ImageAsset } from "@/core/ui/image-asset";
-import { Link } from "@/i18n/navigation";
 
 type NewsCardProps = {
   readonly href: string;
@@ -14,47 +14,60 @@ type NewsCardProps = {
   readonly dateTime?: string;
   readonly excerpt?: string;
   readonly linkLabel: string;
+  /** Featured post: the same anatomy with a taller image and an h2 title. */
+  readonly emphasis?: "standard" | "featured";
+  readonly titleId?: string;
   readonly className?: string;
 };
 
-/** Figma "News Card": image 240, body padding 22/24, gap 14; title 2 lines, excerpt 3 lines. */
-export function NewsCard({ href, image, title, category, date, dateTime, excerpt, linkLabel, className }: NewsCardProps) {
+/** News card option A (A36): image, category and date, title, excerpt, read-more row. */
+export function NewsCard({
+  href,
+  image,
+  title,
+  category,
+  date,
+  dateTime,
+  excerpt,
+  linkLabel,
+  emphasis = "standard",
+  titleId,
+  className,
+}: NewsCardProps) {
+  const Title = emphasis === "featured" ? "h2" : "h3";
+
   return (
-    <article
-      className={classNames(
-        "group relative flex flex-col overflow-hidden rounded-lg border border-line bg-surface transition-colors duration-150 hover:border-line-accent",
-        className,
-      )}
-    >
-      <div className="relative h-60 overflow-hidden bg-highlight">
+    <CardFrame className={classNames("h-full", className)} href={href}>
+      <div className={classNames("relative overflow-hidden bg-highlight", emphasis === "featured" ? "aspect-[16/7] min-h-60" : "aspect-[16/10]")}>
         <Image
           alt={image.alt}
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          className="object-cover motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out motion-safe:md:group-hover:scale-[1.04] motion-safe:md:group-focus-visible:scale-[1.04]"
           fill
-          sizes="(min-width: 1024px) 410px, (min-width: 768px) 50vw, 100vw"
+          sizes={emphasis === "featured" ? "(min-width: 1024px) 1200px, 100vw" : "(min-width: 1024px) 410px, (min-width: 768px) 50vw, 100vw"}
           src={image.src}
         />
       </div>
-      <div className="flex flex-1 flex-col gap-3.5 px-6 py-5.5">
-        <p className="flex items-center gap-2.5 text-caption">
-          {category ? <span className="text-accent">{category}</span> : null}
-          {category && date ? <span aria-hidden="true" className="size-1 rounded-full bg-muted" /> : null}
-          {date ? (
-            <time className="text-muted" dateTime={dateTime}>
-              {date}
-            </time>
-          ) : null}
-        </p>
-        <h3 className="line-clamp-2 font-display text-h4 text-primary">{title}</h3>
+      <div className="flex flex-col gap-3 px-6 py-5">
+        {category || date ? (
+          <p className="flex items-center gap-2.5 text-caption">
+            {category ? <span className="text-accent">{category}</span> : null}
+            {category && date ? <span aria-hidden="true" className="size-1 rounded-full bg-muted" /> : null}
+            {date ? (
+              <time className="text-muted" dateTime={dateTime}>
+                {date}
+              </time>
+            ) : null}
+          </p>
+        ) : null}
+        <Title className={classNames("line-clamp-2 font-display font-bold text-primary underline-offset-4 md:group-hover:underline md:group-focus-visible:underline", emphasis === "featured" ? "text-h2" : "text-h4")} id={titleId}>
+          {title}
+        </Title>
         {excerpt ? <p className="line-clamp-3 text-body-s text-secondary">{excerpt}</p> : null}
-        <Link
-          className="mt-auto inline-flex items-center gap-3 self-start py-1.5 text-label-m text-accent transition-colors duration-150 after:absolute after:inset-0 hover:text-primary"
-          href={href}
-        >
+        <span className="inline-flex items-center gap-2 text-label-m text-accent">
           <span>{linkLabel}</span>
-          <Icon className="text-accent" name="arrow" />
-        </Link>
+          <Icon name="arrow" />
+        </span>
       </div>
-    </article>
+    </CardFrame>
   );
 }

@@ -18,7 +18,6 @@ export function ProjectRelated({ project }: { readonly project: ProjectDetailVie
             <li key={related.slug}>
               <ProjectCard
                 category={related.category}
-                className="h-100 lg:h-110"
                 client={related.client}
                 href={`/projects/${related.slug}`}
                 image={related.image}

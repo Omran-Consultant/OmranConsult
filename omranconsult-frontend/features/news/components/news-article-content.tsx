@@ -5,9 +5,9 @@ import { Fragment } from "react";
 import { Breadcrumb } from "@/core/ui/breadcrumb";
 import { LinkButton } from "@/core/ui/button";
 import type { ImageAsset } from "@/core/ui/image-asset";
+import { NewsCard } from "@/core/ui/news-card";
 import { ShareLinks } from "@/features/news/components/share-links";
 import type { NewsArticleView } from "@/features/news/services/get-news-article-data";
-import { Link } from "@/i18n/navigation";
 
 type BodyBlock = NewsArticleView["body"][number];
 type BodyGroup = { readonly kind: "text"; readonly block: Exclude<BodyBlock, { type: "image" }> } | { readonly kind: "images"; readonly images: ImageAsset[] };
@@ -142,22 +142,10 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
                 <h2 className="font-display text-h3 text-primary" id="article-related-title">
                   {t("article.related")}
                 </h2>
-                <ul className="flex flex-col">
+                <ul className="flex flex-col gap-4">
                   {article.related.map((item) => (
-                    <li className="border-b border-line py-2.5 first:pt-0" key={item.slug}>
-                      <Link className="group flex items-center gap-3.5" href={item.href}>
-                        <span className="relative h-18 w-24 shrink-0 overflow-hidden rounded-md bg-highlight">
-                          <Image alt="" className="object-cover" fill sizes="96px" src={item.image.src} />
-                        </span>
-                        <span className="flex min-w-0 flex-col gap-1.5">
-                          <span className="line-clamp-2 text-label-m text-primary transition-colors duration-150 group-hover:text-accent">{item.title}</span>
-                          {item.year ? (
-                            <time className="text-caption text-muted" dateTime={item.dateTime}>
-                              {item.year}
-                            </time>
-                          ) : null}
-                        </span>
-                      </Link>
+                    <li key={item.slug}>
+                      <NewsCard date={item.year} dateTime={item.dateTime} href={item.href} image={item.image} linkLabel={t("readMore")} title={item.title} />
                     </li>
                   ))}
                 </ul>

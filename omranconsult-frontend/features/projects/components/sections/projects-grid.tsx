@@ -60,11 +60,11 @@ export async function ProjectsGrid({ view }: { readonly view: ProjectsView }) {
           />
         ) : (
           <>
-            <ul className="grid gap-6 max-md:hidden md:grid-cols-2 lg:grid-cols-3">
-              {view.desktopCards.map((project) => card(project, "h-120", "(min-width: 1024px) 411px, 50vw"))}
+            <ul className="grid items-start gap-6 max-md:hidden md:grid-cols-2 lg:grid-cols-3">
+              {view.desktopCards.map((project) => card(project, "", "(min-width: 1024px) 411px, 50vw"))}
             </ul>
             <ul className="flex flex-col gap-4 md:hidden">
-              {view.mobileCards.map((project) => card(project, "h-100", "100vw"))}
+              {view.mobileCards.map((project) => card(project, "", "100vw"))}
             </ul>
 
             {lastPage > 1 ? (

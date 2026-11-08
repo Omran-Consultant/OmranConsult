@@ -21,18 +21,17 @@ type ProjectsShowcaseProps = {
   readonly header: ReactNode;
 };
 
-function card(project: HomeProject, className: string, sizes: string) {
+function card(project: HomeProject, sizes: string, emphasis: "standard" | "tall" = "standard") {
   return (
     <ProjectCard
       category={project.category}
-      className={className}
       client={project.client}
+      emphasis={emphasis}
       href={`/projects/${project.slug}`}
       image={project.image}
       key={project.slug}
       sizes={sizes}
       title={project.title}
-      year={project.year}
     />
   );
 }
@@ -123,19 +122,19 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
         <>
           {/* Laptop and desktop: bento. */}
           <div className="container-page hidden flex-col gap-6 lg:flex">
-            <div className="grid grid-cols-[740fr_516fr] grid-rows-[308px_308px] gap-6">
-              {first ? card(first, "row-span-2", "(min-width: 1440px) 740px, 58vw") : null}
-              {second ? card(second, "", "(min-width: 1440px) 516px, 40vw") : null}
-              {third ? card(third, "", "(min-width: 1440px) 516px, 40vw") : null}
+            <div className="grid grid-cols-[740fr_516fr] items-stretch gap-6">
+              {first ? <div className="row-span-2 h-full">{card(first, "(min-width: 1440px) 740px, 58vw", "tall")}</div> : null}
+              {second ? card(second, "(min-width: 1440px) 516px, 40vw") : null}
+              {third ? card(third, "(min-width: 1440px) 516px, 40vw") : null}
             </div>
             {rest.length > 0 ? (
-              <div className="grid grid-cols-3 gap-6">{rest.map((project) => card(project, "h-115", "(min-width: 1440px) 411px, 32vw"))}</div>
+              <div className="grid grid-cols-3 items-start gap-6">{rest.map((project) => card(project, "(min-width: 1440px) 411px, 32vw"))}</div>
             ) : null}
           </div>
 
           {/* Tablet: two columns. */}
-          <div className="container-page hidden grid-cols-2 gap-5 md:grid lg:hidden">
-            {visible.map((project) => card(project, "h-105", "50vw"))}
+          <div className="container-page hidden grid-cols-2 items-start gap-5 md:grid lg:hidden">
+            {visible.map((project) => card(project, "50vw"))}
           </div>
 
           {/* Mobile: horizontal carousel with scroll-snap and dots. */}
@@ -157,7 +156,7 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
                   className="w-75 shrink-0 snap-start"
                   key={project.slug}
                 >
-                  {card(project, "h-105", "300px")}
+                  {card(project, "300px")}
                 </li>
               ))}
             </ul>

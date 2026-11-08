@@ -1,16 +1,13 @@
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 
 import { Breadcrumb } from "@/core/ui/breadcrumb";
 import { LinkButton } from "@/core/ui/button";
 import { EmptyState } from "@/core/ui/empty-state";
-import { Icon } from "@/core/ui/icon";
 import { NewsCard } from "@/core/ui/news-card";
 import { NewsletterForm } from "@/core/ui/newsletter-form";
 import { MediaTabs } from "@/features/news/components/media-tabs";
 import type { MediaView } from "@/features/news/services/get-media-page-data";
 import { mediaQuery } from "@/features/news/services/news-view";
-import { Link } from "@/i18n/navigation";
 
 const PANEL_ID = "media-panel";
 
@@ -53,7 +50,24 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
       </section>
 
       <div aria-labelledby={selectedTab.id} data-section="list" id={PANEL_ID} role="tabpanel">
-        {view.featured ? <FeaturedPost post={view.featured} /> : null}
+        {view.featured ? (
+          <section aria-labelledby="media-featured-title" className="pb-4 lg:pb-16" data-section="featured">
+            <div className="container-page">
+              <NewsCard
+                category={view.featured.category}
+                date={view.featured.monthYear}
+                dateTime={view.featured.dateTime}
+                emphasis="featured"
+                excerpt={view.featured.excerpt}
+                href={view.featured.href}
+                image={view.featured.image}
+                linkLabel={t("readMore")}
+                title={view.featured.title}
+                titleId="media-featured-title"
+              />
+            </div>
+          </section>
+        ) : null}
 
         <section aria-labelledby="media-list-title" className="pb-12 lg:pb-25" data-section="grid">
           <div className="container-page flex flex-col gap-4 lg:gap-6">
@@ -119,61 +133,5 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
         </section>
       ) : null}
     </>
-  );
-}
-
-type FeaturedPostProps = { readonly post: NonNullable<MediaView["featured"]> };
-
-/** Figma "Featured Card": 700-px photo and a 48-px padded body; the badge and button show from 1024 px. */
-function FeaturedPost({ post }: FeaturedPostProps) {
-  const t = useTranslations("MediaPage");
-  const meta = [post.monthYear, post.readingMinutes ? t("readingTime", { minutes: post.readingMinutes }) : undefined].filter(Boolean).join(" · ");
-
-  return (
-    <section aria-labelledby="media-featured-title" className="pb-4 lg:pb-16" data-section="featured">
-      <div className="container-page">
-        <article className="group relative grid overflow-hidden rounded-lg border border-line bg-surface lg:grid-cols-[700fr_578fr] lg:rounded-[28px]">
-          <div className="relative h-60 overflow-hidden bg-highlight lg:h-auto lg:min-h-115">
-            <Image
-              alt={post.image.alt}
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-              fill
-              priority
-              sizes="(min-width: 1024px) 700px, (min-width: 768px) 100vw, 350px"
-              src={post.image.src}
-            />
-          </div>
-          <div className="flex flex-col gap-3.5 px-6 py-5.5 lg:gap-5 lg:p-12">
-            <span className="self-start rounded-full bg-accent-strong/18 px-3 py-1.5 text-caption text-accent max-lg:hidden">{t("featuredBadge")}</span>
-            <p className="flex items-center gap-2.5 text-caption lg:hidden">
-              {post.category ? <span className="text-accent">{post.category}</span> : null}
-              {post.category && post.year ? <span aria-hidden="true" className="size-1 rounded-full bg-muted" /> : null}
-              {post.year ? (
-                <time className="text-muted" dateTime={post.dateTime}>
-                  {post.year}
-                </time>
-              ) : null}
-            </p>
-            <h2 className="font-display text-h4 text-primary lg:text-h1" id="media-featured-title">
-              {post.title}
-            </h2>
-            {post.excerpt ? <p className="line-clamp-3 text-body-s text-secondary lg:line-clamp-none lg:text-body-l">{post.excerpt}</p> : null}
-            <div className="mt-auto flex flex-wrap items-center gap-6 max-lg:hidden">
-              <LinkButton arrow href={post.href}>
-                {t("readArticle")}
-              </LinkButton>
-              {meta ? <p className="text-caption text-muted">{meta}</p> : null}
-            </div>
-            <Link
-              className="mt-auto inline-flex items-center gap-3 self-start py-1.5 text-label-m text-accent transition-colors duration-150 after:absolute after:inset-0 hover:text-primary lg:hidden"
-              href={post.href}
-            >
-              <span>{t("readMore")}</span>
-              <Icon className="text-accent" name="arrow" />
-            </Link>
-          </div>
-        </article>
-      </div>
-    </section>
   );
 }
