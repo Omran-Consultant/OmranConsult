@@ -37,7 +37,7 @@ export function NewsCard({
   const Title = emphasis === "featured" ? "h2" : "h3";
 
   return (
-    <CardFrame className={classNames("h-full", className)} href={href}>
+    <CardFrame className={className} glow={false} href={href}>
       <div className={classNames("relative overflow-hidden bg-highlight", emphasis === "featured" ? "aspect-[16/7] min-h-60" : "aspect-[16/10]")}>
         <Image
           alt={image.alt}
@@ -47,7 +47,7 @@ export function NewsCard({
           src={image.src}
         />
       </div>
-      <div className="flex flex-col gap-3 px-6 py-5">
+      <div className="flex flex-1 flex-col gap-3 bg-surface px-6 py-5">
         {category || date ? (
           <p className="flex items-center gap-2.5 text-caption">
             {category ? <span className="text-accent">{category}</span> : null}
@@ -59,11 +59,11 @@ export function NewsCard({
             ) : null}
           </p>
         ) : null}
-        <Title className={classNames("line-clamp-2 font-display font-bold text-primary underline-offset-4 md:group-hover:underline md:group-focus-visible:underline", emphasis === "featured" ? "text-h2" : "text-h4")} id={titleId}>
+        <Title className={classNames("line-clamp-2 text-pretty font-display font-bold text-primary transition-colors duration-[250ms] ease-out md:group-hover:text-accent md:group-focus-visible:text-accent", emphasis === "featured" ? "text-h2" : "text-h4")} id={titleId}>
           {title}
         </Title>
         {excerpt ? <p className="line-clamp-3 text-body-s text-secondary">{excerpt}</p> : null}
-        <span className="inline-flex items-center gap-2 text-label-m text-accent">
+        <span className="mt-auto inline-flex items-center gap-2 pt-1 text-label-m text-accent" data-card-footer="">
           <span>{linkLabel}</span>
           <Icon name="arrow" />
         </span>

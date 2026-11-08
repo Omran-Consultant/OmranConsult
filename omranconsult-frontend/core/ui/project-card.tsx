@@ -19,7 +19,7 @@ type ProjectCardProps = {
 
 /**
  * Project card option A (A36): 16:10 image, sector, two-line title, client.
- * The whole card is the link. Hover zooms the image, lifts the card, and underlines the title.
+ * The whole card is the link. Hover zooms the image, lifts the card, and turns the title green.
  */
 export function ProjectCard({
   href,
@@ -33,7 +33,7 @@ export function ProjectCard({
   className,
 }: ProjectCardProps) {
   return (
-    <CardFrame className={classNames("h-full", className)} href={href}>
+    <CardFrame className={className} glow={false} href={href}>
       <div className={classNames("relative overflow-hidden bg-highlight", emphasis === "tall" ? "min-h-72 flex-1" : "aspect-[16/10]")}>
         <Image
           alt={image.alt}
@@ -44,10 +44,14 @@ export function ProjectCard({
           src={image.src}
         />
       </div>
-      <div className="flex flex-col gap-2 px-6 py-5">
+      <div className="flex flex-1 flex-col gap-2 bg-surface px-6 py-5">
         {category ? <span className="text-label-s text-accent">{category}</span> : null}
-        <span className="line-clamp-2 font-display text-h3 font-bold text-primary underline-offset-4 md:group-hover:underline md:group-focus-visible:underline">{title}</span>
-        {client ? <span className="truncate text-body-s text-secondary">{client}</span> : null}
+        <span className="line-clamp-2 text-pretty font-display text-h3 font-bold text-primary transition-colors duration-[250ms] ease-out md:group-hover:text-accent md:group-focus-visible:text-accent">{title}</span>
+        {client ? (
+          <span className="mt-auto truncate pt-1 text-body-s text-secondary" data-card-footer="">
+            {client}
+          </span>
+        ) : null}
       </div>
     </CardFrame>
   );

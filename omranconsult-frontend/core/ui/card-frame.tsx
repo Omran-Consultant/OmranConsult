@@ -9,6 +9,8 @@ type CardFrameProps = {
   readonly className?: string;
   readonly featured?: boolean;
   readonly href?: string;
+  /** Image cards keep the text panel solid: no green glow behind the copy. */
+  readonly glow?: boolean;
 };
 
 /**
@@ -16,9 +18,9 @@ type CardFrameProps = {
  * two-layer navy shadow, 6 px lift and gradient hairline on hover. Motion is off
  * under prefers-reduced-motion; phones get a pressed border instead of the lift.
  */
-export function CardFrame({ children, className, featured = false, href }: CardFrameProps) {
+export function CardFrame({ children, className, featured = false, glow = true, href }: CardFrameProps) {
   const classNamesValue = classNames(
-    "group relative isolate flex flex-col overflow-hidden rounded-lg border border-line bg-surface text-primary shadow-card",
+    "group relative isolate flex h-full min-w-0 flex-col overflow-hidden rounded-lg border border-line bg-surface text-primary shadow-card",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
     "motion-safe:transition-[transform,box-shadow] motion-safe:duration-[250ms] motion-safe:ease-out",
     "motion-safe:md:hover:-translate-y-1.5 motion-safe:md:hover:shadow-card-hover",
@@ -40,10 +42,12 @@ export function CardFrame({ children, className, featured = false, href }: CardF
             : "motion-safe:transition-opacity motion-safe:duration-[250ms] motion-safe:md:group-hover:opacity-100 motion-safe:md:group-focus-visible:opacity-100 max-md:group-active:opacity-100 [background:linear-gradient(135deg,var(--green-600),color-mix(in_srgb,var(--navy-800)_25%,transparent)_60%)]",
         )}
       />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 hidden opacity-0 motion-safe:md:block motion-safe:md:group-hover:opacity-100 motion-safe:md:group-focus-visible:opacity-100 [background:radial-gradient(280px_circle_at_70%_30%,color-mix(in_srgb,var(--green-300)_10%,transparent),transparent_60%)]"
-      />
+      {glow ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 hidden opacity-0 motion-safe:md:block motion-safe:md:group-hover:opacity-100 motion-safe:md:group-focus-visible:opacity-100 [background:radial-gradient(280px_circle_at_70%_30%,color-mix(in_srgb,var(--green-300)_10%,transparent),transparent_60%)]"
+        />
+      ) : null}
       <div className="relative z-10 flex flex-1 flex-col">{children}</div>
     </>
   );
