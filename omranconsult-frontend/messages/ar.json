@@ -24,7 +24,8 @@
     "stage": "المرحلة {n}"
   },
   "ServicesPage": {
-    "outputsHeading": "المخرجات المتوقعة"
+    "outputsHeading": "المخرجات المتوقعة",
+    "itemCount": "{count, plural, zero {لا بنود} one {بند واحد} two {بندان} few {# بنود} many {# بنداً} other {# بند}}"
   },
   "ProjectsPage": {
     "filtersLabel": "تصفية المشاريع حسب القطاع",

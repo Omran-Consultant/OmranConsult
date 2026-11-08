@@ -39,15 +39,14 @@ export const servicesBlocksSchema = z.object({
 export type ServicesCopy = z.infer<typeof servicesCopySchema>;
 export type ServicesBlocks = z.infer<typeof servicesBlocksSchema>;
 
-/** Pillar icons in the API axis order (Figma Pillar Card icons). */
-export const PILLAR_ICONS: readonly IconName[] = ["building", "chart", "trending-up"];
+/** Axis icons in API order: engineering consulting, project management, business consulting. */
+export const PILLAR_ICONS: readonly IconName[] = ["hard-hat", "clipboard", "chart"];
 
 /**
- * Tool icons in the profile order (PHASE4C_FIGMA §6.3: one icon per tool):
- * sedans, total station, GPS station, computers, printer, colour copier, 4×4 vehicles,
- * attendance terminal, drone, engineering software.
+ * Tool icons in the profile order:
+ * sedans, total station, GPS survey, computers, printer, copier, 4×4, attendance device, drone, engineering software.
  */
-export const TOOL_ICONS: readonly IconName[] = ["car", "total-station", "map-pin", "monitor", "file", "image", "car", "clock", "drone", "layers"];
+export const TOOL_ICONS: readonly IconName[] = ["car", "total-station", "gps", "desktop", "printer", "copy", "jeep", "fingerprint", "drone", "blueprint"];
 
 /** Splits a list into two columns, first half then second half (Figma Asset Management 01-05 | 06-10). */
 export function splitColumns<T>(items: readonly T[]): [T[], T[]] {

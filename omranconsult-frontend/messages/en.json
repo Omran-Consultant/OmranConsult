@@ -24,7 +24,8 @@
     "stage": "Stage {n}"
   },
   "ServicesPage": {
-    "outputsHeading": "Expected outputs"
+    "outputsHeading": "Expected outputs",
+    "itemCount": "{count, plural, one {# item} other {# items}}"
   },
   "ProjectsPage": {
     "filtersLabel": "Filter projects by sector",

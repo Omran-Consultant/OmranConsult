@@ -63,6 +63,9 @@
   --header-glass: rgb(242 244 247 / 0.85);
   --elevation-popup: 0 24px 48px rgb(8 19 34 / 0.16);
   --elevation-lift: 0 12px 28px rgb(8 19 34 / 0.14);
+  /* Service-card concept: two soft navy layers, then the lifted hover pair (A36). */
+  --elevation-card: 0 1px 2px rgb(8 19 34 / 0.04), 0 8px 24px rgb(8 19 34 / 0.06);
+  --elevation-card-hover: 0 2px 4px rgb(8 19 34 / 0.05), 0 20px 40px rgb(8 19 34 / 0.12);
   --decorative-media-opacity: 0.18;
   --reveal-start-opacity: 1;
   color-scheme: light;
@@ -115,6 +118,8 @@
   --header-glass: rgb(8 19 34 / 0.85);
   --elevation-popup: 0 24px 48px rgb(0 0 0 / 0.35);
   --elevation-lift: 0 12px 28px rgb(0 0 0 / 0.28);
+  --elevation-card: 0 1px 2px rgb(0 0 0 / 0.2), 0 8px 24px rgb(0 0 0 / 0.28);
+  --elevation-card-hover: 0 2px 4px rgb(0 0 0 / 0.25), 0 20px 40px rgb(0 0 0 / 0.4);
   --decorative-media-opacity: 1;
   --reveal-start-opacity: 0;
   color-scheme: dark;
@@ -226,6 +231,8 @@ html[lang="ar"] {
   --color-info: var(--status-info);
   --shadow-elevated: var(--elevation-popup);
   --shadow-lift: var(--elevation-lift);
+  --shadow-card: var(--elevation-card);
+  --shadow-card-hover: var(--elevation-card-hover);
 
   /* Typography */
   --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;

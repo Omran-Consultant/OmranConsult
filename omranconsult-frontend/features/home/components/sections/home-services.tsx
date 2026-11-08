@@ -1,14 +1,17 @@
 import { getTranslations } from "next-intl/server";
 
 import { LinkButton } from "@/core/ui/button";
-import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import { SectionHeader } from "@/core/ui/section-header";
+import type { IconName } from "@/core/ui/icon";
 import { ServiceCard } from "@/core/ui/service-card";
 import type { HomeView } from "@/features/home/services/home-view";
 import { Link } from "@/i18n/navigation";
 
-/** Figma Home "Services": bg/surface, header + «جميع الخدمات», six cards (three on mobile). */
+/** Concept order 01–06: assets, consulting, supervision, design, digital, enablement. */
+const SERVICE_ICONS = ["buildings", "hard-hat", "clipboard", "compass", "cpu", "graduation"] as const satisfies readonly IconName[];
+
+/** Home service highlights: six concept cards. One column on a phone, three from 1024 px. */
 export async function HomeServices({ view }: { readonly view: HomeView }) {
   const t = await getTranslations("Home");
   const { services: copy } = view.copy;
@@ -36,15 +39,14 @@ export async function HomeServices({ view }: { readonly view: HomeView }) {
             </LinkButton>
           </div>
         </div>
-        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <ul className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {view.highlights.map((item, index) => (
-            <li className={classNames(index >= 3 && "max-md:hidden")} data-reveal="" key={item.number} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
+            <li data-reveal="" key={item.number} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
               <ServiceCard
-                className="h-full min-h-70 lg:min-h-95"
                 description={item.description}
-                highlighted={index === 0}
+                featured={index === 0}
                 href={item.href}
-                icon={item.icon}
+                icon={SERVICE_ICONS[index] ?? item.icon}
                 linkLabel={t("discover")}
                 number={item.number}
                 title={item.title}
