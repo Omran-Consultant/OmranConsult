@@ -41,13 +41,7 @@
     "stage": "Stage {n}"
   },
   "ServicesPage": {
-    "titleFallback": "Our Services",
-    "axesHeading": "Service axes",
-    "stepsHeading": "Implementation steps",
-    "outputsHeading": "Expected outputs",
-    "outputsRowLabel": "Expected deliverables, scroll horizontally",
-    "outputsRowPrevious": "Previous",
-    "outputsRowNext": "Next"
+    "outputsHeading": "Expected outputs"
   },
   "ProjectsPage": {
     "headerTitle": "Projects",

@@ -10,6 +10,8 @@ type SectionHeaderProps = {
   readonly overlineShort?: string;
   /** May contain one `{accent}` word and line breaks. */
   readonly title: string;
+  /** Shorter title below 768 px (the 390 frames); one heading element keeps the id. */
+  readonly titleShort?: string;
   readonly subtitle?: string;
   /** Shorter subtitle below 768 px (the 390 frames). */
   readonly subtitleShort?: string;
@@ -25,6 +27,7 @@ export function SectionHeader({
   overline,
   overlineShort,
   title,
+  titleShort,
   subtitle,
   subtitleShort,
   titleId,
@@ -37,7 +40,18 @@ export function SectionHeader({
       {overline ? <Overline className={overlineShort ? "max-md:hidden" : undefined}>{overline}</Overline> : null}
       {overline && overlineShort ? <Overline className="md:hidden">{overlineShort}</Overline> : null}
       <Heading className="font-display text-h1 text-primary" id={titleId}>
-        <AccentText value={title} />
+        {titleShort ? (
+          <>
+            <span className="max-md:hidden">
+              <AccentText value={title} />
+            </span>
+            <span className="md:hidden">
+              <AccentText value={titleShort} />
+            </span>
+          </>
+        ) : (
+          <AccentText value={title} />
+        )}
       </Heading>
       {subtitle ? <p className={classNames("text-body-l text-secondary", subtitleShort && "max-md:hidden")}>{subtitle}</p> : null}
       {subtitle && subtitleShort ? <p className="text-body-l text-secondary md:hidden">{subtitleShort}</p> : null}

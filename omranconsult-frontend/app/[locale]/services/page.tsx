@@ -18,7 +18,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   }
 
   setRequestLocale(locale);
-  const data = await getServicesPageData(locale);
+  const view = await getServicesPageData(locale);
 
-  return <ServicesPageContent data={data} locale={locale} />;
+  return <ServicesPageContent view={view} />;
 }

@@ -25,7 +25,8 @@ type PageHeroProps = {
   readonly stats?: readonly HeroStat[];
   /** Scrim utility from the Figma frame, for example `scrim-down-70` or `scrim-start-strong`. */
   readonly scrim?: string;
-  /** Heights and bottom padding per page (Figma: About 620, Services 600, Projects 560). */
+  /** Minimum heights per page (Figma: About 620/500, Services 600/460, Projects 560/420). */
+  readonly heightClassName?: string;
   readonly className?: string;
   readonly children?: ReactNode;
 };
@@ -43,13 +44,15 @@ export function PageHero({
   breadcrumbLabel,
   stats,
   scrim = "scrim-down-70",
+  heightClassName = "min-h-125 lg:min-h-155",
   className,
   children,
 }: PageHeroProps) {
   return (
     <header
       className={classNames(
-        "scheme-dark relative isolate flex min-h-125 items-end overflow-hidden bg-canvas pt-36 pb-8 text-primary lg:min-h-155 lg:pb-22.5",
+        "scheme-dark relative isolate flex items-end overflow-hidden bg-canvas pt-36 pb-8 text-primary lg:pb-22.5",
+        heightClassName,
         className,
       )}
       data-section="page-hero"

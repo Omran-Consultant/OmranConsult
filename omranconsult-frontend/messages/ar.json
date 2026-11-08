@@ -41,13 +41,7 @@
     "stage": "المرحلة {n}"
   },
   "ServicesPage": {
-    "titleFallback": "خدماتنا",
-    "axesHeading": "محاور الخدمات",
-    "stepsHeading": "خطوات التنفيذ",
-    "outputsHeading": "المخرجات المتوقعة",
-    "outputsRowLabel": "المخرجات المتوقعة، مرّر أفقياً",
-    "outputsRowPrevious": "السابق",
-    "outputsRowNext": "التالي"
+    "outputsHeading": "المخرجات المتوقعة"
   },
   "ProjectsPage": {
     "headerTitle": "المشاريع",
