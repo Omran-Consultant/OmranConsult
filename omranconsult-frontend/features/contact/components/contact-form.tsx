@@ -47,6 +47,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
   const locale = useLocale() as AppLocale;
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
+  const submittingRef = useRef(false);
   const [values, setValues] = useState(EMPTY);
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState("");
@@ -84,7 +85,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (status.kind === "submitting") {
+    if (submittingRef.current) {
       return;
     }
     setTouched(ALL_TOUCHED);
@@ -92,6 +93,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
       setAttempt((current) => current + 1);
       return;
     }
+    submittingRef.current = true;
     setStatus({ kind: "submitting" });
     try {
       const response = await postInquiry(locale, {
@@ -121,6 +123,8 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
       }
       const tooMany = error instanceof ApiError && error.status === 429;
       setStatus({ kind: "error", message: tooMany ? t("tooMany") : t("error") });
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -225,7 +229,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
           </div>
           <div aria-hidden="true" className="sr-only">
             <label htmlFor={`${id}-website`}>Website</label>
-            <input autoComplete="off" id={`${id}-website`} name="website" onChange={(event) => setWebsite(event.target.value)} tabIndex={-1} type="text" value={website} />
+            <input autoComplete="off" id={`${id}-website`} maxLength={INQUIRY_LIMITS.website} name="website" onChange={(event) => setWebsite(event.target.value)} tabIndex={-1} type="text" value={website} />
           </div>
           <p aria-live="polite" className="text-caption text-danger empty:hidden">
             {status.kind === "error" ? status.message : null}

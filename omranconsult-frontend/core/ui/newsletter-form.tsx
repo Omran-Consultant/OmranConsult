@@ -1,13 +1,13 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useId, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/core/ui/button";
 import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import { Spinner } from "@/core/ui/spinner";
-import { isValidEmail } from "@/core/validation/inquiry";
+import { INQUIRY_LIMITS, isValidEmail } from "@/core/validation/inquiry";
 import type { AppLocale } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/errors";
 import { postNewsletterSubscription } from "@/lib/api/public-writes";
@@ -34,6 +34,7 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
   const t = useTranslations("Layout.newsletter");
   const locale = useLocale() as AppLocale;
   const id = useId();
+  const submittingRef = useRef(false);
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -44,10 +45,14 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setTouched(true);
-    if (!isValidEmail(email) || status.kind === "submitting") {
+    if (submittingRef.current) {
       return;
     }
+    setTouched(true);
+    if (!isValidEmail(email)) {
+      return;
+    }
+    submittingRef.current = true;
     setStatus({ kind: "submitting" });
     try {
       const response = await postNewsletterSubscription(locale, { email: email.trim(), consent: true });
@@ -57,6 +62,8 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
     } catch (error) {
       const tooMany = error instanceof ApiError && error.status === 429;
       setStatus({ kind: "error", message: tooMany ? t("tooMany") : t("error") });
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -72,6 +79,7 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
       )}
       id={`${id}-email`}
       inputMode="email"
+      maxLength={INQUIRY_LIMITS.email}
       name="email"
       onBlur={() => setTouched(email.length > 0)}
       onChange={(event) => setEmail(event.target.value)}

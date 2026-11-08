@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useId, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/core/ui/button";
 import { Icon } from "@/core/ui/icon";
@@ -34,6 +34,7 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
   const t = useTranslations("Inquiry");
   const locale = useLocale() as AppLocale;
   const id = useId();
+  const submittingRef = useRef(false);
   const [values, setValues] = useState<Record<Field, string>>({ name: "", organisation: "", email: "" });
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [serverErrors, setServerErrors] = useState<Partial<Record<Field, string>>>({});
@@ -59,10 +60,14 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setTouched({ name: true, organisation: true, email: true });
-    if (clientErrors.name || clientErrors.email || status.kind === "submitting") {
+    if (submittingRef.current) {
       return;
     }
+    setTouched({ name: true, organisation: true, email: true });
+    if (clientErrors.name || clientErrors.email) {
+      return;
+    }
+    submittingRef.current = true;
     setStatus({ kind: "submitting" });
     try {
       const response = await postInquiry(locale, {
@@ -83,6 +88,8 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
       }
       const tooMany = error instanceof ApiError && error.status === 429;
       setStatus({ kind: "error", message: tooMany ? t("tooMany") : t("error") });
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -123,7 +130,7 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
             />
             <div aria-hidden="true" className="sr-only">
               <label htmlFor={`${id}-website`}>Website</label>
-              <input autoComplete="off" id={`${id}-website`} name="website" onChange={(event) => setWebsite(event.target.value)} tabIndex={-1} type="text" value={website} />
+              <input autoComplete="off" id={`${id}-website`} maxLength={INQUIRY_LIMITS.website} name="website" onChange={(event) => setWebsite(event.target.value)} tabIndex={-1} type="text" value={website} />
             </div>
             <p aria-live="polite" className="text-caption text-danger empty:hidden">
               {status.kind === "error" ? status.message : null}

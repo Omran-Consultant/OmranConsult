@@ -1,5 +1,5 @@
 /** Client mirror of StoreInquiryRequest (B7); the server stays the authority. */
-export const INQUIRY_LIMITS = { name: 120, organisation: 160, email: 190, message: 2000 } as const;
+export const INQUIRY_LIMITS = { name: 120, organisation: 160, email: 190, message: 2000, website: 255 } as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SAUDI_MOBILE_PATTERN = /^(05\d{8}|\+9665\d{8})$/;

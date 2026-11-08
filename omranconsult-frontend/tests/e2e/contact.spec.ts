@@ -38,12 +38,13 @@ test("contact form validates, then posts source=contact and shows success", asyn
   await submit.click();
 
   await expect(card.getByRole("status")).toHaveText("استلمنا طلبك، سنتواصل معك خلال يومي عمل");
-  expect(body).toMatchObject({
+  expect(body).toEqual({
     source: "contact",
     name: "مهندس تجربة",
     email: "test@example.com",
     phone: "0512345678",
     service_type: "asset-management-services",
+    message: "تقييم أصول مبنى إداري",
     consent: true,
     website: "",
   });
@@ -85,5 +86,52 @@ test("footer newsletter subscribes and announces the server message", async ({ p
   await footer.getByLabel("البريد الإلكتروني").fill("reader@example.com");
   await footer.getByRole("button", { name: "اشترك" }).click();
   await expect(footer.getByText("تم الاشتراك في النشرة")).toBeVisible();
-  expect(body).toMatchObject({ email: "reader@example.com", consent: true });
+  expect(body).toEqual({ email: "reader@example.com", consent: true });
+});
+
+test("contact and newsletter forms send only one request on a double submit", async ({ page }) => {
+  let inquiryCalls = 0;
+  let releaseInquiry: (() => void) | undefined;
+  const inquiryGate = new Promise<void>((resolve) => {
+    releaseInquiry = resolve;
+  });
+  await page.route("**/api/inquiries", async (route) => {
+    inquiryCalls += 1;
+    await inquiryGate;
+    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ message: "Received" }) });
+  });
+
+  await page.goto("/en/contact");
+  const card = page.getByTestId("contact-form-card");
+  await card.getByLabel("Full name").fill("Test engineer");
+  await card.getByLabel("Email").fill("test@example.com");
+  await card.getByLabel(/I agree to the privacy policy/).check();
+  await card.locator("form").evaluate((form: HTMLFormElement) => {
+    form.requestSubmit();
+    form.requestSubmit();
+  });
+  await expect.poll(() => inquiryCalls).toBe(1);
+  releaseInquiry?.();
+  await expect(card.getByRole("status")).toBeVisible();
+
+  let newsletterCalls = 0;
+  let releaseNewsletter: (() => void) | undefined;
+  const newsletterGate = new Promise<void>((resolve) => {
+    releaseNewsletter = resolve;
+  });
+  await page.route("**/api/newsletter", async (route) => {
+    newsletterCalls += 1;
+    await newsletterGate;
+    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ message: "Subscribed" }) });
+  });
+
+  const footer = page.locator("footer");
+  await footer.getByLabel("Email").fill("reader@example.com");
+  await footer.locator("form").evaluate((form: HTMLFormElement) => {
+    form.requestSubmit();
+    form.requestSubmit();
+  });
+  await expect.poll(() => newsletterCalls).toBe(1);
+  releaseNewsletter?.();
+  await expect(footer.getByText("Subscribed")).toBeVisible();
 });

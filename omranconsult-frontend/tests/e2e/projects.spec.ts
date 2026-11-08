@@ -78,7 +78,38 @@ test("project inquiry validates and posts source=project", async ({ page }) => {
   await card.getByLabel("البريد الإلكتروني").fill("test@example.com");
   await card.getByRole("button", { name: "إرسال الطلب" }).click();
   await expect(card.getByRole("status")).toContainText("استلمنا طلبك");
-  expect(body).toMatchObject({ source: "project", project_slug: "king-saud-university-operation-and-maintenance-efficiency", name: "مهندس تجربة" });
+  expect(body).toEqual({
+    source: "project",
+    project_slug: "king-saud-university-operation-and-maintenance-efficiency",
+    name: "مهندس تجربة",
+    email: "test@example.com",
+    website: "",
+  });
+});
+
+test("project inquiry sends only one request on a double submit", async ({ page }) => {
+  let calls = 0;
+  let release: (() => void) | undefined;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/inquiries", async (route) => {
+    calls += 1;
+    await gate;
+    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ message: "Received" }) });
+  });
+  await page.goto("/en/projects/king-saud-university-operation-and-maintenance-efficiency");
+  const card = page.locator('[data-section="body"] aside');
+  await card.getByLabel("Full name").fill("Test engineer");
+  await card.getByLabel("Email").fill("test@example.com");
+  await card.locator("form").evaluate((form: HTMLFormElement) => {
+    form.requestSubmit();
+    form.requestSubmit();
+  });
+
+  await expect.poll(() => calls).toBe(1);
+  release?.();
+  await expect(card.getByRole("status")).toBeVisible();
 });
 
 for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }]) {
