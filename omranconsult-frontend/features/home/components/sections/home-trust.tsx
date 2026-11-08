@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
 
 import { CertificateCard } from "@/core/ui/certificate-card";
+import { PartnerGrid } from "@/core/ui/partner-card";
 import { SectionHeader } from "@/core/ui/section-header";
-import { WordmarkStrip } from "@/core/ui/wordmark-strip";
 import type { HomeView } from "@/features/home/services/home-view";
 
 /**
  * Figma Home "Trust": the eight ISO certificates from the profile (D6: the design's ISO 55001 is
- * not shown), then the partner logos (Q11: partners only). The expired badge stays hidden (A31).
+ * not shown), then the same partner cards as About (A34). The expired badge stays hidden (A31).
  */
 export async function HomeTrust({ view }: { readonly view: HomeView }) {
   const t = await getTranslations("Home");
@@ -28,10 +28,16 @@ export async function HomeTrust({ view }: { readonly view: HomeView }) {
           </ul>
         ) : null}
 
-        <WordmarkStrip
-          items={view.partners.map((partner) => ({ key: partner.slug, wordmark: partner.wordmark, title: partner.name }))}
-          label={copy.partners_label}
-        />
+        {view.partners.length > 0 ? (
+          <div className="flex flex-col gap-6">
+            {copy.partners_label ? (
+              <h3 className="text-label-m text-secondary" id="home-partners-label">
+                {copy.partners_label}
+              </h3>
+            ) : null}
+            <PartnerGrid labelId={copy.partners_label ? "home-partners-label" : undefined} partners={view.partners} />
+          </div>
+        ) : null}
       </div>
     </section>
   );

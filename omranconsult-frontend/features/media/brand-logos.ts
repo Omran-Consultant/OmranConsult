@@ -76,3 +76,15 @@ export function getPartnerLogo(slug: string | null | undefined): BrandLogo | und
   }
   return PARTNER_LOGOS[slug];
 }
+
+/** One card per published partner that has a slug and a name. The logo is local artwork by slug. */
+export function partnerCards(partners: readonly { slug?: string; name?: string; field?: string }[]) {
+  return partners
+    .filter((partner) => partner.slug && partner.name)
+    .map((partner) => ({
+      slug: partner.slug as string,
+      name: partner.name as string,
+      field: partner.field,
+      logo: getPartnerLogo(partner.slug),
+    }));
+}

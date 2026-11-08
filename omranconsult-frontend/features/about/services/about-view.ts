@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { getClientLogo, getPartnerLogo } from "@/features/media/brand-logos";
+import { getClientLogo } from "@/features/media/brand-logos";
 
 const text = z.string().trim().min(1).optional().catch(undefined);
 const texts = z.array(z.string()).catch([]).default([]);
@@ -61,12 +61,6 @@ export const aboutBlocksSchema = z.object({
 
 export type AboutBlocks = z.infer<typeof aboutBlocksSchema>;
 export type AboutCopy = z.infer<typeof aboutCopySchema>;
-
-export function partnerCards(partners: readonly { slug?: string; name?: string; field?: string }[]) {
-  return partners
-    .filter((partner) => partner.slug && partner.name)
-    .map((partner) => ({ slug: partner.slug as string, name: partner.name as string, field: partner.field, logo: getPartnerLogo(partner.slug) }));
-}
 
 export function clientLogos(clients: readonly { slug?: string; name?: string; inClientList: boolean; sortOrder: number }[]) {
   return clients

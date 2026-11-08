@@ -5,6 +5,7 @@ import { groupRegions } from "@/features/home/lib/coverage-groups";
 import { shortStandardCode } from "@/core/format/standard-code";
 import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/public-content/services/home-copy";
 import { formatStatisticValue } from "@/core/format/statistic";
+import { partnerCards } from "@/features/media/brand-logos";
 import { certificateScan } from "@/features/media/credential-scans";
 import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type {
@@ -27,7 +28,6 @@ type HomeSources = {
   readonly regions: ReturnType<typeof mapRegionsToUiModel>;
   readonly certificates: ReturnType<typeof mapDocumentsToUiModel>;
   readonly partners: ReturnType<typeof mapPartnersToUiModel>;
-  readonly partnersEn: ReturnType<typeof mapPartnersToUiModel>;
 };
 
 export type HomeStat = { readonly key: string; readonly value: string; readonly label: string | undefined };
@@ -49,8 +49,6 @@ export type HomeServiceHighlight = {
   readonly description?: string;
   readonly href: string;
 };
-
-export type HomePartner = { readonly slug: string; readonly name: string; readonly wordmark: string };
 
 /** The five profile statistics in the profile order (Stats section). */
 const PROFILE_STAT_KEYS = ["completed_projects", "project_volume", "employees", "local_content", "partnerships"];
@@ -92,7 +90,6 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
   };
   const projects = sources.projects.filter((project) => project.title).map(toProject);
   const featured = sources.featured.filter((project) => project.title).map(toProject);
-  const englishNames = new Map(sources.partnersEn.map((partner) => [partner.slug, partner.name]));
 
   const highlights: HomeServiceHighlight[] = serviceHighlightsSchema
     .parse(sources.home.blocks.service_highlights ?? {})
@@ -129,14 +126,7 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
           image: certificateScan(document.slug ?? code) ?? certificateScan(code),
         };
       }),
-    partners: sources.partners
-      .filter((partner) => partner.slug && partner.name)
-      .map((partner): HomePartner => ({
-        slug: partner.slug as string,
-        name: partner.name as string,
-        // Latin wordmark: the English name before any " — " tagline, uppercased (H6).
-        wordmark: (englishNames.get(partner.slug) ?? partner.name ?? "").split(" — ")[0]?.trim().toUpperCase() ?? "",
-      })),
+    partners: partnerCards(sources.partners),
     profilePdfUrl: sources.settings.profilePdfUrl,
     organization: {
       name: sources.settings.companyLegalName,

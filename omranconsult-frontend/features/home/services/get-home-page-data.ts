@@ -20,7 +20,7 @@ import {
 import { buildHomeView } from "@/features/home/services/home-view";
 
 export async function getHomePageData(locale: AppLocale) {
-  const [settings, home, sectors, projects, featured, regions, certificates, partners, partnersEn] = await Promise.all([
+  const [settings, home, sectors, projects, featured, regions, certificates, partners] = await Promise.all([
     fetchPublicSettings(locale),
     fetchPublicHome(locale),
     fetchPublicSectors(locale),
@@ -29,8 +29,6 @@ export async function getHomePageData(locale: AppLocale) {
     fetchPublicRegions(locale),
     fetchPublicDocuments(locale, "iso_certificate"),
     fetchPublicPartners(locale),
-    // The Trust strip shows Latin wordmarks in both locales (H6).
-    fetchPublicPartners("en"),
   ]);
 
   return buildHomeView(locale, {
@@ -42,7 +40,6 @@ export async function getHomePageData(locale: AppLocale) {
     regions: mapRegionsToUiModel(regions),
     certificates: mapDocumentsToUiModel(certificates),
     partners: mapPartnersToUiModel(partners),
-    partnersEn: mapPartnersToUiModel(partnersEn),
   });
 }
 

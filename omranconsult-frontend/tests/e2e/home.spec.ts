@@ -55,6 +55,24 @@ test.describe("mobile", () => {
   });
 });
 
+test("home trust shows the partner cards under one partners label", async ({ page }) => {
+  await page.goto("/ar");
+  const trust = page.locator('[data-section="trust"]');
+  await expect(trust.getByRole("heading", { name: "شركاؤنا", exact: true })).toHaveCount(1);
+  const partners = trust.getByRole("list", { name: "شركاؤنا" });
+  await expect(partners.getByRole("img", { name: "OLIVER WYMAN — A MARSH BUSINESS" })).toHaveCount(1);
+  await expect(partners.getByRole("img", { name: "MUSANADAH" })).toHaveCount(1);
+  await expect(partners.getByRole("img", { name: "TACENT" })).toHaveCount(1);
+  await expect(partners.getByRole("img", { name: "BUREAU VERITAS" })).toHaveCount(1);
+  await expect(partners.getByRole("heading", { name: "BUREAU VERITAS", exact: true })).toBeVisible();
+  await expect(partners.getByText("في مجال الجودة والامتثال وإدارة المخاطر")).toBeVisible();
+
+  await page.goto("/en");
+  const english = page.locator('[data-section="trust"]');
+  await expect(english.getByRole("heading", { name: "Our partners", exact: true })).toHaveCount(1);
+  await expect(english.getByRole("list", { name: "Our partners" }).getByText("Quality, compliance, and risk management")).toBeVisible();
+});
+
 test("home does not show the expired-certificate badge", async ({ page }) => {
   await page.goto("/en");
   await expect(page.locator('[data-section="trust"]').getByText("Expired")).toHaveCount(0);

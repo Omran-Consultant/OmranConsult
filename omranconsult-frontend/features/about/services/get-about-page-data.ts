@@ -1,5 +1,6 @@
 import { formatStats } from "@/core/format/statistic";
-import { aboutBlocksSchema, aboutCopySchema, clientLogos, partnerCards } from "@/features/about/services/about-view";
+import { aboutBlocksSchema, aboutCopySchema, clientLogos } from "@/features/about/services/about-view";
+import { partnerCards } from "@/features/media/brand-logos";
 import { homeCopySchema } from "@/features/public-content/services/home-copy";
 import { shortStandardCode } from "@/core/format/standard-code";
 import { certificateScan, licenseScan } from "@/features/media/credential-scans";
