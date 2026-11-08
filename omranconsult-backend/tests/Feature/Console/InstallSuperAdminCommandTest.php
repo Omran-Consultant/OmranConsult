@@ -49,11 +49,11 @@ class InstallSuperAdminCommandTest extends TestCase
 
     public function test_installs_super_admin_when_users_table_is_empty(): void
     {
-        $this->setBootstrapCredentials('bootstrap@omranconsult.test', 'securepassword12');
+        $this->setBootstrapCredentials('bootstrap@omranconsult.test', 'SecurePassword12!');
 
         $this->artisan('omranconsult:install-super-admin')
             ->assertSuccessful()
-            ->doesntExpectOutputToContain('securepassword12');
+            ->doesntExpectOutputToContain('SecurePassword12!');
 
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseHas('users', [
@@ -109,6 +109,26 @@ class InstallSuperAdminCommandTest extends TestCase
         $this->artisan('omranconsult:install-super-admin')
             ->assertFailed()
             ->doesntExpectOutputToContain('short');
+
+        $this->assertDatabaseCount('users', 0);
+    }
+
+    public function test_rejects_empty_admin_password(): void
+    {
+        $this->setBootstrapCredentials('admin@omranconsult.test', '');
+
+        $this->artisan('omranconsult:install-super-admin')->assertFailed();
+
+        $this->assertDatabaseCount('users', 0);
+    }
+
+    public function test_rejects_weak_admin_password_even_when_it_is_long_enough(): void
+    {
+        $this->setBootstrapCredentials('admin@omranconsult.test', 'passwordpassword');
+
+        $this->artisan('omranconsult:install-super-admin')
+            ->assertFailed()
+            ->doesntExpectOutputToContain('passwordpassword');
 
         $this->assertDatabaseCount('users', 0);
     }

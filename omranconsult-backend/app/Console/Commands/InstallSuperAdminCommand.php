@@ -7,6 +7,7 @@ use App\Support\SuperAdminRole;
 use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class InstallSuperAdminCommand extends Command
 {
@@ -29,7 +30,7 @@ class InstallSuperAdminCommand extends Command
 
         $validator = Validator::make($credentials, [
             'email' => ['required', 'email'],
-            'password' => ['required', 'string', 'min:12'],
+            'password' => ['required', 'string', Password::min(12)->mixedCase()->numbers()->symbols()],
         ]);
 
         if ($validator->fails()) {
