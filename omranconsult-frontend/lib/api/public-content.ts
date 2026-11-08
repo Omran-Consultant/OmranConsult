@@ -6,6 +6,9 @@ import {
   documentsResponseSchema,
   expertsResponseSchema,
   homeResponseSchema,
+  newsCategoriesResponseSchema,
+  newsDetailResponseSchema,
+  newsIndexResponseSchema,
   pageResponseSchema,
   orgChartResponseSchema,
   partnersResponseSchema,
@@ -16,6 +19,7 @@ import {
   servicesResponseSchema,
   settingsResponseSchema,
 } from "@/features/public-content/schemas/public-api-schemas";
+import { ApiError } from "@/lib/api/errors";
 import { serverApiRequest } from "@/lib/api/server-client";
 
 type ProjectsQuery = {
@@ -27,6 +31,21 @@ type ProjectsQuery = {
   page?: number;
   perPage?: number;
 };
+
+/**
+ * Detail fetchers return null on 404 inside the cached function: an error thrown across a
+ * "use cache" boundary is serialized and is no longer an ApiError instance for the caller.
+ */
+async function nullOnNotFound<T>(request: Promise<T>): Promise<T | null> {
+  try {
+    return await request;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}
 
 function withLocaleHeaders(locale: AppLocale): HeadersInit {
   return {
@@ -136,12 +155,13 @@ export async function fetchPublicProjectBySlug(locale: AppLocale, slug: string) 
   cacheTag("projects");
   cacheTag(`project:${slug}`);
 
-  return projectDetailResponseSchema.parse(
-    await serverApiRequest<unknown>(`/api/projects/${slug}`, {
+  const payload = await nullOnNotFound(
+    serverApiRequest<unknown>(`/api/projects/${slug}`, {
       headers: withLocaleHeaders(locale),
       cache: "force-cache",
     }),
   );
+  return payload === null ? null : projectDetailResponseSchema.parse(payload);
 }
 
 export async function fetchPublicClients(locale: AppLocale) {
@@ -233,4 +253,70 @@ export async function fetchPublicSectors(locale: AppLocale) {
       cache: "force-cache",
     }),
   );
+}
+
+export type NewsQuery = {
+  category?: string;
+  featured?: boolean;
+  page?: number;
+  perPage?: number;
+};
+
+function buildNewsQuery(query: NewsQuery = {}): string {
+  const params = new URLSearchParams();
+  if (query.category) {
+    params.set("category", query.category);
+  }
+  if (query.featured !== undefined) {
+    params.set("featured", query.featured ? "1" : "0");
+  }
+  if (query.page) {
+    params.set("page", String(query.page));
+  }
+  if (query.perPage) {
+    params.set("per_page", String(query.perPage));
+  }
+  const serialized = params.toString();
+  return serialized.length > 0 ? `?${serialized}` : "";
+}
+
+export async function fetchPublicNewsCategories(locale: AppLocale) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("news");
+
+  return newsCategoriesResponseSchema.parse(
+    await serverApiRequest<unknown>("/api/news-categories", {
+      headers: withLocaleHeaders(locale),
+      cache: "force-cache",
+    }),
+  );
+}
+
+export async function fetchPublicNews(locale: AppLocale, query?: NewsQuery) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("news");
+
+  return newsIndexResponseSchema.parse(
+    await serverApiRequest<unknown>(`/api/news${buildNewsQuery(query)}`, {
+      headers: withLocaleHeaders(locale),
+      cache: "force-cache",
+    }),
+  );
+}
+
+export async function fetchPublicNewsPost(locale: AppLocale, slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("news");
+  cacheTag(`news:${slug}`);
+
+  const payload = await nullOnNotFound(
+    serverApiRequest<unknown>(`/api/news/${encodeURIComponent(slug)}`, {
+      headers: withLocaleHeaders(locale),
+      cache: "force-cache",
+    }),
+  );
+  return payload === null ? null : newsDetailResponseSchema.parse(payload);
 }

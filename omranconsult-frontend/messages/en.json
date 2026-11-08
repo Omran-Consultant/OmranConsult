@@ -109,6 +109,32 @@
       "tooMany": "Too many attempts. Wait a minute and try again."
     }
   },
+  "MediaPage": {
+    "allTab": "All",
+    "tablistLabel": "News categories",
+    "featuredBadge": "Featured",
+    "readArticle": "Read the story",
+    "readMore": "Read more",
+    "loadMore": "Load more",
+    "listTitle": "News",
+    "count": "{shown} of {total} posts",
+    "emptyTitle": "No news in this category yet",
+    "emptyAction": "Show all news",
+    "readingTime": "{minutes, plural, one {# min read} other {# min read}}",
+    "article": {
+      "related": "Related news",
+      "tags": "Tags",
+      "share": "Share:",
+      "shareX": "Share on X",
+      "shareLinkedIn": "Share on LinkedIn",
+      "shareWhatsApp": "Share on WhatsApp",
+      "copyLink": "Copy link",
+      "copied": "Link copied",
+      "copyFailed": "Could not copy the link",
+      "contact": "Contact us",
+      "author": "Author"
+    }
+  },
   "Inquiry": {
     "nameLabel": "Full name",
     "namePlaceholder": "Enter your name",

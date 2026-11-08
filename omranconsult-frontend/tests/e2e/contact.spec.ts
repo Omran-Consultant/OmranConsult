@@ -83,7 +83,7 @@ test("footer newsletter subscribes and announces the server message", async ({ p
   await page.goto("/ar/contact");
   const footer = page.locator("footer");
   await footer.getByLabel("البريد الإلكتروني").fill("reader@example.com");
-  await footer.getByRole("button", { name: "اشتراك" }).click();
+  await footer.getByRole("button", { name: "اشترك" }).click();
   await expect(footer.getByText("تم الاشتراك في النشرة")).toBeVisible();
   expect(body).toMatchObject({ email: "reader@example.com", consent: true });
 });

@@ -109,6 +109,32 @@
       "tooMany": "محاولات كثيرة، انتظر دقيقة ثم حاول مجدداً."
     }
   },
+  "MediaPage": {
+    "allTab": "الكل",
+    "tablistLabel": "تصنيفات الأخبار",
+    "featuredBadge": "خبر مميز",
+    "readArticle": "اقرأ الخبر",
+    "readMore": "اقرأ المزيد",
+    "loadMore": "تحميل المزيد",
+    "listTitle": "الأخبار",
+    "count": "{shown} من {total} خبر",
+    "emptyTitle": "لا توجد أخبار في هذا التصنيف بعد",
+    "emptyAction": "عرض كل الأخبار",
+    "readingTime": "{minutes, plural, one {دقيقة قراءة واحدة} two {دقيقتان قراءة} few {# دقائق قراءة} other {# دقيقة قراءة}}",
+    "article": {
+      "related": "أخبار ذات صلة",
+      "tags": "الوسوم",
+      "share": "مشاركة:",
+      "shareX": "مشاركة على X",
+      "shareLinkedIn": "مشاركة على LinkedIn",
+      "shareWhatsApp": "مشاركة عبر واتساب",
+      "copyLink": "نسخ الرابط",
+      "copied": "تم نسخ الرابط",
+      "copyFailed": "تعذّر نسخ الرابط",
+      "contact": "تواصل معنا",
+      "author": "الكاتب"
+    }
+  },
   "Inquiry": {
     "nameLabel": "الاسم الكامل",
     "namePlaceholder": "اكتب اسمك",
@@ -166,7 +192,7 @@
     "newsletter": {
       "emailLabel": "البريد الإلكتروني",
       "emailPlaceholder": "name@company.com",
-      "submit": "اشتراك",
+      "submit": "اشترك",
       "consent": "بالاشتراك، توافق على استخدام بريدك الإلكتروني لإرسال النشرة البريدية.",
       "invalidEmail": "أدخل بريداً إلكترونياً صحيحاً",
       "error": "تعذّر إتمام الاشتراك، حاول مرة أخرى.",

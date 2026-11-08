@@ -80,3 +80,8 @@ test("project inquiry validates and posts source=project", async ({ page }) => {
   await expect(card.getByRole("status")).toContainText("استلمنا طلبك");
   expect(body).toMatchObject({ source: "project", project_slug: "king-saud-university-operation-and-maintenance-efficiency", name: "مهندس تجربة" });
 });
+
+test("unknown project slug renders the not-found page", async ({ page }) => {
+  await page.goto("/en/projects/not-a-real-project");
+  await expect(page.getByRole("link", { name: "Back to home" })).toBeVisible();
+});

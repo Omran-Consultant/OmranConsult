@@ -127,7 +127,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
   const consentError = errorFor("consent");
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-line bg-elevated px-5 py-6 md:gap-6 md:p-10" data-testid="contact-form-card">
+    <div className="flex flex-col gap-4 rounded-[24px] border border-line bg-elevated px-5 py-6 md:gap-6 md:rounded-[28px] md:p-10" data-testid="contact-form-card">
       {title ? <h2 className="font-display text-h3 text-primary md:text-h2">{title}</h2> : null}
       {status.kind === "success" ? (
         <p aria-live="polite" className="flex items-start gap-3 text-body-l text-primary" role="status">

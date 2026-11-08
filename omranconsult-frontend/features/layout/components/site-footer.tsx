@@ -3,7 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentYear } from "@/core/format/current-year";
 import { formatPhoneForDisplay, formatPhoneTelLink } from "@/core/format/phone";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
-import { NewsletterForm } from "@/features/layout/components/newsletter-form";
+import { NewsletterForm } from "@/core/ui/newsletter-form";
 import { FOOTER_COLUMNS, FOOTER_COLUMNS_COMPACT } from "@/features/layout/navigation";
 import { getLayoutData } from "@/features/layout/services/get-layout-data";
 import { Link } from "@/i18n/navigation";

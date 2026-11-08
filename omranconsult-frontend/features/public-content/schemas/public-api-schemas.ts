@@ -234,6 +234,39 @@ export const partnersResponseSchema = z.object({
   ),
 });
 
+const newsPostSchema = z.object({
+  slug: z.string(),
+  title: nullableStringSchema,
+  excerpt: nullableStringSchema,
+  cover_image: nullableStringSchema,
+  category: z.object({ slug: z.string(), name: nullableStringSchema }).nullable(),
+  date: nullableStringSchema,
+  is_featured: z.boolean(),
+  is_demo: z.boolean(),
+});
+
+export const newsCategoriesResponseSchema = z.object({
+  locale: localeSchema,
+  data: z.array(z.object({ slug: z.string(), name: nullableStringSchema })),
+});
+
+export const newsIndexResponseSchema = z.object({
+  locale: localeSchema,
+  data: z.array(newsPostSchema),
+  meta: projectsMetaSchema,
+});
+
+/** Body blocks (Q9): paragraph, heading, quote (`text`) and image (`image` key); unknown types are dropped by the mapper. */
+export const newsDetailResponseSchema = z.object({
+  locale: localeSchema,
+  data: newsPostSchema.extend({
+    author: nullableStringSchema.optional(),
+    tags: z.array(z.string()).optional(),
+    body: z.array(z.object({ type: z.string(), text: nullableStringSchema.optional(), image: nullableStringSchema.optional() })).optional(),
+    related: z.array(newsPostSchema).optional(),
+  }),
+});
+
 export type SettingsResponse = z.infer<typeof settingsResponseSchema>;
 export type SectorsResponse = z.infer<typeof sectorsResponseSchema>;
 export type HomeResponse = z.infer<typeof homeResponseSchema>;
@@ -247,3 +280,6 @@ export type ExpertsResponse = z.infer<typeof expertsResponseSchema>;
 export type OrgChartResponse = z.infer<typeof orgChartResponseSchema>;
 export type DocumentsResponse = z.infer<typeof documentsResponseSchema>;
 export type PartnersResponse = z.infer<typeof partnersResponseSchema>;
+export type NewsCategoriesResponse = z.infer<typeof newsCategoriesResponseSchema>;
+export type NewsIndexResponse = z.infer<typeof newsIndexResponseSchema>;
+export type NewsDetailResponse = z.infer<typeof newsDetailResponseSchema>;

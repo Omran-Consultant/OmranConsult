@@ -3,6 +3,9 @@ import type {
   DocumentsResponse,
   ExpertsResponse,
   HomeResponse,
+  NewsCategoriesResponse,
+  NewsDetailResponse,
+  NewsIndexResponse,
   PageResponse,
   OrgChartResponse,
   PartnersResponse,
@@ -195,4 +198,43 @@ export function mapPartnersToUiModel(payload: PartnersResponse) {
     name: mapOptionalText(partner.name),
     field: mapOptionalText(partner.field),
   }));
+}
+
+function mapNewsPost(post: NewsIndexResponse["data"][number]) {
+  return {
+    slug: post.slug,
+    title: mapOptionalText(post.title),
+    excerpt: mapOptionalText(post.excerpt),
+    imageKey: mapOptionalText(post.cover_image),
+    category: post.category?.name ? { slug: post.category.slug, name: post.category.name } : undefined,
+    date: mapOptionalText(post.date),
+    isFeatured: post.is_featured,
+    isDemo: post.is_demo,
+  };
+}
+
+export function mapNewsCategoriesToUiModel(payload: NewsCategoriesResponse) {
+  return payload.data.flatMap((category) => {
+    const name = mapOptionalText(category.name);
+    return name ? [{ slug: category.slug, name }] : [];
+  });
+}
+
+export function mapNewsIndexToUiModel(payload: NewsIndexResponse) {
+  return {
+    posts: payload.data.map(mapNewsPost),
+    total: payload.meta.total,
+    lastPage: payload.meta.last_page,
+  };
+}
+
+export function mapNewsDetailToUiModel(payload: NewsDetailResponse) {
+  const post = payload.data;
+  return {
+    ...mapNewsPost(post),
+    author: mapOptionalText(post.author ?? null),
+    tags: (post.tags ?? []).map((tag) => tag.trim()).filter(Boolean),
+    body: post.body ?? [],
+    related: (post.related ?? []).map(mapNewsPost),
+  };
 }
