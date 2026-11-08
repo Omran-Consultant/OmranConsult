@@ -121,6 +121,12 @@ async function captureImpl(page, section) {
   if ((await locator.count()) === 0) {
     return undefined;
   }
+  // Bring the section into view so lazy images are decoded and painted before the clip.
+  await locator.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+  // Back to the top so the fixed header is in its initial state (it only overlaps the hero).
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
   const box = await page.evaluate((selector) => {
     const element = document.querySelector(selector);
     const rect = element.getBoundingClientRect();

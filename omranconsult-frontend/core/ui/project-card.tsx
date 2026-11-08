@@ -17,8 +17,6 @@ type ProjectCardProps = {
   readonly sizes?: string;
   readonly priority?: boolean;
   readonly className?: string;
-  /** Title size: `lg` for the large bento card. */
-  readonly size?: "md" | "lg";
 };
 
 const chipClassName =
@@ -39,14 +37,13 @@ export function ProjectCard({
   sizes = "(min-width: 1024px) 420px, (min-width: 768px) 50vw, 100vw",
   priority = false,
   className,
-  size = "md",
 }: ProjectCardProps) {
   const hasChips = Boolean(location) || year !== undefined;
 
   return (
     <Link
       className={classNames(
-        "scheme-dark group relative isolate flex min-h-115 flex-col justify-end overflow-hidden rounded-lg bg-highlight p-6 text-primary",
+        "scheme-dark group relative isolate flex flex-col justify-end overflow-hidden rounded-lg bg-highlight p-6 text-primary",
         className,
       )}
       href={href}
@@ -75,14 +72,7 @@ export function ProjectCard({
 
       <span className="flex flex-col gap-2.5">
         {category ? <span className="text-label-s text-accent">{category}</span> : null}
-        <span
-          className={classNames(
-            "line-clamp-2 font-display",
-            size === "lg" ? "text-h2" : "text-h3",
-          )}
-        >
-          {title}
-        </span>
+        <span className="line-clamp-2 font-display text-h3">{title}</span>
         <span className="flex items-center justify-between gap-4 pt-2.5">
           <span className="truncate text-body-s text-secondary">{client}</span>
           <span

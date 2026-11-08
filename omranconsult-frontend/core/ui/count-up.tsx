@@ -78,7 +78,7 @@ export function CountUp({ value, className }: CountUpProps) {
   }, [value]);
 
   return (
-    <span className={classNames("num-isolate", className)} dir="ltr" ref={ref}>
+    <span className={classNames("num-isolate self-start", className)} dir="ltr" ref={ref}>
       <span aria-hidden="true">{shown}</span>
       <span className="sr-only">{value}</span>
     </span>

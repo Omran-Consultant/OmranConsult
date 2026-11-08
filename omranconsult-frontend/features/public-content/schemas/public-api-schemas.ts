@@ -19,6 +19,9 @@ const projectSchema = z.object({
       name: nullableStringSchema,
     })
     .nullable(),
+  sector: z.object({ slug: z.string(), name: nullableStringSchema }).nullable().optional(),
+  year: z.number().int().nullable().optional(),
+  image: nullableStringSchema.optional(),
   regions: z.array(regionSchema),
 });
 
@@ -37,6 +40,17 @@ const projectsMetaSchema = z.object({
   per_page: z.number().int().positive(),
   to: z.number().int().positive().nullable(),
   total: z.number().int().nonnegative(),
+});
+
+export const sectorsResponseSchema = z.object({
+  locale: localeSchema,
+  data: z.array(
+    z.object({
+      slug: z.string(),
+      name: nullableStringSchema,
+      projects_count: z.number().int().nonnegative().optional(),
+    }),
+  ),
 });
 
 export const settingsResponseSchema = z.object({
@@ -213,6 +227,7 @@ export const partnersResponseSchema = z.object({
 });
 
 export type SettingsResponse = z.infer<typeof settingsResponseSchema>;
+export type SectorsResponse = z.infer<typeof sectorsResponseSchema>;
 export type HomeResponse = z.infer<typeof homeResponseSchema>;
 export type PageResponse = z.infer<typeof pageResponseSchema>;
 export type ServicesResponse = z.infer<typeof servicesResponseSchema>;

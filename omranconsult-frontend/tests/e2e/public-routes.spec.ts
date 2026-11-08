@@ -39,6 +39,8 @@ for (const { locale, dir } of LOCALES) {
       });
       expect(noHorizontalOverflow).toBe(true);
 
+      // Let the section reveal (600 ms + stagger) finish so axe does not measure half-faded text.
+      await page.waitForTimeout(1200);
       const axe = await new AxeBuilder({ page }).analyze();
       const severeViolations = axe.violations.filter((violation) =>
         ["critical", "serious"].includes(violation.impact ?? ""),

@@ -45,7 +45,9 @@ export async function SiteFooter() {
   const data = await getLayoutData(locale);
   const footerLinks = (column: readonly { href: string; messageKey: string }[]) =>
     column.map((item) => ({ href: item.href, label: t(`footer.${item.messageKey}`) }));
-  const copyright = t("footer.copyright", { year: await getCurrentYear(), name: data.companyName ?? "" });
+  const year = await getCurrentYear();
+  const copyright = t("footer.copyright", { year, name: data.companyName ?? "" });
+  const copyrightShort = t("footer.copyrightShort", { year, name: data.companyName ?? "" });
 
   return (
     <footer aria-label={t("footer.label")} className="bg-surface pt-12 pb-10 md:pt-25" data-section="footer">
@@ -100,7 +102,8 @@ export async function SiteFooter() {
         </p>
 
         <div className="mt-7 flex flex-col gap-2 border-t border-line pt-5 text-caption text-muted md:mt-16 md:flex-row md:items-center md:justify-between md:pt-6">
-          <p>{copyright}</p>
+          <p className="md:hidden">{copyrightShort}</p>
+          <p className="max-md:hidden">{copyright}</p>
           {data.tagline ? <p className="hidden md:block">{data.tagline}</p> : null}
         </div>
       </div>

@@ -63,3 +63,8 @@ test("does not duplicate currency in the formatted value", () => {
   assert.doesNotMatch(enValue, /SAR|riyal/i);
   assert.doesNotMatch(arValue, /ريال|ر\.س/);
 });
+
+test("appends a percent unit from the API", () => {
+  assert.equal(formatStatisticValue({ value: 72.92, unit: "%", locale: "ar" }), "72.92%");
+  assert.equal(formatStatisticValue({ value: 15, scale: "billion", suffix: "+", unit: "SAR", locale: "ar" }), "15B+");
+});

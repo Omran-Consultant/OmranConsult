@@ -20,14 +20,15 @@ export function CtaBox({ image, title, text, titleId, actions, className }: CtaB
   return (
     <div
       className={classNames(
-        "scheme-dark relative isolate flex min-h-110 items-center overflow-hidden rounded-xl bg-canvas px-6 py-14 text-primary md:px-18",
+        "scheme-dark relative isolate flex items-center overflow-hidden rounded-[24px] bg-canvas px-6 py-10 text-primary md:min-h-110 md:rounded-xl md:px-18 md:py-14",
         className,
       )}
     >
       <Image alt={image.alt} className="-z-20 object-cover" fill sizes="(min-width: 1440px) 1280px, 100vw" src={image.src} />
-      <span aria-hidden="true" className="scrim-start absolute inset-0 -z-10" />
-      <div className="flex max-w-155 flex-col gap-7">
-        <h2 className="font-display text-display-l" id={titleId}>
+      <span aria-hidden="true" className="absolute inset-0 -z-10 bg-scrim md:hidden" />
+      <span aria-hidden="true" className="scrim-start absolute inset-0 -z-10 max-md:hidden" />
+      <div className="flex max-w-155 flex-col gap-5 md:gap-7">
+        <h2 className="font-display text-h1 md:text-display-l" id={titleId}>
           <AccentText value={title} />
         </h2>
         {text ? <p className="text-body-l text-secondary">{text}</p> : null}

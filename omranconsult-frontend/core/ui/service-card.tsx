@@ -32,17 +32,18 @@ export function ServiceCard({
     <article
       className={classNames(
         "group relative flex flex-col gap-5 rounded-lg border p-8 transition-colors duration-150 hover:border-line-accent",
-        highlighted ? "border-line-accent bg-accent-strong/12" : "glass border-line",
+        // The tint applies from tablet up; the 390 frame shows every card plain.
+        highlighted ? "glass border-line md:border-line-accent md:bg-accent-strong/12" : "glass border-line",
         className,
       )}
     >
       <div className="flex items-start justify-between">
-        <span className="flex size-13.5 items-center justify-center rounded-[14px] border border-line-accent bg-accent-strong/16 text-accent">
+        <span className="flex size-13.5 items-center justify-center rounded-[14px] border border-line-accent bg-accent-strong text-green-300">
           <Icon className="size-6" name={icon} />
         </span>
-        <span className="num-isolate font-latin text-label-s text-muted">{number}</span>
+        <span className="num-isolate mt-5 font-latin text-overline text-muted">{number}</span>
       </div>
-      <div className="mt-auto flex flex-col gap-5 pt-12">
+      <div className="mt-auto flex flex-col gap-5 lg:pt-12">
         <h3 className="font-display text-h3 text-primary">{title}</h3>
         {description ? <p className="line-clamp-3 text-body-s text-secondary">{description}</p> : null}
         {href && linkLabel ? (

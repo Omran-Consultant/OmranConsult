@@ -1,59 +1,44 @@
 import type { AppLocale } from "@/i18n/routing";
 import {
-  fetchPublicClients,
   fetchPublicDocuments,
-  fetchPublicExperts,
   fetchPublicHome,
   fetchPublicPartners,
   fetchPublicProjects,
   fetchPublicRegions,
-  fetchPublicServices,
+  fetchPublicSectors,
   fetchPublicSettings,
 } from "@/lib/api/public-content";
 import {
-  mapClientsToUiModel,
   mapDocumentsToUiModel,
-  mapExpertsToUiModel,
   mapHomeToUiModel,
   mapPartnersToUiModel,
   mapProjectsIndexToUiModel,
   mapRegionsToUiModel,
-  mapServicesToUiModel,
+  mapSectorsToUiModel,
   mapSettingsToUiModel,
 } from "@/features/public-content/services/public-content-mappers";
+import { buildHomeView } from "@/features/home/services/home-view";
 
 export async function getHomePageData(locale: AppLocale) {
-  const [
-    settingsPayload,
-    homePayload,
-    servicesPayload,
-    projectsPayload,
-    regionsPayload,
-    documentsPayload,
-    partnersPayload,
-    clientsPayload,
-    expertsPayload,
-  ] = await Promise.all([
+  const [settings, home, sectors, projects, regions, certificates, partners] = await Promise.all([
     fetchPublicSettings(locale),
     fetchPublicHome(locale),
-    fetchPublicServices(locale),
-    fetchPublicProjects(locale, { perPage: 60 }),
+    fetchPublicSectors(locale),
+    fetchPublicProjects(locale, { perPage: 100 }),
     fetchPublicRegions(locale),
-    fetchPublicDocuments(locale),
+    fetchPublicDocuments(locale, "iso_certificate"),
     fetchPublicPartners(locale),
-    fetchPublicClients(locale),
-    fetchPublicExperts(locale),
   ]);
 
-  return {
-    settings: mapSettingsToUiModel(settingsPayload),
-    home: mapHomeToUiModel(homePayload),
-    services: mapServicesToUiModel(servicesPayload),
-    projects: mapProjectsIndexToUiModel(projectsPayload),
-    regions: mapRegionsToUiModel(regionsPayload),
-    documents: mapDocumentsToUiModel(documentsPayload),
-    partners: mapPartnersToUiModel(partnersPayload),
-    clients: mapClientsToUiModel(clientsPayload),
-    experts: mapExpertsToUiModel(expertsPayload),
-  };
+  return buildHomeView(locale, {
+    settings: mapSettingsToUiModel(settings),
+    home: mapHomeToUiModel(home),
+    sectors: mapSectorsToUiModel(sectors),
+    projects: mapProjectsIndexToUiModel(projects).projects,
+    regions: mapRegionsToUiModel(regions),
+    certificates: mapDocumentsToUiModel(certificates),
+    partners: mapPartnersToUiModel(partners),
+  });
 }
+
+export type HomePageData = Awaited<ReturnType<typeof getHomePageData>>;

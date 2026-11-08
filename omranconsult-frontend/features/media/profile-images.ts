@@ -293,3 +293,12 @@ export type SiteImageKey = keyof typeof SITE_IMAGES;
 export function toImageAsset(image: ProfileImage, locale: AppLocale): ImageAsset {
   return { src: image.src, width: image.width, height: image.height, alt: image.alt[locale] };
 }
+
+/** API image keys use the Figma file names (for example `riyadh_teal`). */
+export function getSiteImage(key: string | null | undefined): ProfileImage | undefined {
+  if (!key) {
+    return undefined;
+  }
+  const camel = key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase());
+  return camel in SITE_IMAGES ? SITE_IMAGES[camel as SiteImageKey] : undefined;
+}

@@ -178,6 +178,9 @@ html[lang="ar"] {
   --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
 
   --container-page: 80rem;
+
+  --animate-ring-in: ring-in 1200ms ease-out both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
 }
 
 @theme inline {
@@ -187,6 +190,7 @@ html[lang="ar"] {
   --color-neutral-300: var(--neutral-300);
   --color-navy-950: var(--navy-950);
   --color-green-700: var(--green-700);
+  --color-green-300: var(--green-300);
 
   /* Semantic */
   --color-canvas: var(--bg-base);
@@ -356,6 +360,30 @@ html[lang="ar"] {
     scroll-behavior: auto !important;
     transition-property: color, background-color, border-color, outline-color, fill, stroke !important;
   }
+}
+
+/* Hero arcs: rotate 8° and fade in on load (motion table). */
+@keyframes ring-in {
+  from {
+    opacity: 0;
+    transform: rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero outer ring: annulus mask with the inner radius at 80 % (the inner shape is a full disc). */
+@utility ring-mask-80 {
+  -webkit-mask-image: radial-gradient(closest-side, transparent 80%, #000 80.3%);
+  mask-image: radial-gradient(closest-side, transparent 80%, #000 80.3%);
+}
+
+/* The accent arc fades out towards the bottom of the hero. */
+@utility arc-fade {
+  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 70%);
+  mask-image: linear-gradient(to bottom, #000 35%, transparent 70%);
 }
 
 @keyframes shimmer {

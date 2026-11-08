@@ -110,7 +110,8 @@
       "certificates": "الشهادات",
       "assetManagementShort": "إدارة الأصول",
       "consultingShort": "الاستشارات",
-      "copyright": "© {year} {name}. جميع الحقوق محفوظة."
+      "copyright": "© {year} {name}. جميع الحقوق محفوظة.",
+      "copyrightShort": "© {year} {name}"
     },
     "newsletter": {
       "emailLabel": "البريد الإلكتروني",
@@ -135,6 +136,28 @@
       "text": "ربما نُقلت الصفحة أو تغيّر رابطها. يمكنك العودة إلى الصفحة الرئيسية.",
       "home": "العودة إلى الرئيسية",
       "metaTitle": "الصفحة غير موجودة"
+    }
+  },
+  "Home": {
+    "scroll": "SCROLL TO EXPLORE",
+    "allServices": "جميع الخدمات",
+    "discover": "اكتشف المزيد",
+    "allProjects": "عرض جميع المشاريع",
+    "allSectors": "الكل",
+    "sectorFilter": "تصفية المشاريع حسب القطاع",
+    "carousel": "المشاريع المميزة",
+    "carouselHint": "استخدم الأسهم للتنقل بين المشاريع",
+    "slideLabel": "{index} من {total}",
+    "emptySector": "لا توجد مشاريع في هذا القطاع",
+    "expired": "منتهية",
+    "certificates": "شهادات الأيزو",
+    "heroStats": "أرقام الشركة",
+    "coverage": {
+      "central": "المنطقة الوسطى",
+      "western": "المنطقة الغربية",
+      "southern": "المنطقة الجنوبية",
+      "eastern": "المنطقة الشرقية",
+      "northern": "المنطقة الشمالية"
     }
   }
 }

@@ -156,6 +156,11 @@ const PATHS = {
 
 export type IconName = keyof typeof PATHS;
 
+/** Narrows an icon key coming from the API (for example service highlights). */
+export function isIconName(value: string): value is IconName {
+  return Object.hasOwn(PATHS, value);
+}
+
 /** Icons whose direction carries meaning; drawn for RTL and mirrored in LTR. */
 const DIRECTIONAL: ReadonlySet<IconName> = new Set(["arrow", "chevron-left", "chevron-right"]);
 

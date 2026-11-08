@@ -39,10 +39,14 @@ export const CLIENT_LOGOS: Record<string, BrandLogo> = {
   "client-30": { src: "/images/clients/client-30.png", width: 480, height: 221 },
 };
 
+/*
+ * File names were swapped when the logos were cropped: tacent.png holds the Musanadah logo and
+ * musanadah.png the blue-bar mark (Tacent, to be confirmed). oliver-wyman.png is a slide crop, not
+ * a logo, so Oliver Wyman has no image until the company supplies one (PHASE4C report).
+ */
 export const PARTNER_LOGOS: Record<string, BrandLogo> = {
-  "oliver-wyman": { src: "/images/partners/oliver-wyman.png", width: 480, height: 345 },
-  "musanadah": { src: "/images/partners/musanadah.png", width: 174, height: 167 },
-  "tacent": { src: "/images/partners/tacent.png", width: 288, height: 172 },
+  "musanadah": { src: "/images/partners/tacent.png", width: 288, height: 172 },
+  "tacent": { src: "/images/partners/musanadah.png", width: 174, height: 167 },
   "bureau-veritas": { src: "/images/partners/bureau-veritas.png", width: 186, height: 240 },
 };
 

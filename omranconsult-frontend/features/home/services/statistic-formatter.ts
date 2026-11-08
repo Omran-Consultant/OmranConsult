@@ -4,6 +4,8 @@ type StatisticValueInput = {
   value: number;
   scale?: string | null;
   suffix?: string | null;
+  /** A "%" unit is part of the figure (72.92%); currency units are shown in labels instead. */
+  unit?: string | null;
   locale: AppLocale;
 };
 
@@ -15,6 +17,7 @@ export function formatStatisticValue({
   value,
   scale,
   suffix,
+  unit,
   locale,
 }: StatisticValueInput): string {
   const formattedNumber = new Intl.NumberFormat(locale, {
@@ -26,5 +29,7 @@ export function formatStatisticValue({
   const scaleLabel = scale ? (SCALE_LABELS[scale] ?? scale) : "";
   const suffixLabel = suffix ?? "";
 
-  return `${formattedNumber}${scaleLabel}${suffixLabel}`;
+  const unitLabel = unit === "%" && suffix !== "%" ? "%" : "";
+
+  return `${formattedNumber}${scaleLabel}${unitLabel}${suffixLabel}`;
 }

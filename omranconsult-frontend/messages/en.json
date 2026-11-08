@@ -110,7 +110,8 @@
       "certificates": "Certificates",
       "assetManagementShort": "Asset management",
       "consultingShort": "Consulting",
-      "copyright": "© {year} {name}. All rights reserved."
+      "copyright": "© {year} {name}. All rights reserved.",
+      "copyrightShort": "© {year} {name}"
     },
     "newsletter": {
       "emailLabel": "Email",
@@ -135,6 +136,28 @@
       "text": "The page may have moved or its link changed. You can go back to the home page.",
       "home": "Back to home",
       "metaTitle": "Page not found"
+    }
+  },
+  "Home": {
+    "scroll": "SCROLL TO EXPLORE",
+    "allServices": "All services",
+    "discover": "Discover more",
+    "allProjects": "View all projects",
+    "allSectors": "All",
+    "sectorFilter": "Filter projects by sector",
+    "carousel": "Featured projects",
+    "carouselHint": "Use the arrow keys to move between projects",
+    "slideLabel": "{index} of {total}",
+    "emptySector": "No projects in this sector",
+    "expired": "Expired",
+    "certificates": "ISO certificates",
+    "heroStats": "Company figures",
+    "coverage": {
+      "central": "Central Region",
+      "western": "Western Region",
+      "southern": "Southern Region",
+      "eastern": "Eastern Region",
+      "northern": "Northern Region"
     }
   }
 }

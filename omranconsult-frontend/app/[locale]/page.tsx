@@ -1,10 +1,11 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { HomePageContent } from "@/features/home/components/home-page-content";
 import { getHomePageData } from "@/features/home/services/get-home-page-data";
 import { routing } from "@/i18n/routing";
+
 type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
@@ -17,8 +18,7 @@ export default async function PublicHomePage({ params }: HomePageProps) {
   }
 
   setRequestLocale(locale);
-  await getTranslations("HomePage");
-  const data = await getHomePageData(locale);
+  const view = await getHomePageData(locale);
 
-  return <HomePageContent data={data} locale={locale} />;
+  return <HomePageContent view={view} />;
 }

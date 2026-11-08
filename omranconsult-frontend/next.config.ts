@@ -19,6 +19,10 @@ const csp = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // Hero photos behind heavy scrims use lower qualities (Home LCP); 75 stays the default.
+  images: {
+    qualities: [40, 60, 75],
+  },
   partialPrefetching: true,
   async rewrites() {
     return [

@@ -9,6 +9,7 @@ import type {
   ProjectDetailResponse,
   ProjectsIndexResponse,
   RegionsResponse,
+  SectorsResponse,
   ServicesResponse,
   SettingsResponse,
 } from "@/features/public-content/schemas/public-api-schemas";
@@ -86,6 +87,9 @@ export function mapProjectsIndexToUiModel(payload: ProjectsIndexResponse) {
             name: mapOptionalText(project.client.name),
           }
         : undefined,
+      sector: project.sector ? { slug: project.sector.slug, name: mapOptionalText(project.sector.name) } : undefined,
+      year: project.year ?? undefined,
+      imageKey: mapOptionalText(project.image ?? null),
       regions: project.regions.map((region) => ({
         slug: region.slug,
         code: mapOptionalText(region.code),
@@ -116,6 +120,14 @@ export function mapProjectDetailToUiModel(payload: ProjectDetailResponse) {
       projectsCount: region.projects_count,
     })),
   };
+}
+
+export function mapSectorsToUiModel(payload: SectorsResponse) {
+  return payload.data.map((sector) => ({
+    slug: sector.slug,
+    name: mapOptionalText(sector.name),
+    projectsCount: sector.projects_count ?? 0,
+  }));
 }
 
 export function mapClientsToUiModel(payload: ClientsResponse) {

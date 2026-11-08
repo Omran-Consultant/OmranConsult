@@ -12,6 +12,7 @@ import {
   projectDetailResponseSchema,
   projectsIndexResponseSchema,
   regionsResponseSchema,
+  sectorsResponseSchema,
   servicesResponseSchema,
   settingsResponseSchema,
 } from "@/features/public-content/schemas/public-api-schemas";
@@ -20,6 +21,8 @@ import { serverApiRequest } from "@/lib/api/server-client";
 type ProjectsQuery = {
   client?: string;
   region?: string;
+  sector?: string;
+  q?: string;
   page?: number;
   perPage?: number;
 };
@@ -38,6 +41,12 @@ function buildProjectsQuery(query: ProjectsQuery = {}): string {
   }
   if (query.region) {
     params.set("region", query.region);
+  }
+  if (query.sector) {
+    params.set("sector", query.sector);
+  }
+  if (query.q) {
+    params.set("q", query.q);
   }
   if (query.page) {
     params.set("page", String(query.page));
@@ -203,6 +212,19 @@ export async function fetchPublicPartners(locale: AppLocale) {
 
   return partnersResponseSchema.parse(
     await serverApiRequest<unknown>("/api/partners", {
+      headers: withLocaleHeaders(locale),
+      cache: "force-cache",
+    }),
+  );
+}
+
+export async function fetchPublicSectors(locale: AppLocale) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("sectors");
+
+  return sectorsResponseSchema.parse(
+    await serverApiRequest<unknown>("/api/sectors", {
       headers: withLocaleHeaders(locale),
       cache: "force-cache",
     }),

@@ -80,7 +80,8 @@ export function MobileMenu({ open, onClose, returnFocusRef, email }: MobileMenuP
       </h2>
 
       <span aria-hidden="true" className="earth-ring pointer-events-none absolute -end-105 top-105 size-175 overflow-hidden rounded-full">
-        <Image alt="" className="object-cover" fill sizes="700px" src={SITE_IMAGES.earth.src} />
+        {/* Loaded only while the menu is open, so the hidden menu costs nothing on page load. */}
+        {open ? <Image alt="" className="object-cover" fill quality={60} sizes="700px" src={SITE_IMAGES.earth.src} /> : null}
       </span>
 
       <div className="container-page relative flex h-19.5 shrink-0 items-center justify-between">
