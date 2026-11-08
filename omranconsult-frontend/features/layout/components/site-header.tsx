@@ -63,16 +63,16 @@ export function SiteHeader({ email }: SiteHeaderProps) {
             <BrandLogo alt={t("brand.logoAlt")} className="h-auto w-27.5 lg:w-37.5" priority surface="adaptive" />
           </Link>
 
-          <nav aria-label={t("nav.primaryLabel")} className="hidden lg:ms-10 lg:block xl:ms-30 2xl:ms-50">
-            <ul className="flex items-center gap-8 xl:gap-10">
+          <nav aria-label={t("nav.primaryLabel")} className="hidden lg:ms-4 lg:block min-[1180px]:ms-6 xl:ms-16 2xl:ms-50">
+            <ul className="flex flex-nowrap items-center gap-4 min-[1180px]:gap-5 xl:gap-8 2xl:gap-10">
               {PRIMARY_NAV_ITEMS.map((item) => {
                 const active = isActiveNavHref(item.href, pathname);
                 return (
-                  <li key={item.href}>
+                  <li className="shrink-0" key={item.href}>
                     <Link
                       aria-current={active ? "page" : undefined}
                       className={classNames(
-                        "text-label-m transition-colors duration-150",
+                        "whitespace-nowrap text-label-m transition-colors duration-150",
                         active ? "text-accent" : "text-secondary hover:text-primary",
                       )}
                       href={item.href}
@@ -85,7 +85,7 @@ export function SiteHeader({ email }: SiteHeaderProps) {
             </ul>
           </nav>
 
-          <div className="hidden items-center gap-5 lg:ms-auto lg:flex">
+          <div className="hidden items-center gap-3 lg:ms-auto lg:flex min-[1180px]:gap-4 xl:gap-5">
             <LinkButton arrow href={CONTACT_HREF} variant="secondary">
               {t("nav.contact")}
             </LinkButton>
