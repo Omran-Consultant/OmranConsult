@@ -29,7 +29,7 @@ export async function HomeHero({ view }: { readonly view: HomeView }) {
       <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 hidden h-65 bg-linear-to-b from-transparent to-canvas lg:block" />
 
       <div className="container-page flex flex-1 flex-col justify-end pt-95 pb-10 lg:justify-start lg:pt-62.5 lg:pb-16">
-        <div className="flex max-w-170 flex-col gap-5 lg:gap-8" data-reveal="">
+        <div className="reveal-on-load flex max-w-170 flex-col gap-5 lg:gap-8">
           {hero.overline ? <Overline className="max-md:hidden">{hero.overline}</Overline> : null}
           {hero.overline_short ?? hero.overline ? <Overline className="md:hidden">{hero.overline_short ?? hero.overline ?? ""}</Overline> : null}
           {hero.headline ? (

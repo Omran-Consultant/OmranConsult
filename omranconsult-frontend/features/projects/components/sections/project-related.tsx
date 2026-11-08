@@ -13,7 +13,7 @@ export function ProjectRelated({ project }: { readonly project: ProjectDetailVie
     <section aria-labelledby="related-projects-title" className="bg-surface py-16 lg:py-25" data-reveal data-section="related">
       <Container className="flex flex-col gap-8 lg:gap-12">
         <SectionHeader overline={project.copy.related_overline} title={project.copy.related_title} titleId="related-projects-title" />
-        <ul className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {project.related.map((related) => (
             <li key={related.slug}>
               <ProjectCard

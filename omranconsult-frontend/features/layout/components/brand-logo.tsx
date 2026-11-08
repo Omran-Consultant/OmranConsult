@@ -10,14 +10,17 @@ type BrandLogoProps = {
   readonly className: string;
   /** `adaptive`: dark logo on light surfaces, white logo on dark ones. `onDark`: always white. */
   readonly surface: "adaptive" | "onDark";
+  /** Above the fold: fetch eagerly at high priority (Next 16 deprecates `priority`). */
   readonly priority?: boolean;
 };
 
 /** Vector logo from the Figma handoff (A28). Sizes: 150 header, 180 footer, 110 mobile. */
 export function BrandLogo({ alt, className, surface, priority = false }: BrandLogoProps) {
+  const loading = priority ? { fetchPriority: "high", loading: "eager" } as const : {};
+
   if (surface === "onDark") {
     return (
-      <Image alt={alt} className={className} height={LOGO_HEIGHT} priority={priority} src="/images/brand/logo-white.svg" width={LOGO_WIDTH} />
+      <Image alt={alt} className={className} height={LOGO_HEIGHT} {...loading} src="/images/brand/logo-white.svg" width={LOGO_WIDTH} />
     );
   }
 
@@ -27,7 +30,7 @@ export function BrandLogo({ alt, className, surface, priority = false }: BrandLo
         alt={alt}
         className={classNames(className, "on-dark:hidden")}
         height={LOGO_HEIGHT}
-        priority={priority}
+        {...loading}
         src="/images/brand/logo-dark.svg"
         width={LOGO_WIDTH}
       />
@@ -35,7 +38,7 @@ export function BrandLogo({ alt, className, surface, priority = false }: BrandLo
         alt={alt}
         className={classNames(className, "hidden on-dark:block")}
         height={LOGO_HEIGHT}
-        priority={priority}
+        {...loading}
         src="/images/brand/logo-white.svg"
         width={LOGO_WIDTH}
       />

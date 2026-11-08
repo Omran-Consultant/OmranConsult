@@ -47,7 +47,7 @@ type InputFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "class
   readonly error?: string;
   readonly helper?: string;
   readonly className?: string;
-  /** Extra classes on the control, e.g. `rtl:text-right` for a `dir="ltr"` value in Arabic. */
+  /** Extra classes on the control, e.g. `rtl:text-end` to start a `dir="ltr"` value at the Arabic reading edge. */
   readonly inputClassName?: string;
 };
 

@@ -1,7 +1,7 @@
 import { formatStats } from "@/core/format/statistic";
 import { aboutBlocksSchema, aboutCopySchema, clientLogos, partnerCards } from "@/features/about/services/about-view";
-import { homeCopySchema } from "@/features/home/services/home-copy";
-import { shortStandardCode } from "@/features/home/lib/standard-code";
+import { homeCopySchema } from "@/features/public-content/services/home-copy";
+import { shortStandardCode } from "@/core/format/standard-code";
 import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import {
   mapClientsToUiModel,

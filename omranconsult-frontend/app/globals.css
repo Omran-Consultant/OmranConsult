@@ -362,6 +362,18 @@ html[lang="ar"] {
   }
 }
 
+/* Above-the-fold reveal: plays on first paint so the hero headline (Home LCP) never waits for JS. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@utility reveal-on-load {
+  animation: reveal-in 600ms var(--ease-out) both;
+}
+
 /* Hero arcs: rotate 8° and fade in on load (motion table). */
 @keyframes ring-in {
   from {

@@ -2,8 +2,8 @@ import type { IconName } from "@/core/ui/icon";
 import { isIconName } from "@/core/ui/icon";
 import type { ImageAsset } from "@/core/ui/image-asset";
 import { groupRegions } from "@/features/home/lib/coverage-groups";
-import { shortStandardCode } from "@/features/home/lib/standard-code";
-import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/home/services/home-copy";
+import { shortStandardCode } from "@/core/format/standard-code";
+import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/public-content/services/home-copy";
 import { formatStatisticValue } from "@/core/format/statistic";
 import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type {

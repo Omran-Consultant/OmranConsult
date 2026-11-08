@@ -1,4 +1,4 @@
-import { homeCopySchema } from "@/features/home/services/home-copy";
+import { homeCopySchema } from "@/features/public-content/services/home-copy";
 import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import { mapHomeToUiModel, mapPageToBlocks, mapServicesToUiModel, mapSettingsToUiModel } from "@/features/public-content/services/public-content-mappers";
 import { servicesBlocksSchema, servicesCopySchema } from "@/features/services/services/services-view";

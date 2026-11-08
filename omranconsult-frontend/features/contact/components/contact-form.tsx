@@ -154,7 +154,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
               autoComplete="email"
               dir="ltr"
               id={`${id}-email`}
-              inputClassName="rtl:text-right"
+              inputClassName="rtl:text-end"
               inputMode="email"
               label={t("emailLabel")}
               maxLength={INQUIRY_LIMITS.email}
@@ -167,7 +167,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
               autoComplete="tel"
               dir="ltr"
               id={`${id}-phone`}
-              inputClassName="rtl:text-right"
+              inputClassName="rtl:text-end"
               inputMode="tel"
               label={t("phoneLabel")}
               maxLength={20}

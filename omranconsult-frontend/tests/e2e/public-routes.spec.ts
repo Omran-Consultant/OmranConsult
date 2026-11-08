@@ -53,6 +53,23 @@ for (const { locale, dir } of LOCALES) {
   }
 }
 
+test.describe("390 px", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  // The King Saud project's related cards carry a long English client name.
+  const MOBILE_ROUTES = [...ROUTES, "/projects/king-saud-university-operation-and-maintenance-efficiency"];
+
+  for (const { locale } of LOCALES) {
+    for (const route of MOBILE_ROUTES) {
+      test(`${locale}${route || "/"} has no horizontal scroll`, async ({ page }) => {
+        await page.goto(`/${locale}${route}`);
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        expect(overflow).toBe(0);
+      });
+    }
+  }
+});
+
 test("arabic statistics keep suffix after the number", async ({ page }) => {
   await page.goto("/ar");
   const statsSection = page.locator('[data-section="stats"]');

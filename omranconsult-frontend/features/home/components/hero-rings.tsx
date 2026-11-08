@@ -1,4 +1,6 @@
 import { getImageProps } from "next/image";
+import type { CSSProperties } from "react";
+import { preload } from "react-dom";
 
 import { classNames } from "@/core/ui/class-names";
 import { annularSectorPath } from "@/features/home/lib/annular-sector";
@@ -23,40 +25,47 @@ const MOBILE = {
 
 type Composition = typeof DESKTOP | typeof MOBILE;
 
-function Rings({ composition, href, id, mirror, className }: {
+/** Mask image (SVG data URI) for one annular sector drawn in a `size`×`size` box. */
+function sectorMask(size: number, start: number, end: number, inner: number, mirror: boolean): string {
+  const flip = mirror ? ` transform="matrix(-1 0 0 1 ${size} 0)"` : "";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><path d="${annularSectorPath(size, start, end, inner)}"${flip}/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+function photoLayer(href: string, mask: string): CSSProperties {
+  return { backgroundImage: `url("${href}")`, maskImage: mask, maskSize: "100% 100%", WebkitMaskImage: mask, WebkitMaskSize: "100% 100%" };
+}
+
+/*
+ * The photo is a masked background, not an SVG <image>: browsers skip backgrounds of hidden
+ * elements, so each breakpoint downloads only its own size (Home LCP on mobile).
+ */
+function Rings({ composition, href, mirror, className }: {
   readonly composition: Composition;
   readonly href: string;
-  readonly id: string;
   readonly mirror: boolean;
   readonly className: string;
 }) {
   const { box, outer, inner, line } = composition;
-  // In LTR the shapes mirror to the other side; the photo itself is never flipped.
-  const flipOuter = mirror ? `matrix(-1 0 0 1 ${box} 0)` : undefined;
-  const flipInner = mirror ? `translate(${inner.offset} ${inner.offset}) matrix(-1 0 0 1 ${inner.size} 0)` : `translate(${inner.offset} ${inner.offset})`;
+  const inset = `${(inner.offset / box) * 100}%`;
 
   return (
-    <svg aria-hidden="true" className={classNames("pointer-events-none absolute -z-10 aspect-square animate-ring-in", className)} focusable="false" viewBox={`0 0 ${box} ${box}`}>
-      <defs>
-        <clipPath id={`${id}-outer`}>
-          <path d={annularSectorPath(box, outer.start, outer.end, outer.inner)} transform={flipOuter} />
-        </clipPath>
-        <clipPath id={`${id}-inner`}>
-          <path d={annularSectorPath(inner.size, inner.start, inner.end, inner.inner)} transform={flipInner} />
-        </clipPath>
-      </defs>
-      <image clipPath={`url(#${id}-outer)`} height={box} href={href} preserveAspectRatio="xMidYMid slice" width={box} />
-      <image
-        clipPath={`url(#${id}-inner)`}
-        height={inner.size}
-        href={href}
-        preserveAspectRatio="xMidYMid slice"
-        width={inner.size}
-        x={inner.offset}
-        y={inner.offset}
+    <div aria-hidden="true" className={classNames("pointer-events-none absolute -z-10 aspect-square animate-ring-in", className)}>
+      <span className="absolute inset-0 bg-cover bg-center" style={photoLayer(href, sectorMask(box, outer.start, outer.end, outer.inner, mirror))} />
+      <span
+        className="absolute bg-cover bg-center"
+        style={{ inset, ...photoLayer(href, sectorMask(inner.size, inner.start, inner.end, inner.inner, mirror)) }}
       />
-      {line ? <path className="fill-accent" d={annularSectorPath(box, outer.start, outer.end, line.inner)} transform={flipOuter} /> : null}
-    </svg>
+      {line ? (
+        <svg className="absolute inset-0 size-full" focusable="false" viewBox={`0 0 ${box} ${box}`}>
+          <path
+            className="fill-accent"
+            d={annularSectorPath(box, outer.start, outer.end, line.inner)}
+            transform={mirror ? `matrix(-1 0 0 1 ${box} 0)` : undefined}
+          />
+        </svg>
+      ) : null}
+    </div>
   );
 }
 
@@ -67,7 +76,12 @@ function Rings({ composition, href, id, mirror, className }: {
  */
 export function HeroRings({ src, direction }: { readonly src: string; readonly direction: "rtl" | "ltr" }) {
   const { props } = getImageProps({ alt: "", src, width: 1920, height: 960, quality: 60, sizes: "1920px" });
+  // The mobile box is 620 CSS px: a fixed-width source keeps phones off the 3840 px variant.
+  const { props: mobileProps } = getImageProps({ alt: "", src, width: 600, height: 300, quality: 60 });
   const mirror = direction === "ltr";
+
+  preload(props.src, { as: "image", fetchPriority: "high", media: "(min-width: 1024px)" });
+  preload(mobileProps.src, { as: "image", fetchPriority: "high", media: "(max-width: 1023.98px)" });
 
   return (
     <>
@@ -75,10 +89,9 @@ export function HeroRings({ src, direction }: { readonly src: string; readonly d
         className="hidden end-[max(-500px,-34.722vw)] top-[max(-120px,-8.333vw)] w-[min(1180px,81.944vw)] lg:block"
         composition={DESKTOP}
         href={props.src}
-        id="hero-rings-desktop"
         mirror={mirror}
       />
-      <Rings className="-end-10 -top-30 w-155 lg:hidden" composition={MOBILE} href={props.src} id="hero-rings-mobile" mirror={mirror} />
+      <Rings className="-end-10 -top-30 w-155 lg:hidden" composition={MOBILE} href={mobileProps.src} mirror={mirror} />
     </>
   );
 }
