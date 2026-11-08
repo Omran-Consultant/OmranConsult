@@ -8,7 +8,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['kind', 'title', 'standard_code', 'issuer', 'valid_from', 'valid_until', 'sort_order', 'status', 'published_at'])]
+#[Fillable(['slug', 'kind', 'title', 'standard_code', 'issuer', 'valid_from', 'valid_until', 'sort_order', 'status', 'published_at'])]
 class Document extends Model
 {
     use Publishable;

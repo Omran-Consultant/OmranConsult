@@ -163,6 +163,10 @@ class ProfileContentSeederTest extends TestCase
         $this->assertCount(1, $translation);
         $this->assertNull($translation->first()->subject_type);
         $this->assertSame(0, ContentDispute::query()->where('status', '!=', 'pending')->count());
+        $this->assertStringContainsString(
+            'not an error',
+            (string) ContentDispute::query()->where('issue_code', 'EDITORIAL_BRAND_NAME')->value('description'),
+        );
         $this->assertSame(0, ContentDispute::query()->where('dispute_class', '!=', 'editorial')->count());
 
         // Every dispute that names a row points at an existing row.

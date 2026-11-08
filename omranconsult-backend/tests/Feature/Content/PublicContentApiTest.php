@@ -286,7 +286,29 @@ class PublicContentApiTest extends TestCase
         $this->assertFalse($documents->firstWhere('standard_code', 'ISO 31000:2018')['is_expired']);
 
         $this->getJson('/api/documents?kind=license')->assertJsonCount(5, 'data')->assertJsonPath('data.0.valid_until', null);
-        $this->getJson('/api/documents')->assertJsonCount(13, 'data');
+        $documents = collect($this->getJson('/api/documents')->assertJsonCount(13, 'data')->json('data'));
+        $this->assertEqualsCanonicalizing([
+            'classification-certificate',
+            'commercial-registration',
+            'professional-licence',
+            'commercial-activity-licence',
+            'civil-defence-licence',
+            'iso-45001',
+            'iso-14001',
+            'iso-27001',
+            'iso-9001',
+            'iso-21500',
+            'iso-41001',
+            'iso-26000',
+            'iso-31000',
+        ], $documents->pluck('slug')->all());
+
+        Document::query()->where('slug', 'commercial-registration')->update([
+            'title' => ['ar' => 'عنوان جديد', 'en' => 'A rewritten English title'],
+        ]);
+        $this->getJson('/api/documents?kind=license', ['Accept-Language' => 'en'])
+            ->assertJsonPath('data.1.slug', 'commercial-registration')
+            ->assertJsonPath('data.1.title', 'A rewritten English title');
         $this->getJson('/api/documents?kind=passport')->assertUnprocessable()->assertJsonValidationErrors('kind');
 
         Carbon::setTestNow();

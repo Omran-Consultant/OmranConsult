@@ -24,6 +24,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ContentDisputesSeeder extends ProfileSeeder
 {
+    /**
+     * A32: AAC is a centre that belongs to the company. Certificates in its name are the company's own.
+     */
+    public const LEGAL_NAME_NOTE = 'Certificate holder name varies: ADVANCED ALOMRAN CENTER (AAC), ALOMRAN ADVANCED CENTER, ALOMRAN ADVANCED COMPANY. A32 (2026-11-08): ADVANCED ALOMRAN CENTER (AAC) is a centre that belongs to the company. Certificates issued in its name are the company\'s own. This variation is not an error, and the scans stay as printed. The English name OMRAN Advanced Company follows the logo lockup (U17).';
+
     public function run(): void
     {
         $this->note(null, null, 'EDITORIAL_TRANSLATION_UNREVIEWED',
@@ -186,7 +191,7 @@ class ContentDisputesSeeder extends ProfileSeeder
             'Certificates print P.O. Box 24151; the contact page prints postal number 241514. Confirm.',
             ['pages' => '19–22, 45', 'printed' => ['24151', '241514']]);
         $this->note(SiteSetting::query()->where('key', 'company_legal_name')->firstOrFail(), 'value.en', 'EDITORIAL_BRAND_NAME',
-            'Certificate holder name varies: ADVANCED ALOMRAN CENTER (AAC), ALOMRAN ADVANCED CENTER, ALOMRAN ADVANCED COMPANY. The English name OMRAN Advanced Company follows the logo lockup. Confirm the legal English name (U17).',
+            self::LEGAL_NAME_NOTE,
             ['pages' => '1, 19–22']);
     }
 

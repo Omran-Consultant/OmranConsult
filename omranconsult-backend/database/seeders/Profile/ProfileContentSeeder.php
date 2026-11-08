@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Profile;
 
+use App\Modules\Content\Infrastructure\Models\ContentDispute;
 use App\Modules\Content\Infrastructure\Models\SiteSetting;
 use Database\Seeders\Design\DesignCopySeeder;
 use Database\Seeders\Design\FeaturedProjectsSeeder;
@@ -18,6 +19,10 @@ class ProfileContentSeeder extends Seeder
     public function run(): void
     {
         if (SiteSetting::query()->exists()) {
+            ContentDispute::query()
+                ->where('issue_code', 'EDITORIAL_BRAND_NAME')
+                ->where('field_path', 'value.en')
+                ->update(['description' => ContentDisputesSeeder::LEGAL_NAME_NOTE]);
             $this->command?->warn('Profile content already seeded; skipping.');
 
             return;

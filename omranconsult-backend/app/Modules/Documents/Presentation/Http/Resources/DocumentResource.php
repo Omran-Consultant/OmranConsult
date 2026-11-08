@@ -19,6 +19,7 @@ class DocumentResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'kind' => $this->kind->value,
             'title' => PublicLocale::pick($this->title),
             'standard_code' => $this->standard_code,
