@@ -8,7 +8,7 @@ const apiOrigin = new URL(apiBaseUrl).origin;
 const csp = [
   "default-src 'self'",
   `connect-src 'self' ${apiOrigin}`,
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob: ${apiOrigin}`,
   "font-src 'self' data:",
   // Next emits the theme pre-paint script and style attributes. 'unsafe-eval' is intentionally absent.
   "style-src 'self' 'unsafe-inline'",
@@ -35,6 +35,10 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         destination: `${apiBaseUrl}/api/:path*`,
       },
+      {
+        source: "/storage/:path*",
+        destination: `${apiBaseUrl}/storage/:path*`,
+      },
     ];
   },
   async headers() {
@@ -59,6 +63,30 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers,
+      },
+      {
+        source: "/dashboard",
+        headers: [
+          ...headers,
+          { key: "Cache-Control", value: "no-store" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      {
+        source: "/dashboard/:path*",
+        headers: [
+          ...headers,
+          { key: "Cache-Control", value: "no-store" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      {
+        source: "/cms/:path*",
+        headers: [
+          ...headers,
+          { key: "Cache-Control", value: "no-store" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
       },
     ];
   },

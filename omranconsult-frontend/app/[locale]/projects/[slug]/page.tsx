@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies, draftMode } from "next/headers";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -27,7 +28,9 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   }
 
   setRequestLocale(locale);
-  const project = await getProjectDetailData(locale, slug);
+  const preview = (await draftMode()).isEnabled;
+  const token = preview ? (await cookies()).get("PREVIEW_TOKEN")?.value : undefined;
+  const project = await getProjectDetailData(locale, slug, token);
 
   if (!project) {
     notFound();

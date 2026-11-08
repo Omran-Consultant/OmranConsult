@@ -85,7 +85,7 @@ function buildProjectsQuery(query: ProjectsQuery = {}): string {
 export async function fetchPublicSettings(locale: AppLocale) {
   "use cache";
   cacheLife("hours");
-  cacheTag("settings");
+  cacheTag("settings", "footer");
 
   return settingsResponseSchema.parse(
     await serverApiRequest<unknown>("/api/settings", {
@@ -114,6 +114,12 @@ export async function fetchPublicPage(locale: AppLocale, page: PublicPageKey) {
   "use cache";
   cacheLife("hours");
   cacheTag("pages", `pages:${page}`);
+  if (page === "contact") {
+    cacheTag("contact");
+  }
+  if (page === "layout") {
+    cacheTag("footer");
+  }
 
   return pageResponseSchema.parse(
     await serverApiRequest<unknown>(`/api/pages/${page}`, {
@@ -159,6 +165,19 @@ export async function fetchPublicProjectBySlug(locale: AppLocale, slug: string) 
     serverApiRequest<unknown>(`/api/projects/${slug}`, {
       headers: withLocaleHeaders(locale),
       cache: "force-cache",
+    }),
+  );
+  return payload === null ? null : projectDetailResponseSchema.parse(payload);
+}
+
+export async function fetchPreviewProjectBySlug(locale: AppLocale, slug: string, previewToken: string) {
+  const payload = await nullOnNotFound(
+    serverApiRequest<unknown>(`/api/projects/${slug}`, {
+      headers: {
+        ...withLocaleHeaders(locale),
+        "X-Preview-Token": previewToken,
+      },
+      cache: "no-store",
     }),
   );
   return payload === null ? null : projectDetailResponseSchema.parse(payload);

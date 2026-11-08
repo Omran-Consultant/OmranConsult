@@ -2,10 +2,13 @@ import { galleryImages } from "@/features/projects/services/projects-filters";
 import { projectImage, projectsCopySchema, toProjectCards } from "@/features/projects/services/projects-view";
 import { mapPageToBlocks, mapProjectDetailToUiModel } from "@/features/public-content/services/public-content-mappers";
 import type { AppLocale } from "@/i18n/routing";
-import { fetchPublicPage, fetchPublicProjectBySlug } from "@/lib/api/public-content";
+import { fetchPreviewProjectBySlug, fetchPublicPage, fetchPublicProjectBySlug } from "@/lib/api/public-content";
 
-export async function getProjectDetailData(locale: AppLocale, slug: string) {
-  const [payload, page] = await Promise.all([fetchPublicProjectBySlug(locale, slug), fetchPublicPage(locale, "projects")]);
+export async function getProjectDetailData(locale: AppLocale, slug: string, previewToken?: string) {
+  const [payload, page] = await Promise.all([
+    previewToken ? fetchPreviewProjectBySlug(locale, slug, previewToken) : fetchPublicProjectBySlug(locale, slug),
+    fetchPublicPage(locale, "projects"),
+  ]);
   if (!payload) {
     return null;
   }

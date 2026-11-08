@@ -72,5 +72,5 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|sanctum|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|sanctum|cms|dashboard|_next|_vercel|.*\\..*).*)"],
 };

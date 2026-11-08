@@ -5,12 +5,18 @@ import { readXsrfTokenFromDocument } from "@/lib/api/xsrf-token";
 export type BrowserRequestOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   json?: unknown;
+  formData?: FormData;
   headers?: HeadersInit;
   csrf?: boolean;
   signal?: AbortSignal;
 };
 
 let csrfInitialized = false;
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setDashboardUnauthorizedHandler(handler: (() => void) | null): void {
+  unauthorizedHandler = handler;
+}
 
 function buildUrl(path: string): string {
   const base = getBrowserApiBaseUrl();
@@ -73,15 +79,40 @@ export async function browserApiRequest<T>(
       ? readXsrfTokenFromDocument()
       : null;
 
+  const headers = options.formData
+    ? (() => {
+        const next = new Headers(options.headers);
+        next.set("Accept", "application/json");
+        if (xsrfToken) {
+          next.set("X-XSRF-TOKEN", xsrfToken);
+        }
+        return next;
+      })()
+    : buildJsonHeaders(options.headers, xsrfToken);
+
   const response = await fetch(buildUrl(path), {
     method,
     credentials: "include",
-    headers: buildJsonHeaders(options.headers, xsrfToken),
-    body: options.json === undefined ? undefined : JSON.stringify(options.json),
+    headers,
+    body: options.formData
+      ? options.formData
+      : options.json === undefined
+        ? undefined
+        : JSON.stringify(options.json),
     signal: options.signal,
   });
 
   if (!response.ok) {
+    if (
+      response.status === 401 &&
+      unauthorizedHandler &&
+      !path.startsWith("/api/admin/login") &&
+      path !== "/api/admin/forgot-password" &&
+      path !== "/api/admin/reset-password" &&
+      path !== "/api/admin/accept-invite"
+    ) {
+      unauthorizedHandler();
+    }
     throw await parseApiError(response);
   }
 

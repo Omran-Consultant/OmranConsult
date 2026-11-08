@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import {
@@ -13,6 +14,7 @@ import { publicFontVariables } from "@/core/fonts/public";
 import { getPublicMetadataBase } from "@/core/seo/locale-metadata";
 import { themeInitScript } from "@/core/theme/theme-init-script";
 import { ThemeProvider } from "@/core/theme/theme-provider";
+import { PreviewBanner } from "@/features/layout/components/preview-banner";
 import { PublicLayoutShell } from "@/features/layout/components/public-layout-shell";
 import { getLocaleDirection, routing } from "@/i18n/routing";
 
@@ -79,6 +81,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
   const direction = getLocaleDirection(locale);
+  const preview = (await draftMode()).isEnabled;
 
   return (
     <html
@@ -97,6 +100,7 @@ export default async function LocaleLayout({
         />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
+            {preview ? <PreviewBanner /> : null}
             <PublicLayoutShell>{children}</PublicLayoutShell>
           </ThemeProvider>
         </NextIntlClientProvider>

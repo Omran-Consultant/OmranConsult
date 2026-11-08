@@ -1,6 +1,7 @@
 export type LaravelErrorBody = {
   message: string;
   errors?: Record<string, string[]>;
+  minutes_remaining?: number;
 };
 
 export class ApiError extends Error {
@@ -8,11 +9,19 @@ export class ApiError extends Error {
 
   readonly errors?: Record<string, string[]>;
 
-  constructor(status: number, message: string, errors?: Record<string, string[]>) {
+  readonly minutesRemaining?: number;
+
+  constructor(
+    status: number,
+    message: string,
+    errors?: Record<string, string[]>,
+    minutesRemaining?: number,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.errors = errors;
+    this.minutesRemaining = minutesRemaining;
   }
 }
 
@@ -29,5 +38,6 @@ export async function parseApiError(response: Response): Promise<ApiError> {
     response.status,
     body?.message ?? response.statusText,
     body?.errors,
+    body?.minutes_remaining,
   );
 }

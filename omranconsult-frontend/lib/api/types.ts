@@ -7,6 +7,13 @@ export type AdminUser = {
   name: string;
   email: string;
   roles: string[];
+  permissions: string[];
+  is_active: boolean;
+  department: string | null;
+  dashboard_locale: "ar" | "en" | null;
+  notify_inquiries: boolean;
+  mfa_enabled: boolean;
+  last_login_at: string | null;
 };
 
 export type AdminUserResponse = {
@@ -20,4 +27,52 @@ export type AdminLogoutResponse = {
 export type AdminLoginRequest = {
   email: string;
   password: string;
+  remember?: boolean;
+};
+
+export type AdminMfaPendingResponse = {
+  mfa_required: true;
+};
+
+export type AdminSummaryResponse = {
+  kpis: {
+    projects_published: number;
+    projects_draft: number;
+    inquiries_new: number;
+    drafts_awaiting_publish: number;
+    open_disputes: number;
+    expired_certificates: number;
+  };
+  inquiries_chart: { month: string; count: number }[];
+  sectors: { slug: string; name: { ar: string; en: string }; count: number }[];
+  latest_inquiries: { id: number; name: string; email: string; status: string; created_at: string }[];
+  latest_edits: { id: number; slug: string; title: { ar: string; en: string }; status: string; updated_at: string }[];
+  recent_activity: { id: number; action: string; subject_type: string | null; subject_id: number | null; occurred_at: string; user_id: number | null }[];
+};
+
+export type AdminProjectListItem = {
+  id: number;
+  slug: string;
+  title: { ar?: string | null; en?: string | null };
+  status: string;
+  client_id: number | null;
+  sector_id: number | null;
+  updated_at: string | null;
+};
+
+export type AdminProjectDetail = {
+  id: number;
+  slug: string;
+  title: { ar?: string | null; en?: string | null };
+  overview: { ar?: string | null; en?: string | null } | null;
+  client_id: number | null;
+  sector_id: number | null;
+  year: number | null;
+  gallery: string[] | null;
+  region_ids: number[];
+  is_featured: boolean;
+  status: string;
+  has_unpublished_changes: boolean;
+  draft: Record<string, unknown> | null;
+  updated_at: string | null;
 };
