@@ -16,30 +16,32 @@ type ServiceCardProps = {
 
 /**
  * Service highlight (A36 concept): tile, outlined numeral, title, three-line description,
- * hairline footer. Height follows the content; the footer is not pushed by an empty flex gap.
+ * hairline footer. Cards in a grid row stretch to one height; the footer sits at the bottom (mt-auto) so dividers align.
  */
 export function ServiceCard({ number, title, description, icon, href, linkLabel, featured = false, className }: ServiceCardProps) {
   return (
     <CardFrame className={className} featured={featured} href={href}>
-      <div className="flex flex-col px-7.5 pt-7.5 pb-6.5">
+      <div className="flex flex-1 flex-col px-7.5 pt-7.5 pb-6.5">
         <Numeral featured={featured} value={number} />
         <IconTile featured={featured} name={icon} />
-        <h3 className={classNames("mt-6.5 font-display text-h3 font-bold", featured ? "text-white" : "text-primary")}>{title}</h3>
+        <h3 className={classNames("mt-6.5 line-clamp-2 font-display text-h3 font-bold", featured ? "text-white" : "text-primary")}>{title}</h3>
         {description ? (
           <p className={classNames("mt-2.5 line-clamp-3 text-[0.969rem] leading-[1.75]", featured ? "text-[var(--navy-200)]" : "text-secondary")}>
             {description}
           </p>
         ) : null}
         {linkLabel ? (
-          <div
-            className={
-              featured
-                ? "mt-5.5 flex items-center justify-between border-t border-white/10 pt-4.5 text-[0.9375rem] font-medium text-green-300"
-                : "mt-5.5 flex items-center justify-between border-t border-line pt-4.5 text-[0.9375rem] font-medium text-accent"
-            }
-          >
-            <span>{linkLabel}</span>
-            <ArrowDisc featured={featured} />
+          <div className="mt-auto pt-5.5" data-card-footer="">
+            <div
+              className={
+                featured
+                  ? "flex items-center justify-between border-t border-white/10 pt-4.5 text-[0.9375rem] font-medium text-green-300"
+                  : "flex items-center justify-between border-t border-line pt-4.5 text-[0.9375rem] font-medium text-accent"
+              }
+            >
+              <span>{linkLabel}</span>
+              <ArrowDisc featured={featured} />
+            </div>
           </div>
         ) : null}
       </div>
@@ -60,10 +62,10 @@ type AxisCardProps = {
 export function AxisCard({ number, title, icon, items, countLabel, featured = false }: AxisCardProps) {
   return (
     <CardFrame featured={featured}>
-      <div className="flex flex-col px-7.5 pt-7.5 pb-6.5">
+      <div className="flex flex-1 flex-col px-7.5 pt-7.5 pb-6.5">
         <Numeral featured={featured} value={number} />
         <IconTile featured={featured} name={icon} />
-        <h3 className={classNames("mt-6.5 font-display text-h3 font-bold", featured ? "text-white" : "text-primary")}>{title}</h3>
+        <h3 className={classNames("mt-6.5 line-clamp-2 font-display text-h3 font-bold", featured ? "text-white" : "text-primary")}>{title}</h3>
         <ul className="mt-4 grid gap-x-4 gap-y-2.5 lg:grid-cols-2">
           {items.map((item) => (
             <li className={classNames("flex items-start gap-2 text-body-s", featured ? "text-[var(--navy-200)]" : "text-secondary")} key={item}>
@@ -72,15 +74,17 @@ export function AxisCard({ number, title, icon, items, countLabel, featured = fa
             </li>
           ))}
         </ul>
-        <p
-          className={
-            featured
-              ? "mt-5.5 border-t border-white/10 pt-4.5 text-[0.9375rem] font-medium text-green-300"
-              : "mt-5.5 border-t border-line pt-4.5 text-[0.9375rem] font-medium text-accent"
-          }
-        >
-          {countLabel}
-        </p>
+        <div className="mt-auto pt-5.5" data-card-footer="">
+          <p
+            className={
+              featured
+                ? "border-t border-white/10 pt-4.5 text-[0.9375rem] font-medium text-green-300"
+                : "border-t border-line pt-4.5 text-[0.9375rem] font-medium text-accent"
+            }
+          >
+            {countLabel}
+          </p>
+        </div>
       </div>
     </CardFrame>
   );
@@ -96,9 +100,9 @@ type ToolCardProps = {
 export function ToolCard({ title, description, icon }: ToolCardProps) {
   return (
     <CardFrame>
-      <div className="flex flex-col px-6 pt-6 pb-5">
+      <div className="flex flex-1 flex-col px-6 pt-6 pb-5">
         <IconTile compact name={icon} />
-        <h3 className="mt-4 font-display text-h4 font-bold text-primary">{title}</h3>
+        <h3 className="mt-4 line-clamp-2 font-display text-h4 font-bold text-primary">{title}</h3>
         {description ? <p className="mt-2 line-clamp-3 text-body-s text-secondary">{description}</p> : null}
       </div>
     </CardFrame>

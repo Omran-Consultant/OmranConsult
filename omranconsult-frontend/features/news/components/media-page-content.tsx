@@ -90,7 +90,7 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
             ) : (
               <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
                 {view.cards.map((card) => (
-                  <li className="flex" key={card.slug}>
+                  <li className="flex h-full min-w-0" key={card.slug}>
                     <NewsCard
                       category={card.category}
                       className="w-full"

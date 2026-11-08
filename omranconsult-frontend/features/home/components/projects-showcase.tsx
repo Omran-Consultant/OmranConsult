@@ -128,12 +128,12 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
               {third ? card(third, "(min-width: 1440px) 516px, 40vw") : null}
             </div>
             {rest.length > 0 ? (
-              <div className="grid grid-cols-3 items-start gap-6">{rest.map((project) => card(project, "(min-width: 1440px) 411px, 32vw"))}</div>
+              <div className="grid grid-cols-3 gap-6">{rest.map((project) => card(project, "(min-width: 1440px) 411px, 32vw"))}</div>
             ) : null}
           </div>
 
           {/* Tablet: two columns. */}
-          <div className="container-page hidden grid-cols-2 items-start gap-5 md:grid lg:hidden">
+          <div className="container-page hidden grid-cols-2 gap-5 md:grid lg:hidden">
             {visible.map((project) => card(project, "50vw"))}
           </div>
 

@@ -31,7 +31,7 @@ export function PartnerGrid({ partners, labelId }: PartnerGridProps) {
     <ul aria-labelledby={labelId} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
       {partners.map((partner, index) => (
         <li
-          className="glass flex flex-col gap-5 rounded-lg border border-line p-6"
+          className="glass flex h-full min-w-0 flex-col gap-5 rounded-lg border border-line p-6"
           data-reveal=""
           key={partner.slug}
           style={{ "--reveal-index": index } as CSSProperties}
@@ -48,8 +48,8 @@ export function PartnerGrid({ partners, labelId }: PartnerGridProps) {
               />
             ) : null}
           </div>
-          <h3 className="font-display text-h4 text-primary">{partner.name}</h3>
-          {partner.field ? <p className="text-body-s text-secondary">{partner.field}</p> : null}
+          <h3 className="line-clamp-2 font-display text-h4 text-primary">{partner.name}</h3>
+          {partner.field ? <p className="mt-auto line-clamp-3 text-body-s text-secondary">{partner.field}</p> : null}
         </li>
       ))}
     </ul>

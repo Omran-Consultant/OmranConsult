@@ -15,9 +15,9 @@ export function ServicesTools({ view }: { readonly view: ServicesView }) {
     <section aria-labelledby="services-tools-title" className="bg-surface py-12 lg:py-27.5" data-section="tools" id="tools">
       <div className="container-page flex flex-col gap-6 lg:gap-12">
         <SectionHeader overline={view.copy.tools.overline} title={title} titleId="services-tools-title" />
-        <ul className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {tools.map((tool, index) => (
-            <li data-reveal="" key={tool.title} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
+            <li className="h-full min-w-0" data-reveal="" key={tool.title} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
               <ToolCard description={tool.body} icon={TOOL_ICONS[index] ?? "cog"} title={tool.title ?? ""} />
             </li>
           ))}

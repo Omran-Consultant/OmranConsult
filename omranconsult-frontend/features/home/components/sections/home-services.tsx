@@ -39,9 +39,9 @@ export async function HomeServices({ view }: { readonly view: HomeView }) {
             </LinkButton>
           </div>
         </div>
-        <ul className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {view.highlights.map((item, index) => (
-            <li data-reveal="" key={item.number} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
+            <li className="h-full min-w-0" data-reveal="" key={item.number} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
               <ServiceCard
                 description={item.description}
                 featured={index === 0}

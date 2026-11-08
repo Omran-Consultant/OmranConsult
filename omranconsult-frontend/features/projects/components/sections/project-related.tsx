@@ -15,7 +15,7 @@ export function ProjectRelated({ project }: { readonly project: ProjectDetailVie
         <SectionHeader overline={project.copy.related_overline} title={project.copy.related_title} titleId="related-projects-title" />
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {project.related.map((related) => (
-            <li key={related.slug}>
+            <li className="h-full min-w-0" key={related.slug}>
               <ProjectCard
                 category={related.category}
                 client={related.client}

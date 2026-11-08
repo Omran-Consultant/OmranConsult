@@ -26,11 +26,11 @@ export async function ServicesPillars({ view }: { readonly view: ServicesView })
             titleId="services-pillars-title"
           />
         ) : null}
-        <ol className="grid items-start gap-4 lg:grid-cols-3 lg:gap-6">
+        <ol className="grid gap-4 lg:grid-cols-3 lg:gap-6">
           {view.pillars.map((pillar, index) => {
             const items = pillar.services.flatMap((service) => (service.title ? [service.title] : []));
             return (
-              <li data-reveal="" key={pillar.slug} style={{ "--reveal-index": index } as React.CSSProperties}>
+              <li className="h-full min-w-0" data-reveal="" key={pillar.slug} style={{ "--reveal-index": index } as React.CSSProperties}>
                 <AxisCard
                   countLabel={t("itemCount", { count: items.length })}
                   featured={index === 0}
