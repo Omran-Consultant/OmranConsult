@@ -195,6 +195,11 @@
       "text": "The page may have moved or its link changed. You can go back to the home page.",
       "home": "Back to home",
       "metaTitle": "Page not found"
+    },
+    "error": {
+      "title": "This page could not be loaded",
+      "text": "Something went wrong while loading this page. Try again.",
+      "retry": "Try again"
     }
   },
   "Credentials": {

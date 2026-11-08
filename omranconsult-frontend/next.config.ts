@@ -10,6 +10,7 @@ const csp = [
   `connect-src 'self' ${apiOrigin}`,
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
+  // Next emits the theme pre-paint script and style attributes. 'unsafe-eval' is intentionally absent.
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
   "frame-ancestors 'none'",
