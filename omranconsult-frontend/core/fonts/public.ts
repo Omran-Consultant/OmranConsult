@@ -22,6 +22,8 @@ export const rubik = Rubik({
   variable: "--font-rubik",
   subsets: ["latin"],
   display: "swap",
+  // Arabic Home LCP is the earth photo plus Somar; do not compete with it by preloading Rubik.
+  preload: false,
 });
 
 export const montserrat = Montserrat({
@@ -29,6 +31,8 @@ export const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800"],
   display: "swap",
+  // Overlines and numerals sit below the fold on Home; Somar is the only family preloaded.
+  preload: false,
 });
 
 export const publicFontVariables = `${rubik.variable} ${somar.variable} ${montserrat.variable}`;

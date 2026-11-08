@@ -26,7 +26,7 @@ export async function HomeHero({ view }: { readonly view: HomeView }) {
       data-section="hero"
     >
       {/* Desktop layers from OMRAN.fig: earth2 at 35 % opacity, then the "Shade" gradient. Mobile has neither. */}
-      <Image alt="" className="-z-30 hidden object-cover opacity-35 lg:block" fill priority quality={40} sizes="100vw" src={SITE_IMAGES.earth2.src} />
+      <Image alt="" className="-z-30 hidden object-cover opacity-35 lg:block" fill quality={40} sizes="100vw" src={SITE_IMAGES.earth2.src} />
       <span aria-hidden="true" className="hero-shade absolute inset-0 -z-20 hidden lg:block" />
       <HeroRings direction={view.locale === "ar" ? "rtl" : "ltr"} src={SITE_IMAGES.earth.src} />
       {/* "Bottom Fade" (desktop: last 260 px) and the mobile fade (from y 280, opaque at 60 %). */}

@@ -52,7 +52,7 @@ function ScanCard({ code, label, badge, image, className }: CertificateCardProps
         {badge ? <span className="absolute end-3 top-3 z-10">{badge}</span> : null}
         <span className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-neutral-100" data-credential-scan="">
           <span className="absolute inset-2">
-            <Image alt="" className="object-contain" fill sizes="(min-width: 1024px) 280px, 90vw" src={image.src} />
+            <Image alt="" className="object-contain" fill sizes="(min-width: 1024px) 200px, (min-width: 640px) 40vw, 80vw" src={image.src} />
           </span>
         </span>
         <CardText code={code} label={label} />
