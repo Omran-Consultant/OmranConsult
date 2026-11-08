@@ -93,7 +93,7 @@ class ProjectsController extends Controller
     private function search(Builder $query, string $term): void
     {
         // "!" escapes LIKE wildcards; SQLite has no default escape character.
-        $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], mb_strtolower(trim($term))).'%';
+        $pattern = '%'.str_replace(['!', '%', '_', '\\'], ['!!', '!%', '!_', '!\\'], mb_strtolower(trim($term))).'%';
 
         $query->where(function (Builder $where) use ($pattern): void {
             foreach (PublicLocale::SUPPORTED as $locale) {
