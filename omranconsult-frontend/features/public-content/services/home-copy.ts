@@ -18,12 +18,12 @@ export const homeCopySchema = z
         lead_short: text,
         cta_primary: text,
         cta_secondary: text,
-        stat_labels: z.record(text).catch({}).default({}),
+        stat_labels: z.record(z.string(), text).catch({}).default({}),
       })
       .catch({ stat_labels: {} })
       .default({ stat_labels: {} }),
     stats: z
-      .object({ overline: text, title: text, side_text: text, short_labels: z.record(text).catch({}).default({}) })
+      .object({ overline: text, title: text, side_text: text, short_labels: z.record(z.string(), text).catch({}).default({}) })
       .catch({ short_labels: {} })
       .default({ short_labels: {} }),
     about: z

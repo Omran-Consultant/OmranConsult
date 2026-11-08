@@ -10,7 +10,7 @@ const titledItems = z.object({ title: text, items: texts });
 export const aboutCopySchema = z
   .object({
     hero: z.object({ title: text, intro: text, intro_short: text }).catch({}).default({}),
-    intro: z.object({ overline: text, stat_labels: z.record(text).catch({}).default({}) }).catch({ stat_labels: {} }).default({ stat_labels: {} }),
+    intro: z.object({ overline: text, stat_labels: z.record(z.string(), text).catch({}).default({}) }).catch({ stat_labels: {} }).default({ stat_labels: {} }),
     education_goals: z.object({ overline: text }).catch({}).default({}),
     strategy: z.object({ overline: text, title: text }).catch({}).default({}),
     esg: z.object({ overline: text }).catch({}).default({}),
@@ -54,7 +54,7 @@ export const aboutBlocksSchema = z.object({
     .catch({})
     .default({}),
   section_titles: z
-    .object({ experts: text, org_chart: text, org_groups: z.record(text).catch({}).default({}) })
+    .object({ experts: text, org_chart: text, org_groups: z.record(z.string(), text).catch({}).default({}) })
     .catch({ org_groups: {} })
     .default({ org_groups: {} }),
 });

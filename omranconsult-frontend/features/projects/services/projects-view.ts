@@ -11,7 +11,7 @@ const text = z.string().trim().min(1).optional().catch(undefined);
 export const projectsCopySchema = z
   .object({
     hero: z
-      .object({ title: text, intro: text, intro_short: text, stat_labels: z.record(z.string()).catch({}).default({}) })
+      .object({ title: text, intro: text, intro_short: text, stat_labels: z.record(z.string(), z.string()).catch({}).default({}) })
       .catch({ stat_labels: {} })
       .default({ stat_labels: {} }),
     detail: z

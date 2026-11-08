@@ -64,7 +64,7 @@ export const settingsResponseSchema = z.object({
       phones: z.array(z.string()),
     }),
     working_hours: nullableStringSchema.optional(),
-    profile_pdf_url: z.string().url().nullable().optional(),
+    profile_pdf_url: z.url().nullable().optional(),
   }),
 });
 
@@ -72,7 +72,7 @@ export const settingsResponseSchema = z.object({
 export const pageResponseSchema = z.object({
   locale: localeSchema,
   data: z.object({
-    blocks: z.record(z.unknown()),
+    blocks: z.record(z.string(), z.unknown()),
   }),
 });
 
@@ -97,7 +97,7 @@ export const homeResponseSchema = z.object({
       }),
     ),
     blocks: z
-      .record(z.unknown())
+      .record(z.string(), z.unknown())
       .and(
         z.object({
           section_titles: z
@@ -106,7 +106,7 @@ export const homeResponseSchema = z.object({
               experts: nullableStringSchema.optional(),
               org_chart: nullableStringSchema.optional(),
               featured_projects: nullableStringSchema.optional(),
-              org_groups: z.record(nullableStringSchema).optional(),
+              org_groups: z.record(z.string(), nullableStringSchema).optional(),
             })
             .optional(),
         }),
@@ -135,10 +135,10 @@ export const projectsIndexResponseSchema = z.object({
   locale: localeSchema,
   data: z.array(projectSchema),
   links: z.object({
-    first: z.string().url().nullable(),
-    last: z.string().url().nullable(),
-    prev: z.string().url().nullable(),
-    next: z.string().url().nullable(),
+    first: z.url().nullable(),
+    last: z.url().nullable(),
+    prev: z.url().nullable(),
+    next: z.url().nullable(),
   }),
   meta: projectsMetaSchema,
 });
