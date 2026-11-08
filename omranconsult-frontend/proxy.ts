@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 
+import { isIndexableHost, NOINDEX_VALUE } from "@/core/seo/indexing";
 import { routing } from "@/i18n/routing";
 
 const handleI18n = createMiddleware(routing);
@@ -38,15 +39,25 @@ async function missingDetailLocale(request: NextRequest): Promise<string | undef
   }
 }
 
+/** Hosts other than the production domain are never indexed (previews, tunnels, localhost). */
+function withIndexingPolicy(request: NextRequest, response: NextResponse): NextResponse {
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  if (!isIndexableHost(host)) {
+    response.headers.set("X-Robots-Tag", NOINDEX_VALUE);
+  }
+
+  return response;
+}
+
 export default async function proxy(request: NextRequest) {
   const locale = await missingDetailLocale(request);
   if (locale) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/__missing`;
-    return NextResponse.rewrite(url);
+    return withIndexingPolicy(request, NextResponse.rewrite(url));
   }
 
-  return handleI18n(request);
+  return withIndexingPolicy(request, handleI18n(request));
 }
 
 export const config = {

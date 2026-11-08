@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import { notFound } from "next/navigation";
 import { ProjectsPageContent } from "@/features/projects/components/projects-page-content";
 import { getProjectsPageData } from "@/features/projects/services/get-projects-page-data";
 import { parseProjectsFilters } from "@/features/projects/services/projects-filters";
+import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
 import { routing } from "@/i18n/routing";
 
 type ProjectsPageProps = {
@@ -13,6 +15,11 @@ type ProjectsPageProps = {
 };
 
 export const instant = false;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return routeAlternatesMetadata(locale, "/projects");
+}
 
 export default async function ProjectsPage({ params, searchParams }: ProjectsPageProps) {
   const { locale } = await params;

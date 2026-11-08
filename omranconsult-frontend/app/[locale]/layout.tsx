@@ -10,14 +10,10 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { publicFontVariables } from "@/core/fonts/public";
-import {
-  buildPublicLocaleAlternates,
-  getPublicMetadataBase,
-} from "@/core/seo/locale-metadata";
+import { getPublicMetadataBase } from "@/core/seo/locale-metadata";
 import { themeInitScript } from "@/core/theme/theme-init-script";
 import { ThemeProvider } from "@/core/theme/theme-provider";
 import { PublicLayoutShell } from "@/features/layout/components/public-layout-shell";
-import type { AppLocale } from "@/i18n/routing";
 import { getLocaleDirection, routing } from "@/i18n/routing";
 
 type LocaleLayoutProps = {
@@ -42,13 +38,11 @@ export async function generateMetadata({
 
   const t = await getTranslations({ locale, namespace: "Metadata" });
   const metadataBase = getPublicMetadataBase();
-  const alternates = buildPublicLocaleAlternates(locale as AppLocale);
 
   return {
     ...(metadataBase ? { metadataBase } : {}),
     title: t("title"),
     description: t("description"),
-    alternates,
     openGraph: {
       title: t("title"),
       description: t("description"),

@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { ProjectDetailPageContent } from "@/features/projects/components/project-detail-page-content";
 import { getProjectDetailData } from "@/features/projects/services/get-project-detail-data";
+import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
 import { routing } from "@/i18n/routing";
 
 type ProjectDetailPageProps = {
@@ -11,6 +13,11 @@ type ProjectDetailPageProps = {
 };
 
 export const instant = false;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  return routeAlternatesMetadata(locale, `/projects/${encodeURIComponent(slug)}`);
+}
 
 export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { locale, slug } = await params;

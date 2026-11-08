@@ -33,28 +33,38 @@ type LocaleAlternateFields = Pick<
   "canonical" | "languages"
 >;
 
+/**
+ * Canonical and hreflang for one route. `path` is the route without the locale
+ * ("" for Home, "/about", "/projects/some-slug"). Each page declares its own path so a
+ * page is never canonical to Home.
+ */
 export function buildPublicLocaleAlternates(
   locale: AppLocale,
+  path = "",
 ): LocaleAlternateFields {
-  const origin = getConfiguredPublicSiteOrigin();
-
-  if (origin) {
-    return {
-      canonical: `${origin}/${locale}`,
-      languages: {
-        en: `${origin}/en`,
-        ar: `${origin}/ar`,
-        "x-default": `${origin}/en`,
-      },
-    };
-  }
+  const origin = getConfiguredPublicSiteOrigin() ?? "";
 
   return {
-    canonical: `/${locale}`,
+    canonical: `${origin}/${locale}${path}`,
     languages: {
-      en: "/en",
-      ar: "/ar",
-      "x-default": "/en",
+      en: `${origin}/en${path}`,
+      ar: `${origin}/ar${path}`,
+      "x-default": `${origin}/en${path}`,
     },
+  };
+}
+
+/** `generateMetadata` result for a page that only needs its own canonical and hreflang. */
+export function routeAlternatesMetadata(locale: string, path = ""): Metadata {
+  if (locale !== "en" && locale !== "ar") {
+    return {};
+  }
+
+  const alternates = buildPublicLocaleAlternates(locale, path);
+  const origin = getConfiguredPublicSiteOrigin();
+
+  return {
+    alternates,
+    ...(origin ? { openGraph: { url: `${origin}/${locale}${path}` } } : {}),
   };
 }
