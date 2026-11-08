@@ -30,13 +30,15 @@
     "mapAlt": "خريطة مناطق المملكة العربية السعودية"
   },
   "AboutPage": {
-    "titleFallback": "عن شركة العمران",
-    "expiredBadge": "منتهية",
-    "partnersHeading": "الشركاء",
-    "workPhase": "المرحلة {n}",
-    "workStagesScrollLabel": "مراحل العمل، مرّر أفقياً",
-    "scrollPrevious": "السابق",
-    "scrollNext": "التالي"
+    "expertYears": "خبرة {years}+ عاماً",
+    "viewAllExperts": "عرض جميع الخبراء",
+    "showFewerExperts": "عرض أقل",
+    "readBio": "السيرة الذاتية: {name}",
+    "closeBio": "إغلاق",
+    "expired": "منتهية",
+    "certificatesLabel": "شهادات الأيزو",
+    "licensesLabel": "التراخيص",
+    "stage": "المرحلة {n}"
   },
   "ServicesPage": {
     "titleFallback": "خدماتنا",

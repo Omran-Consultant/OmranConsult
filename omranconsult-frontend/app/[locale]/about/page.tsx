@@ -18,7 +18,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   }
 
   setRequestLocale(locale);
-  const data = await getAboutPageData(locale);
+  const view = await getAboutPageData(locale);
 
-  return <AboutPageContent data={data} locale={locale} />;
+  return <AboutPageContent view={view} />;
 }

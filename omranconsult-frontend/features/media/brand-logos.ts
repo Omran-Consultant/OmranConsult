@@ -1,4 +1,7 @@
-/** Profile-derived client and partner logos (Phase 4); replaced by API media in Phase 5. */
+/**
+ * Client and partner logos re-cropped from the profile (p.44 and p.42) at 400 dpi (PHASE4C_HOME_REVIEW
+ * H7); replaced by API media in Phase 5.
+ */
 
 export type BrandLogo = {
   readonly src: string;
@@ -9,36 +12,36 @@ export type BrandLogo = {
 };
 
 export const CLIENT_LOGOS: Record<string, BrandLogo> = {
-  "ministry-of-environment-water-and-agriculture": { src: "/images/clients/ministry-of-environment-water-and-agriculture.png", width: 480, height: 203 },
-  "general-irrigation-organization": { src: "/images/clients/general-irrigation-organization.png", width: 480, height: 170 },
-  "ministry-of-municipalities-and-housing": { src: "/images/clients/ministry-of-municipalities-and-housing.png", width: 480, height: 174 },
-  "ministry-of-sport": { src: "/images/clients/ministry-of-sport.png", width: 479, height: 85 },
-  "tatweer-buildings-company": { src: "/images/clients/tatweer-buildings-company.png", width: 480, height: 202 },
-  "ministry-of-health": { src: "/images/clients/ministry-of-health.png", width: 480, height: 221 },
-  "saudi-red-crescent-authority": { src: "/images/clients/saudi-red-crescent-authority.png", width: 480, height: 214 },
-  "aramco": { src: "/images/clients/aramco.png", width: 480, height: 213 },
-  "ministry-of-investment": { src: "/images/clients/ministry-of-investment.png", width: 479, height: 214 },
-  "state-properties-general-authority": { src: "/images/clients/state-properties-general-authority.png", width: 480, height: 221 },
-  "national-center-for-vegetation-cover-development": { src: "/images/clients/national-center-for-vegetation-cover-development.png", width: 480, height: 221 },
-  "riyad-bank": { src: "/images/clients/riyad-bank.png", width: 480, height: 214 },
-  "arasco": { src: "/images/clients/arasco.png", width: 480, height: 213 },
-  "sdaia": { src: "/images/clients/sdaia.png", width: 479, height: 214 },
-  "tawuniya": { src: "/images/clients/tawuniya.png", width: 480, height: 221 },
-  "ministry-of-culture": { src: "/images/clients/ministry-of-culture.png", width: 480, height: 221 },
-  "national-center-for-water-efficiency-and-conservation": { src: "/images/clients/national-center-for-water-efficiency-and-conservation.png", width: 480, height: 214 },
-  "cargill": { src: "/images/clients/cargill.png", width: 480, height: 213 },
-  "gosi": { src: "/images/clients/gosi.png", width: 479, height: 213 },
-  "expro": { src: "/images/clients/expro.png", width: 480, height: 220 },
-  "ministry-of-justice": { src: "/images/clients/ministry-of-justice.png", width: 480, height: 221 },
-  "general-court-of-audit": { src: "/images/clients/general-court-of-audit.png", width: 480, height: 214 },
-  "client-23": { src: "/images/clients/client-23.png", width: 480, height: 213 },
-  "al-hayat-national-hospitals": { src: "/images/clients/al-hayat-national-hospitals.png", width: 479, height: 214 },
-  "madinah-region-development-authority": { src: "/images/clients/madinah-region-development-authority.png", width: 480, height: 221 },
-  "sekaya-charitable-foundation": { src: "/images/clients/sekaya-charitable-foundation.png", width: 480, height: 221 },
-  "mrooj": { src: "/images/clients/mrooj.png", width: 480, height: 214 },
-  "social-development-bank": { src: "/images/clients/social-development-bank.png", width: 480, height: 213 },
-  "ministry-of-defense": { src: "/images/clients/ministry-of-defense.png", width: 479, height: 214 },
-  "client-30": { src: "/images/clients/client-30.png", width: 480, height: 221 },
+  "ministry-of-environment-water-and-agriculture": { src: "/images/clients/ministry-of-environment-water-and-agriculture.png", width: 480, height: 129 },
+  "general-irrigation-organization": { src: "/images/clients/general-irrigation-organization.png", width: 480, height: 185 },
+  "ministry-of-municipalities-and-housing": { src: "/images/clients/ministry-of-municipalities-and-housing.png", width: 480, height: 144 },
+  "ministry-of-sport": { src: "/images/clients/ministry-of-sport.png", width: 480, height: 164 },
+  "tatweer-buildings-company": { src: "/images/clients/tatweer-buildings-company.png", width: 382, height: 187 },
+  "ministry-of-health": { src: "/images/clients/ministry-of-health.png", width: 480, height: 141 },
+  "saudi-red-crescent-authority": { src: "/images/clients/saudi-red-crescent-authority.png", width: 480, height: 129 },
+  "aramco": { src: "/images/clients/aramco.png", width: 480, height: 107 },
+  "ministry-of-investment": { src: "/images/clients/ministry-of-investment.png", width: 480, height: 149 },
+  "state-properties-general-authority": { src: "/images/clients/state-properties-general-authority.png", width: 443, height: 208 },
+  "national-center-for-vegetation-cover-development": { src: "/images/clients/national-center-for-vegetation-cover-development.png", width: 480, height: 128 },
+  "riyad-bank": { src: "/images/clients/riyad-bank.png", width: 480, height: 142 },
+  "arasco": { src: "/images/clients/arasco.png", width: 480, height: 131 },
+  "sdaia": { src: "/images/clients/sdaia.png", width: 480, height: 181 },
+  "tawuniya": { src: "/images/clients/tawuniya.png", width: 480, height: 157 },
+  "ministry-of-culture": { src: "/images/clients/ministry-of-culture.png", width: 318, height: 210 },
+  "national-center-for-water-efficiency-and-conservation": { src: "/images/clients/national-center-for-water-efficiency-and-conservation.png", width: 380, height: 210 },
+  "cargill": { src: "/images/clients/cargill.png", width: 449, height: 220 },
+  "gosi": { src: "/images/clients/gosi.png", width: 281, height: 197 },
+  "expro": { src: "/images/clients/expro.png", width: 480, height: 185 },
+  "ministry-of-justice": { src: "/images/clients/ministry-of-justice.png", width: 183, height: 217 },
+  "general-court-of-audit": { src: "/images/clients/general-court-of-audit.png", width: 480, height: 138 },
+  "client-23": { src: "/images/clients/client-23.png", width: 256, height: 219 },
+  "al-hayat-national-hospitals": { src: "/images/clients/al-hayat-national-hospitals.png", width: 334, height: 212 },
+  "madinah-region-development-authority": { src: "/images/clients/madinah-region-development-authority.png", width: 480, height: 106 },
+  "sekaya-charitable-foundation": { src: "/images/clients/sekaya-charitable-foundation.png", width: 480, height: 175 },
+  "mrooj": { src: "/images/clients/mrooj.png", width: 480, height: 170 },
+  "social-development-bank": { src: "/images/clients/social-development-bank.png", width: 480, height: 159 },
+  "ministry-of-defense": { src: "/images/clients/ministry-of-defense.png", width: 225, height: 224 },
+  "client-30": { src: "/images/clients/client-30.png", width: 212, height: 232 },
 };
 
 /*

@@ -30,13 +30,15 @@
     "mapAlt": "Map of Saudi Arabia regions"
   },
   "AboutPage": {
-    "titleFallback": "About OMRAN",
-    "expiredBadge": "Expired",
-    "partnersHeading": "Partners",
-    "workPhase": "Phase {n}",
-    "workStagesScrollLabel": "Work stages, scroll horizontally",
-    "scrollPrevious": "Scroll previous",
-    "scrollNext": "Scroll next"
+    "expertYears": "{years}+ years of experience",
+    "viewAllExperts": "View all experts",
+    "showFewerExperts": "Show fewer",
+    "readBio": "Biography: {name}",
+    "closeBio": "Close",
+    "expired": "Expired",
+    "certificatesLabel": "ISO certificates",
+    "licensesLabel": "Licenses",
+    "stage": "Stage {n}"
   },
   "ServicesPage": {
     "titleFallback": "Our Services",

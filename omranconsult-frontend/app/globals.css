@@ -392,21 +392,25 @@ html[lang="ar"] {
   }
 }
 
-/* Photo scrim: darkest at the reading start, where the text sits (CTA box, page heroes). */
+/* CTA box "Overlay" (OMRAN.fig): 95 % at the reading start, 60 % at 60 %, 15 % at the end. */
 @utility scrim-start {
-  background-image: linear-gradient(
-    to left,
-    rgb(8 19 34 / 0.92) 0%,
-    rgb(8 19 34 / 0.75) 45%,
-    rgb(8 19 34 / 0.15) 100%
-  );
+  background-image: linear-gradient(to left, rgb(8 19 34 / 0.95) 0%, rgb(8 19 34 / 0.6) 60%, rgb(8 19 34 / 0.15) 100%);
 
   &:dir(ltr) {
-    background-image: linear-gradient(
-      to right,
-      rgb(8 19 34 / 0.92) 0%,
-      rgb(8 19 34 / 0.75) 45%,
-      rgb(8 19 34 / 0.15) 100%
-    );
+    background-image: linear-gradient(to right, rgb(8 19 34 / 0.95) 0%, rgb(8 19 34 / 0.6) 60%, rgb(8 19 34 / 0.15) 100%);
   }
+}
+
+/* Services page hero scrim: 98 % at the start, 75 % at 60 %, 40 % at the end. */
+@utility scrim-start-strong {
+  background-image: linear-gradient(to left, rgb(8 19 34 / 0.98) 0%, rgb(8 19 34 / 0.75) 60%, rgb(8 19 34 / 0.4) 100%);
+
+  &:dir(ltr) {
+    background-image: linear-gradient(to right, rgb(8 19 34 / 0.98) 0%, rgb(8 19 34 / 0.75) 60%, rgb(8 19 34 / 0.4) 100%);
+  }
+}
+
+/* Page hero scrims fading down to opaque navy: scrim-down-70 = 70 % at the top (About), -75 (Projects), -60 (mobile). */
+@utility scrim-down-* {
+  background-image: linear-gradient(to bottom, rgb(8 19 34 / calc(--value(integer) * 1%)), rgb(8 19 34 / 1));
 }

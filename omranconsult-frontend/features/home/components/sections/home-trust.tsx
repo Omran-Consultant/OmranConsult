@@ -1,7 +1,9 @@
 import { getTranslations } from "next-intl/server";
 
+import { CertificateCard } from "@/core/ui/certificate-card";
 import { SectionHeader } from "@/core/ui/section-header";
 import { StatusBadge } from "@/core/ui/status-badge";
+import { WordmarkStrip } from "@/core/ui/wordmark-strip";
 import type { HomeView } from "@/features/home/services/home-view";
 
 /**
@@ -20,43 +22,21 @@ export async function HomeTrust({ view }: { readonly view: HomeView }) {
         {view.certificates.length > 0 ? (
           <ul aria-label={t("certificates")} className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {view.certificates.map((certificate, index) => (
-              <li
-                className="glass flex flex-col items-center gap-2 rounded-lg border border-line px-4 py-7 text-center"
-                data-reveal=""
-                key={certificate.id}
-                style={{ "--reveal-index": index % 4 } as React.CSSProperties}
-              >
-                <span aria-hidden="true" className="mb-1 size-11 rounded-full border-[1.5px] border-accent" />
-                <span className="font-latin text-base font-bold text-primary" dir="ltr">
-                  {certificate.code}
-                </span>
-                {certificate.label ? <span className="text-caption text-muted">{certificate.label}</span> : null}
-                {certificate.expired ? <StatusBadge tone="neutral">{t("expired")}</StatusBadge> : null}
+              <li data-reveal="" key={certificate.id} style={{ "--reveal-index": index % 4 } as React.CSSProperties}>
+                <CertificateCard
+                  badge={certificate.expired ? <StatusBadge tone="neutral">{t("expired")}</StatusBadge> : null}
+                  code={certificate.code}
+                  label={certificate.label}
+                />
               </li>
             ))}
           </ul>
         ) : null}
 
-        {view.partners.length > 0 ? (
-          <div className="flex flex-col gap-6 border-t border-line pt-10 md:flex-row md:items-center md:gap-14">
-            {copy.partners_label ? <h3 className="shrink-0 text-label-m text-secondary">{copy.partners_label}</h3> : null}
-            {/* Uniform Latin wordmarks, as designed (H6); the logo images are used on About. */}
-            <ul className="flex flex-1 flex-wrap items-center justify-between gap-x-10 gap-y-4">
-              {view.partners.map((partner) => (
-                <li key={partner.slug}>
-                  <span
-                    className="font-latin text-[1.375rem] leading-none font-semibold tracking-[0.04em] text-muted uppercase transition-colors duration-150 hover:text-primary"
-                    dir="ltr"
-                    lang="en"
-                    title={partner.name}
-                  >
-                    {partner.wordmark}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        <WordmarkStrip
+          items={view.partners.map((partner) => ({ key: partner.slug, wordmark: partner.wordmark, title: partner.name }))}
+          label={copy.partners_label}
+        />
       </div>
     </section>
   );

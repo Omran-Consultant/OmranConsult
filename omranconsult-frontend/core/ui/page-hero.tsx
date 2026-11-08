@@ -18,35 +18,52 @@ type PageHeroProps = {
   /** May contain one `{accent}` word and line breaks. */
   readonly title: string;
   readonly intro?: string;
+  /** Shorter intro below 768 px (the 390 frames). */
+  readonly introShort?: string;
   readonly breadcrumbs: readonly BreadcrumbItem[];
   readonly breadcrumbLabel: string;
   readonly stats?: readonly HeroStat[];
+  /** Scrim utility from the Figma frame, for example `scrim-down-70` or `scrim-start-strong`. */
+  readonly scrim?: string;
+  /** Heights and bottom padding per page (Figma: About 620, Services 600, Projects 560). */
   readonly className?: string;
   readonly children?: ReactNode;
 };
 
 /**
- * Figma "Page Hero": photo, dark scrim, breadcrumb, Display/L title, intro, optional
- * mini-stats. Always dark (text sits on a photo). The site header overlays the top.
+ * Figma "Page Hero": photo, scrim, breadcrumb, Display/L title (bold accent word), intro and
+ * optional mini-stats. Always dark (text sits on a photo); the site header overlays the top.
  */
-export function PageHero({ image, title, intro, breadcrumbs, breadcrumbLabel, stats, className, children }: PageHeroProps) {
+export function PageHero({
+  image,
+  title,
+  intro,
+  introShort,
+  breadcrumbs,
+  breadcrumbLabel,
+  stats,
+  scrim = "scrim-down-70",
+  className,
+  children,
+}: PageHeroProps) {
   return (
     <header
       className={classNames(
-        "scheme-dark relative isolate flex min-h-140 items-end overflow-hidden bg-canvas pt-36 pb-16 text-primary lg:pb-30",
+        "scheme-dark relative isolate flex min-h-125 items-end overflow-hidden bg-canvas pt-36 pb-8 text-primary lg:min-h-155 lg:pb-22.5",
         className,
       )}
       data-section="page-hero"
     >
-      <Image alt={image.alt} className="-z-20 object-cover" fill priority sizes="100vw" src={image.src} />
-      <span aria-hidden="true" className="absolute inset-0 -z-10 bg-scrim" />
-      <Container className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex max-w-190 flex-col gap-5">
+      <Image alt={image.alt} className="-z-20 object-cover" fill priority quality={60} sizes="100vw" src={image.src} />
+      <span aria-hidden="true" className={classNames("absolute inset-0 -z-10 max-lg:scrim-down-60", scrim)} />
+      <Container className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex max-w-190 flex-col gap-3 lg:gap-5">
           <Breadcrumb items={breadcrumbs} label={breadcrumbLabel} />
           <h1 className="font-display text-display-l">
-            <AccentText value={title} />
+            <AccentText accentClassName="font-bold" breakClassName="max-md:hidden" value={title} />
           </h1>
-          {intro ? <p className="max-w-155 text-body-l text-secondary">{intro}</p> : null}
+          {intro ? <p className={classNames("max-w-190 text-body-l text-secondary", introShort && "max-md:hidden")}>{intro}</p> : null}
+          {introShort ? <p className="text-body-l text-secondary md:hidden">{introShort}</p> : null}
           {children}
         </div>
         {stats && stats.length > 0 ? (
