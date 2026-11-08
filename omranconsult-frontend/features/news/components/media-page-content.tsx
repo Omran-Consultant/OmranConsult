@@ -132,7 +132,7 @@ function FeaturedPost({ post }: FeaturedPostProps) {
   return (
     <section aria-labelledby="media-featured-title" className="pb-4 lg:pb-16" data-section="featured">
       <div className="container-page">
-        <article className="group relative grid overflow-hidden rounded-[20px] border border-line bg-surface lg:grid-cols-[700fr_578fr] lg:rounded-[28px]">
+        <article className="group relative grid overflow-hidden rounded-lg border border-line bg-surface lg:grid-cols-[700fr_578fr] lg:rounded-[28px]">
           <div className="relative h-60 overflow-hidden bg-highlight lg:h-auto lg:min-h-115">
             <Image
               alt={post.image.alt}

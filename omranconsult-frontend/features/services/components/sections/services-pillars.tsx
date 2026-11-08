@@ -30,7 +30,7 @@ export function ServicesPillars({ view }: { readonly view: ServicesView }) {
             return (
               <li
                 className={classNames(
-                  "flex flex-col gap-5 rounded-[20px] border p-8 lg:gap-6 lg:rounded-[24px]",
+                  "flex flex-col gap-5 rounded-lg border p-8 lg:gap-6 lg:rounded-[24px]",
                   highlighted ? "glass border-line lg:border-line-accent lg:bg-accent-strong/12" : "glass border-line lg:bg-surface",
                 )}
                 data-reveal=""

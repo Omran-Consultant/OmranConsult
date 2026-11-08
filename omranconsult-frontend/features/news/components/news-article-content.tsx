@@ -79,7 +79,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
 
       <div data-section="cover">
         <div className="container-page">
-          <div className="relative aspect-350/220 overflow-hidden rounded-[20px] bg-highlight md:aspect-1280/620 md:rounded-[28px]">
+          <div className="relative aspect-350/220 overflow-hidden rounded-lg bg-highlight md:aspect-1280/620 md:rounded-[28px]">
             <Image alt={article.cover.alt} className="object-cover" fill priority quality={70} sizes="(min-width: 1440px) 1280px, 100vw" src={article.cover.src} />
           </div>
         </div>
@@ -94,7 +94,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
                 return (
                   <div className="grid gap-4 sm:grid-cols-2" key={`images-${index}`}>
                     {group.images.map((image, imageIndex) => (
-                      <div className="relative aspect-402/260 overflow-hidden rounded-[20px] bg-highlight" key={`${image.src}-${imageIndex}`}>
+                      <div className="relative aspect-402/260 overflow-hidden rounded-lg bg-highlight" key={`${image.src}-${imageIndex}`}>
                         <Image alt={image.alt} className="object-cover" fill sizes="(min-width: 1024px) 402px, (min-width: 640px) 50vw, 100vw" src={image.src} />
                       </div>
                     ))}
@@ -111,7 +111,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
               }
               if (block.type === "quote") {
                 return (
-                  <blockquote className="rounded-[20px] bg-accent-strong/8 px-6 py-6 md:px-8 md:py-7" key={index}>
+                  <blockquote className="rounded-lg bg-accent-strong/8 px-6 py-6 md:px-8 md:py-7" key={index}>
                     <p className="border-s-3 border-accent ps-6 font-display text-h4 text-primary md:text-h3">{block.text}</p>
                   </blockquote>
                 );
@@ -164,7 +164,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
               </section>
             ) : null}
             {article.cta.title ? (
-              <section aria-labelledby="article-cta-title" className="scheme-dark relative isolate flex flex-col items-start gap-3.5 overflow-hidden rounded-[20px] bg-canvas p-6 text-primary">
+              <section aria-labelledby="article-cta-title" className="scheme-dark relative isolate flex flex-col items-start gap-3.5 overflow-hidden rounded-lg bg-canvas p-6 text-primary">
                 <Image alt="" className="-z-20 object-cover" fill sizes="380px" src={article.ctaImage.src} />
                 <span aria-hidden="true" className="absolute inset-0 -z-10 bg-canvas/75" />
                 <h2 className="font-display text-h3 text-primary" id="article-cta-title">

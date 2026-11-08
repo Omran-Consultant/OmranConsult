@@ -18,7 +18,7 @@ export function ServicesTools({ view }: { readonly view: ServicesView }) {
         <ul className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-12">
           {tools.map((tool, index) => (
             <li
-              className="flex items-start gap-4.5 rounded-[20px] border border-line bg-canvas p-6"
+              className="flex items-start gap-4.5 rounded-lg border border-line bg-canvas p-6"
               data-reveal=""
               key={tool.title}
               style={{ "--reveal-index": index % 3 } as React.CSSProperties}
