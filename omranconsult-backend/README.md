@@ -46,7 +46,7 @@ Sanctum (SPA session) and Spatie Permission are installed; admin auth routes lan
 
 - Serve the frontend and API over HTTPS only. Keep `SESSION_SECURE_COOKIE=true`.
 - Restrict the deployed `.env` to the application user (for example mode `600`). Give the web/application user only the write access Laravel needs under `storage/` and `bootstrap/cache/`; do not make either world-writable.
-- Set the real production frontend/API domains in `FRONTEND_URL`, `SANCTUM_STATEFUL_DOMAINS`, `SESSION_DOMAIN`, `APP_URL`, `API_BASE_URL`, and `NEXT_PUBLIC_SITE_URL`. Add stable frontend-server egress IPs to `PUBLIC_READ_TRUSTED_IPS`, or raise the public-read limit for that deployment.
+- Set the real production frontend/API domains in `FRONTEND_URL`, `SANCTUM_STATEFUL_DOMAINS`, `SESSION_DOMAIN`, `APP_URL`, `API_BASE_URL`, and `NEXT_PUBLIC_SITE_URL`. Set the same `FRONTEND_SERVER_KEY` on the API `.env` and the Next.js `.env.local` (or a host env in production), and/or add stable frontend-server egress IPs to `PUBLIC_READ_TRUSTED_IPS`.
 - After environment configuration and each release, run `php artisan config:cache`, `php artisan route:cache`, and `php artisan optimize`.
 - Create the first Super Admin only with `omranconsult:install-super-admin` and an operator-supplied password. The command rejects empty, shorter-than-12, and weak passwords; never ship or reuse a default password.
 - Configure and regularly test restorable MySQL backups before storing production content. The backup provider and off-site copy remain deployment decisions.

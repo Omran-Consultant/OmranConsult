@@ -22,6 +22,15 @@ function assertLocalhostUrl(label: string, value: string): string {
 }
 
 /**
+ * Shared secret for server-to-server public reads. Next.js loads it from `.env.local`
+ * locally (standard). Never expose as NEXT_PUBLIC_*.
+ */
+export function getFrontendServerKey(): string | undefined {
+  const key = process.env.FRONTEND_SERVER_KEY?.trim();
+  return key ? key : undefined;
+}
+
+/**
  * Direct Laravel origin for server-side fetches (no browser cookies).
  */
 export function getServerApiBaseUrl(): string {

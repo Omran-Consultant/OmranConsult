@@ -33,7 +33,7 @@ Read the installed Laravel 13 docs before adding framework code. This skeleton c
 
 * **Content tables** per `SYSTEM_DESIGN.md` §6.7 (supersedes §6.2 for these tables): `site_settings`, `hero_slides`, `statistics`, `content_blocks`, `service_categories`, `services`, `clients`, `regions`, `projects`, `project_region`, `team_members`, `org_positions`, `documents`, `partners`, `content_disputes`. Bilingual JSON columns follow "Bilingual storage" below.
 * **Modules:** `app/Modules/{Content,Services,Projects,Team,Documents,Partners,Inquiries,Newsletter,News}`; shared `app/Support/Content` (`PublicationStatus`, `Publishable` trait with `published()` scope and soft deletes, `PublicLocale`) and `app/Http/Middleware/SetPublicLocale.php`.
-* **Public read API** (`routes/api.php`, `SYSTEM_DESIGN.md` §7.1): `GET /api/settings`, `/home`, `/pages/{page}`, `/services`, `/projects`, `/projects/{slug}`, `/clients`, `/regions`, `/sectors`, `/news-categories`, `/news`, `/news/{slug}`, `/experts`, `/org-chart`, `/documents`, `/partners`. `GET /api/documents` includes a stable nullable `slug` (licences and ISO certificates). Expired documents stay listed; the response includes `valid_until` and `is_expired` (A26, A31).
+* **Public read API** (`routes/api.php`, `SYSTEM_DESIGN.md` §7.1): `GET /api/settings`, `/home`, `/pages/{page}`, `/services`, `/projects`, `/projects/{slug}`, `/clients`, `/regions`, `/sectors`, `/news-categories`, `/news`, `/news/{slug}`, `/experts`, `/org-chart`, `/documents`, `/partners`. `GET /api/documents` includes a stable nullable `slug` (licences and ISO certificates). Expired documents stay listed; the response includes `valid_until` and `is_expired` (A26, A31). Reads use **`throttle:public-read`** (**120**/min/IP). **`PUBLIC_READ_TRUSTED_IPS`** skip that cap. A matching **`X-Omran-Frontend-Key`** (`FRONTEND_SERVER_KEY`, **`hash_equals`**) also skips it; an empty key keeps 120/min.
 * **Public writes:** `POST /api/inquiries` and `POST /api/newsletter`, each limited to 5 requests per minute per IP (`throttle:inquiries`, `throttle:newsletter`).
 * **Seeders:** `database/seeders/Profile/` imports the whole profile as **published** demo data with Claude's unreviewed English (A25); profile errors are stored as printed and recorded in `content_disputes`, which do not hide content (A26). `database/seeders/Design/` adds sectors usage, design copy, featured projects, and demo news. `DatabaseSeeder` runs the profile set; it skips if content exists, and still refreshes the A32 legal-name note.
 * **Tests:** `tests/Feature/Content/`, `tests/Unit/Content/`.
@@ -137,7 +137,7 @@ This JSON shape is the rule for content tables (implemented in Phase 3).
 
 * Form Requests validate every write. Controllers do not reimplement rules inline.
 * Return 422 with the error shape above. Do not redirect API clients to an HTML error page.
-* Rate-limit **`POST /api/admin/login`** (configured). Rate-limit other public write routes when those routes are added. Write the numeric limit next to the route definition.
+* Rate-limit **`POST /api/admin/login`** (configured). Public reads use **`throttle:public-read`** as recorded next to the route group. Rate-limit other public write routes when those routes are added. Write the numeric limit next to the route definition.
 * Authorization failures are 403. Missing authentication is 401. Unknown records are 404. Do not use 404 to hide a record the user is allowed to know about, and do not use 403 to reveal a draft to the public; unpublished public reads are 404.
 
 ## CMS workflow

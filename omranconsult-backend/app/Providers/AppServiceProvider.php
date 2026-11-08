@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\FrontendServerKey;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -33,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
             $ip = (string) $request->ip();
 
             if (in_array($ip, config('security.public_read_trusted_ips', []), true)) {
+                return Limit::none();
+            }
+
+            if (FrontendServerKey::matches($request->header('X-Omran-Frontend-Key'))) {
                 return Limit::none();
             }
 

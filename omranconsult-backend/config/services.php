@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    /*
+    | Shared secret for the Next.js server when it reads the public API.
+    | Empty means the public-read limiter stays 120/min per IP (trusted IPs still apply).
+    */
+    'frontend' => [
+        'server_key' => env('FRONTEND_SERVER_KEY'),
+    ],
+
 ];

@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 
 import { isIndexableHost, NOINDEX_VALUE } from "@/core/seo/indexing";
+import { fetchRetryingTooManyRequests } from "@/lib/api/retry-after";
 import { routing } from "@/i18n/routing";
 
 const handleI18n = createMiddleware(routing);
@@ -25,14 +26,24 @@ async function missingDetailLocale(request: NextRequest): Promise<string | undef
   const [, locale, section, slug] = match;
   const resource = section === "media" ? "news" : "projects";
   const apiBase = process.env.API_BASE_URL ?? "http://localhost:8000";
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    "Accept-Language": locale,
+  };
+  const key = process.env.FRONTEND_SERVER_KEY?.trim();
+  if (key) {
+    headers["X-Omran-Frontend-Key"] = key;
+  }
 
   try {
-    const response = await fetch(`${apiBase}/api/${resource}/${encodeURIComponent(slug)}`, {
-      method: "HEAD",
-      headers: { Accept: "application/json", "Accept-Language": locale },
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-    });
+    const response = await fetchRetryingTooManyRequests(() =>
+      fetch(`${apiBase}/api/${resource}/${encodeURIComponent(slug)}`, {
+        method: "HEAD",
+        headers,
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+      }),
+    );
     return response.status === 404 ? locale : undefined;
   } catch {
     return undefined;

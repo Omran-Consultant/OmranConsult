@@ -1,7 +1,8 @@
 import "server-only";
 
-import { getServerApiBaseUrl } from "@/core/env/server";
+import { getFrontendServerKey, getServerApiBaseUrl } from "@/core/env/server";
 import { parseApiError } from "@/lib/api/errors";
+import { fetchRetryingTooManyRequests } from "@/lib/api/retry-after";
 import type { ApiHealthResponse } from "@/lib/api/types";
 
 export type ServerRequestOptions = {
@@ -19,6 +20,21 @@ function buildServerUrl(path: string): string {
   return `${base}${normalizedPath}`;
 }
 
+function serverHeaders(extra?: HeadersInit): Headers {
+  const headers = new Headers({
+    Accept: "application/json",
+    "Accept-Language": "en",
+  });
+  new Headers(extra).forEach((value, name) => {
+    headers.set(name, value);
+  });
+  const key = getFrontendServerKey();
+  if (key) {
+    headers.set("X-Omran-Frontend-Key", key);
+  }
+  return headers;
+}
+
 export async function serverApiRequest<T>(
   path: string,
   options: ServerRequestOptions = {},
@@ -29,19 +45,21 @@ export async function serverApiRequest<T>(
   // `.next/dev/cache/fetch-cache` for up to a year, so a documents body saved before
   // `slug` existed kept failing Zod on later requests. Dev always reads the live API.
   const cache = process.env.NODE_ENV === "production" ? (options.cache ?? "no-store") : "no-store";
+  let attempt = 0;
 
-  const response = await fetch(buildServerUrl(path), {
-    method,
-    headers: {
-      Accept: "application/json",
-      "Accept-Language": "en",
-      ...(options.headers ?? {}),
-    },
-    body: options.json === undefined ? undefined : JSON.stringify(options.json),
-    cache,
-    next: options.next,
-    signal: options.signal,
-  });
+  const send = () => {
+    attempt += 1;
+    return fetch(buildServerUrl(path), {
+      method,
+      headers: serverHeaders(options.headers),
+      body: options.json === undefined ? undefined : JSON.stringify(options.json),
+      cache: attempt > 1 ? "no-store" : cache,
+      next: attempt > 1 ? undefined : options.next,
+      signal: options.signal,
+    });
+  };
+
+  const response = await fetchRetryingTooManyRequests(send);
 
   if (!response.ok) {
     throw await parseApiError(response);
