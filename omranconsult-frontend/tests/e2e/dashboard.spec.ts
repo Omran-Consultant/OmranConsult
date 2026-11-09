@@ -157,6 +157,42 @@ test.describe("dashboard authenticated", () => {
     expect(height).toBeLessThanOrEqual(72);
   });
 
+  test("project table fits at 1440 and 1280 with every header visible", async ({ page }) => {
+    await loginToDashboard(page);
+    for (const width of [1440, 1280] as const) {
+      await setDashboardSurface(page, "ar", "light", width);
+      await page.goto("/dashboard/projects");
+      await waitReady(page);
+      const table = page.locator("[data-dashboard-table]");
+      await expect(table).toBeVisible();
+      const result = await table.evaluate((el) => {
+        if (el.scrollWidth > el.clientWidth) {
+          return `scroll ${el.scrollWidth}>${el.clientWidth}`;
+        }
+        const bounds = el.getBoundingClientRect();
+        const slack = 1;
+        for (const header of el.querySelectorAll("th")) {
+          if (getComputedStyle(header).display === "none") {
+            continue;
+          }
+          const box = header.getBoundingClientRect();
+          if (box.width < 2) {
+            return `empty header`;
+          }
+          if (
+            box.left < bounds.left - slack ||
+            box.right > bounds.right + slack ||
+            header.scrollWidth > header.clientWidth + slack
+          ) {
+            return `header clipped "${header.textContent?.trim()}"`;
+          }
+        }
+        return null;
+      });
+      expect(result, `table overflow at ${width}px`).toBeNull();
+    }
+  });
+
   test("project row actions stay fully inside the table at 1440, 1024, and 768", async ({ page }) => {
     await loginToDashboard(page);
     for (const width of [1440, 1024, 768] as const) {

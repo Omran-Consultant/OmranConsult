@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactNode } from "react";
+import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 
 import { EmptyState } from "@/core/ui/empty-state";
 import { Skeleton } from "@/core/ui/skeleton";
@@ -89,10 +89,14 @@ export function DataTable<T extends { id: string | number }>({
 
   return (
     <>
-      <div className="hidden overflow-x-auto rounded-2xl border border-line bg-elevated md:block" data-dashboard-table>
+      <div className="hidden overflow-x-auto rounded-2xl border border-line bg-elevated md:block lg:overflow-x-hidden" data-dashboard-table>
         <table
-          className="w-full table-fixed text-start text-body-s"
-          style={minTableWidth > 0 ? { minWidth: minTableWidth } : undefined}
+          className="w-full table-fixed text-start text-body-s max-lg:min-w-[var(--dashboard-table-min)]"
+          style={
+            minTableWidth > 0
+              ? ({ "--dashboard-table-min": `${minTableWidth}px` } as CSSProperties)
+              : undefined
+          }
         >
           <thead className="sticky top-0 z-[1] bg-elevated text-caption text-muted">
             <tr className="border-b border-line">
@@ -102,8 +106,8 @@ export function DataTable<T extends { id: string | number }>({
                   key={column.id}
                   scope="col"
                   style={{
-                    width: column.width,
-                    minWidth: column.minWidth ?? column.width,
+                    width: column.width ?? column.minWidth,
+                    minWidth: column.minWidth,
                   }}
                 >
                   {column.header}

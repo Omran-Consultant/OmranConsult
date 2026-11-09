@@ -136,7 +136,7 @@ export default function ProjectsListPage() {
     {
       id: "project",
       header: t("colProject"),
-      minWidth: "380px",
+      width: "340px",
       cell: (row: AdminProjectListItem) => (
         <Link
           className="flex min-w-0 items-center gap-3"
@@ -157,6 +157,7 @@ export default function ProjectsListPage() {
       id: "sector",
       header: t("colSector"),
       width: "140px",
+      className: "lg:max-2xl:hidden",
       cell: (row: AdminProjectListItem) => (
         <span className="line-clamp-2">{localizedName(row.sector_name ?? null, locale)}</span>
       ),
@@ -164,7 +165,8 @@ export default function ProjectsListPage() {
     {
       id: "client",
       header: t("colClient"),
-      width: "200px",
+      width: "180px",
+      className: "lg:max-xl:hidden",
       cell: (row: AdminProjectListItem) => {
         const name = localizedName(row.client_name ?? null, locale);
         return (
@@ -180,6 +182,7 @@ export default function ProjectsListPage() {
             id: "regions",
             header: t("colRegions"),
             width: "140px",
+            className: "lg:max-2xl:hidden",
             cell: (row: AdminProjectListItem) => (
               <span className="line-clamp-2">
                 {row.region_names?.map((name) => localizedName(name, locale)).join(locale === "ar" ? "، " : ", ") || "—"}
@@ -191,14 +194,14 @@ export default function ProjectsListPage() {
     {
       id: "updated",
       header: t("colUpdated"),
-      width: "120px",
-      className: "whitespace-nowrap",
+      width: "110px",
+      className: "whitespace-nowrap lg:max-xl:hidden",
       cell: (row: AdminProjectListItem) => <RelativeTime locale={locale} value={row.updated_at} />,
     },
     {
       id: "status",
       header: t("colStatus"),
-      width: "152px",
+      width: "120px",
       cell: (row: AdminProjectListItem) => <StatusPill locale={locale} status={row.status} />,
     },
   ];

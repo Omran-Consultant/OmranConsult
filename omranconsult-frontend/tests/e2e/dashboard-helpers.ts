@@ -18,7 +18,7 @@ export async function setDashboardSurface(
   page: Page,
   locale: (typeof SURFACE_LOCALES)[number],
   theme: (typeof SURFACE_THEMES)[number],
-  width: (typeof SURFACE_WIDTHS)[number],
+  width: number,
 ) {
   const origin = dashboardOrigin();
   await page.setViewportSize({ width, height: width <= 390 ? 844 : 900 });
