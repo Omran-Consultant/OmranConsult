@@ -130,7 +130,13 @@ export default function ProfilePage() {
             >
               {t("enableMfa")}
             </Button>
-            {qr ? <div dangerouslySetInnerHTML={{ __html: qr.replace(/<\?xml[^>]*>/, "") }} /> : null}
+            {qr ? (
+              <img
+                alt=""
+                className="size-48"
+                src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(qr)}`}
+              />
+            ) : null}
             {secret ? (
               <p className="text-caption" data-mfa-secret>
                 {secret}
