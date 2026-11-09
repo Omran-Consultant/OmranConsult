@@ -398,6 +398,8 @@
       "title": "Users and permissions",
       "subtitle": "Manage the content team and dashboard access",
       "inviteUser": "Invite user",
+      "editUser": "Edit user",
+      "saveUser": "Save",
       "more": "More",
       "lastSuperAdmin": "The last system administrator cannot be deactivated",
       "roleDescSuper": "Full access to content and settings.",

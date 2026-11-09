@@ -42,6 +42,9 @@ export default function UsersPage() {
   const [invitations, setInvitations] = useState<{ id: number; name: string; email: string; role: string; status: string }[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editUser, setEditUser] = useState<AdminUser | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDepartment, setEditDepartment] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("editor");
@@ -176,6 +179,16 @@ export default function UsersPage() {
             <ActionMenu
               items={[
                 {
+                  id: "edit",
+                  label: t("editUser"),
+                  icon: <Icon name="edit" />,
+                  onClick: () => {
+                    setEditUser(row.user);
+                    setEditName(row.user.name);
+                    setEditDepartment(row.user.department ?? "");
+                  },
+                },
+                {
                   id: "mfa",
                   label: t("resetMfa"),
                   icon: <Icon name="fingerprint" />,
@@ -203,6 +216,36 @@ export default function UsersPage() {
         }
         rows={rows}
       />
+      <Drawer
+        onClose={() => setEditUser(null)}
+        open={Boolean(editUser)}
+        title={t("editUser")}
+      >
+        {editUser ? (
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void adminPatchUser(editUser.id, {
+                name: editName,
+                department: editDepartment.trim() === "" ? null : editDepartment.trim(),
+              }).then(() => {
+                setEditUser(null);
+                return load();
+              });
+            }}
+          >
+            <DashboardTextField id="edit-name" label={t("name")} onChange={(event) => setEditName(event.target.value)} required value={editName} />
+            <DashboardTextField
+              id="edit-department"
+              label={t("department")}
+              onChange={(event) => setEditDepartment(event.target.value)}
+              value={editDepartment}
+            />
+            <DashboardButton type="submit">{t("saveUser")}</DashboardButton>
+          </form>
+        ) : null}
+      </Drawer>
       <Drawer onClose={() => setDrawerOpen(false)} open={drawerOpen} title={t("inviteUser")}>
         <form className="space-y-4" onSubmit={(event) => void invite(event)}>
           <DashboardTextField id="invite-name" label={t("name")} onChange={(event) => setName(event.target.value)} required value={name} />

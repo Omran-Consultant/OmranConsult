@@ -113,16 +113,7 @@ export default function ProjectEditorPage() {
   return (
     <div className="space-y-6" data-ready="true">
       <PageHeader
-        actions={
-          <DashboardButton
-            disabled={publishDisabled}
-            disabledReason={publishDisabled ? t("publishBlocked") : undefined}
-            onClick={() => void publish()}
-            type="button"
-          >
-            {t("publish")}
-          </DashboardButton>
-        }
+        actions={<StatusPill locale={locale} status={project.status} />}
         breadcrumbs={project.slug}
         subtitle={t("subtitle")}
         title={t("edit")}
