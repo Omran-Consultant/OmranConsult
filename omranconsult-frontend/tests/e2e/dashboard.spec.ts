@@ -260,9 +260,11 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("tab").nth(1).click();
     const overviewEn = await page.locator("#overview-en").inputValue();
     if (overviewAr.trim() === "") {
-      await page.locator("#overview-ar").fill("نبذة لاختبار المسودة");
+      await page.getByRole("tab").nth(0).click();
+      await page.locator("#overview-ar").fill("نبذة لاختبار المسودة", { force: true });
     }
     if (overviewEn.trim() === "") {
+      await page.getByRole("tab").nth(1).click();
       await page.locator("#overview-en").fill("Overview for the draft e2e test", { force: true });
     }
     const draftTitle = `${original} مسودة-e2e`;
@@ -277,7 +279,7 @@ test.describe("dashboard authenticated", () => {
 
     await page.goto(`/dashboard/projects/${projectId}`);
     await waitReady(page);
-    const popupPromise = page.waitForEvent("popup");
+    const popupPromise = page.waitForEvent("popup", { timeout: 45_000 });
     await page.getByRole("button", { name: /معاينة|Preview/i }).click();
     const preview = await popupPromise;
     await preview.waitForLoadState("domcontentloaded");

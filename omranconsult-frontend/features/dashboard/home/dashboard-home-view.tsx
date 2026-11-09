@@ -155,7 +155,7 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
               <span className="text-success">{locale === "ar" ? "كل الشهادات سارية" : "All certificates valid"}</span>
             ) : (
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="rounded-full bg-danger/10 px-2 py-0.5 text-caption text-danger">
+                <span className="rounded-full bg-danger/15 px-2 py-0.5 text-caption font-medium text-[#b42318] dark:text-[#fca5a5]">
                   {locale === "ar" ? "تجديد مطلوب" : "Renewal needed"}
                 </span>
                 <Link className="text-accent underline" href="/dashboard/documents">
