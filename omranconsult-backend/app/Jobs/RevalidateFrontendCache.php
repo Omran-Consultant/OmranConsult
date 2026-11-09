@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Support\Audit\AuditLogger;
+use App\Support\Cms\CmsFrontendUrl;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
@@ -31,7 +32,7 @@ class RevalidateFrontendCache implements ShouldQueue
     public function handle(): void
     {
         $secret = (string) config('cms.revalidation_secret');
-        $frontend = rtrim((string) config('cms.frontend_url'), '/');
+        $frontend = CmsFrontendUrl::forRevalidation();
         if ($secret === '' || $frontend === '') {
             return;
         }

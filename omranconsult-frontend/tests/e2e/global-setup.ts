@@ -60,7 +60,8 @@ async function assertApi(): Promise<void> {
   }
 
   try {
-    execFileSync("php", ["artisan", "e2e:arm-harness"], {
+    const frontendOrigin = `http://localhost:${process.env.E2E_PORT ?? "3000"}`;
+    execFileSync("php", ["artisan", "e2e:arm-harness", `--frontend-url=${frontendOrigin}`], {
       cwd: backendRoot,
       env: process.env,
       stdio: "pipe",
