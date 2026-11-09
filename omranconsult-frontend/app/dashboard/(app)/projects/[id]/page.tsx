@@ -50,16 +50,18 @@ export default function ProjectEditorPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  function applyDetail(detail: AdminProjectDetail) {
+    const source = (detail.draft as AdminProjectDetail | null) ?? detail;
+    setProject(detail);
+    setTitleAr(String(source.title?.ar ?? detail.title.ar ?? ""));
+    setTitleEn(String(source.title?.en ?? detail.title.en ?? ""));
+    setOverviewAr(String((source.overview as { ar?: string } | null)?.ar ?? detail.overview?.ar ?? ""));
+    setOverviewEn(String((source.overview as { en?: string } | null)?.en ?? detail.overview?.en ?? ""));
+    setGallery((source.gallery as string[] | null) ?? detail.gallery ?? []);
+  }
+
   useEffect(() => {
-    void adminProject(id).then((detail) => {
-      const source = (detail.draft as AdminProjectDetail | null) ?? detail;
-      setProject(detail);
-      setTitleAr(String(source.title?.ar ?? detail.title.ar ?? ""));
-      setTitleEn(String(source.title?.en ?? detail.title.en ?? ""));
-      setOverviewAr(String((source.overview as { ar?: string } | null)?.ar ?? detail.overview?.ar ?? ""));
-      setOverviewEn(String((source.overview as { en?: string } | null)?.en ?? detail.overview?.en ?? ""));
-      setGallery((source.gallery as string[] | null) ?? detail.gallery ?? []);
-    });
+    void adminProject(id).then(applyDetail);
   }, [id]);
 
   function onDragEnd(event: DragEndEvent) {
@@ -77,14 +79,14 @@ export default function ProjectEditorPage() {
       overview: { ar: overviewAr, en: overviewEn },
       gallery,
     });
-    setProject(next);
+    applyDetail(next);
     setMessage(t("saved"));
   }
 
   async function publish() {
     try {
       const next = await adminPublishProject(id);
-      setProject(next);
+      applyDetail(next);
       setMessage(t("published"));
     } catch (caught) {
       setError(caught instanceof ApiError ? t("publishBlocked") : t("publishBlocked"));
@@ -116,7 +118,7 @@ export default function ProjectEditorPage() {
             {t("publish")}
           </Button>
           {project.has_unpublished_changes ? (
-            <Button onClick={() => void adminDiscardProjectDraft(id).then(setProject)} type="button" variant="ghost">
+            <Button onClick={() => void adminDiscardProjectDraft(id).then(applyDetail)} type="button" variant="ghost">
               {t("discard")}
             </Button>
           ) : null}
