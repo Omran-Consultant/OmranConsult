@@ -20,14 +20,24 @@ class AdminSummaryController extends Controller
     public function __invoke(): JsonResponse
     {
         $published = Project::query()->where('status', PublicationStatus::Published)->count();
-        $drafts = Project::query()->where('status', PublicationStatus::Draft)->count();
-        $openDrafts = ContentDraft::query()->count();
+        $draftStatus = Project::query()->where('status', PublicationStatus::Draft)->count();
+        $contentDrafts = ContentDraft::query()->count();
+        $projectsTotal = $published + $draftStatus;
         $newInquiries = Inquiry::query()->where('status', InquiryStatus::New)->count();
+        $inquiriesThisMonth = Inquiry::query()
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->count();
+        $inquiriesLastMonth = Inquiry::query()
+            ->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->startOfMonth()])
+            ->count();
         $openDisputes = ContentDispute::query()->whereIn('status', ['pending', 'rejected'])->count();
+        $disputesBlocking = ContentDispute::query()->where('status', 'pending')->where('blocks_publish', true)->count();
         $expiredCertificates = Document::query()
             ->whereNotNull('valid_until')
             ->whereDate('valid_until', '<', now()->toDateString())
             ->count();
+        $certificatesTotal = Document::query()->whereNotNull('valid_until')->count();
+        $lastDraftEdit = ContentDraft::query()->max('updated_at') ?? Project::query()->max('updated_at');
 
         $chart = $this->inquiriesChart();
         $sectors = Sector::query()
@@ -37,12 +47,19 @@ class AdminSummaryController extends Controller
 
         return response()->json([
             'kpis' => [
+                'projects_total' => $projectsTotal,
                 'projects_published' => $published,
-                'projects_draft' => $drafts,
+                'projects_draft' => $draftStatus + $contentDrafts,
+                'projects_content_drafts' => $contentDrafts,
                 'inquiries_new' => $newInquiries,
-                'drafts_awaiting_publish' => $drafts + $openDrafts,
+                'inquiries_this_month' => $inquiriesThisMonth,
+                'inquiries_last_month' => $inquiriesLastMonth,
+                'drafts_awaiting_publish' => $contentDrafts + $draftStatus,
+                'last_content_edit_at' => $lastDraftEdit,
                 'open_disputes' => $openDisputes,
+                'disputes_blocking_publish' => $disputesBlocking,
                 'expired_certificates' => $expiredCertificates,
+                'certificates_total' => $certificatesTotal,
             ],
             'inquiries_chart' => $chart,
             'sectors' => $sectors->map(fn (Sector $sector): array => [

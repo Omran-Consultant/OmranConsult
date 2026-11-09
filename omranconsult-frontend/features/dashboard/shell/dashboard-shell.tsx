@@ -14,7 +14,8 @@ import { useTheme } from "@/core/theme/theme-provider";
 import { Button } from "@/core/ui/button";
 import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
-import { InputField } from "@/core/ui/input-field";
+import { ToolbarSearch } from "@/features/dashboard/ui/toolbar-search";
+import { controlMdClass } from "@/features/dashboard/ui/control-styles";
 import { Skeleton } from "@/core/ui/skeleton";
 import { adminSearch } from "@/lib/api/admin-browser";
 import type { AppLocale } from "@/i18n/routing";
@@ -157,26 +158,18 @@ export function DashboardShell({
           </div>
         </aside>
         <div className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-elevated/90 px-4 py-3 backdrop-blur">
-            <button aria-label={t("openMenu")} className="lg:hidden" onClick={() => setDrawer(true)} type="button">
+          <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-elevated/90 px-4 py-3 backdrop-blur" data-dashboard-toolbar>
+            <button aria-label={t("openMenu")} className={`${controlMdClass} lg:hidden`} onClick={() => setDrawer(true)} type="button">
               <Icon name="menu" />
             </button>
-            <button
-              className="flex flex-1 items-center gap-2 rounded-md border border-line px-3 py-2 text-start text-body-s text-muted"
-              onClick={() => setPalette(true)}
-              type="button"
-            >
-              <Icon name="search" />
-              {t("search.placeholder")}
-              <kbd className="ms-auto text-caption">⌘K</kbd>
-            </button>
-            <button className="rounded-full border border-line p-2" onClick={switchLocale} type="button">
+            <ToolbarSearch hint="⌘K" label={t("search.placeholder")} onActivate={() => setPalette(true)} />
+            <button className={controlMdClass} onClick={switchLocale} type="button">
               {locale === "ar" ? "EN" : "ع"}
             </button>
-            <button aria-label={t("theme")} className="rounded-full border border-line p-2" onClick={toggleTheme} type="button">
+            <button aria-label={t("theme")} className={controlMdClass} onClick={toggleTheme} type="button">
               <Icon name={theme === "dark" ? "sun" : "moon"} />
             </button>
-            <span className="rounded-full border border-line p-2 text-muted">
+            <span className={controlMdClass}>
               <Icon label={t("notifications")} name="bell" />
             </span>
           </header>
@@ -188,7 +181,14 @@ export function DashboardShell({
       {palette ? (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-navy-950/40 p-6" onClick={() => setPalette(false)}>
           <div className="w-full max-w-lg rounded-2xl bg-elevated p-4 shadow-lg" onClick={(event) => event.stopPropagation()}>
-            <InputField id="dashboard-search" label={t("search.label")} onChange={(event) => setQuery(event.target.value)} value={query} />
+            <input
+              className={`${controlMdClass} w-full`}
+              id="dashboard-search"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("search.label")}
+              type="search"
+              value={query}
+            />
             <ul className="mt-3 space-y-1">
               {shownResults.map((result) => (
                 <li key={result.href}>

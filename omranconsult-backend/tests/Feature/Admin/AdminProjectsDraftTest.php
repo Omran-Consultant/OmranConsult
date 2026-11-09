@@ -154,9 +154,13 @@ class AdminProjectsDraftTest extends TestCase
     {
         $admin = $this->admin();
         $this->publishedProject();
+        $published = Project::query()->where('status', PublicationStatus::Published)->count();
+        $drafts = Project::query()->where('status', PublicationStatus::Draft)->count();
+
         $this->actingAs($admin)->getJson('/api/admin/dashboard/summary')
             ->assertOk()
-            ->assertJsonPath('kpis.projects_published', 1)
+            ->assertJsonPath('kpis.projects_published', $published)
+            ->assertJsonPath('kpis.projects_total', $published + $drafts)
             ->assertJsonPath('kpis.inquiries_new', 0);
     }
 

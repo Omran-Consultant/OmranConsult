@@ -27,7 +27,7 @@ class AdminProjectsController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
         $projects = Project::query()
-            ->with(['client', 'sector', 'regions'])
+            ->with(['client:id,name', 'sector:id,name', 'regions:id,name'])
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($inner) use ($search): void {
                     $inner->where('slug', 'like', '%'.$search.'%')
@@ -182,6 +182,10 @@ class AdminProjectsController extends Controller
             'status' => $badge,
             'client_id' => $project->client_id,
             'sector_id' => $project->sector_id,
+            'client_name' => $project->client?->name,
+            'sector_name' => $project->sector?->name,
+            'region_names' => $project->regions->map(fn ($region) => $region->name)->values(),
+            'cover_path' => is_array($project->gallery) ? ($project->gallery[0] ?? null) : null,
             'updated_at' => $project->updated_at?->toIso8601String(),
         ];
     }

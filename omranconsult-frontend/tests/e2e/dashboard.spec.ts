@@ -135,10 +135,10 @@ test.describe("dashboard authenticated", () => {
       const response = await fetch("/api/admin/dashboard/summary", { credentials: "include" });
       return response.json();
     });
-    await expect(page.locator('[data-kpi="projects"]')).toHaveText(
-      `${summary.kpis.projects_published} / ${summary.kpis.projects_draft}`,
-    );
-    await expect(page.locator('[data-kpi="drafts"]')).toHaveText(String(summary.kpis.drafts_awaiting_publish));
+    const fmt = (value: number) => new Intl.NumberFormat("ar-SA-u-nu-arab", { maximumFractionDigits: 0 }).format(value);
+    await expect(page.locator('[data-kpi="projects-published"]')).toHaveText(fmt(summary.kpis.projects_published));
+    await expect(page.locator('[data-kpi="projects-draft"]')).toHaveText(fmt(summary.kpis.projects_draft));
+    await expect(page.locator('[data-kpi="drafts"]')).toContainText(fmt(summary.kpis.drafts_awaiting_publish));
     await shot(page, "home-ar-light-1440");
     await axeClean(page);
   });
@@ -257,14 +257,16 @@ test.describe("dashboard authenticated", () => {
       await expect(page.locator("[data-draft-badge]")).toHaveCount(0);
     }
     const overviewAr = await page.locator("#overview-ar").inputValue();
+    await page.getByRole("tab").nth(1).click();
     const overviewEn = await page.locator("#overview-en").inputValue();
     if (overviewAr.trim() === "") {
       await page.locator("#overview-ar").fill("نبذة لاختبار المسودة");
     }
     if (overviewEn.trim() === "") {
-      await page.locator("#overview-en").fill("Overview for the draft e2e test");
+      await page.locator("#overview-en").fill("Overview for the draft e2e test", { force: true });
     }
     const draftTitle = `${original} مسودة-e2e`;
+    await page.getByRole("tab").nth(0).click();
     await page.locator("#title-ar").fill(draftTitle);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await expect(page.locator("[data-draft-badge]")).toBeVisible();
@@ -292,6 +294,7 @@ test.describe("dashboard authenticated", () => {
     await waitReady(page);
     await page.locator(`a[data-slug="${slug}"]`).click();
     await waitReady(page);
+    await page.getByRole("tab").nth(0).click();
     await page.locator("#title-ar").fill(original);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).click();

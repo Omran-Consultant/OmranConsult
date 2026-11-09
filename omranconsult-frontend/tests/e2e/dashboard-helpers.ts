@@ -9,16 +9,22 @@ export const SURFACE_WIDTHS = [1440, 1024, 768, 390] as const;
 export const SURFACE_LOCALES = ["ar", "en"] as const;
 export const SURFACE_THEMES = ["light", "dark"] as const;
 
+function dashboardOrigin(): string {
+  const port = process.env.E2E_PORT ?? "3000";
+  return `http://localhost:${port}`;
+}
+
 export async function setDashboardSurface(
   page: Page,
   locale: (typeof SURFACE_LOCALES)[number],
   theme: (typeof SURFACE_THEMES)[number],
   width: (typeof SURFACE_WIDTHS)[number],
 ) {
+  const origin = dashboardOrigin();
   await page.setViewportSize({ width, height: width <= 390 ? 844 : 900 });
   await page.context().addCookies([
-    { name: "DASHBOARD_LOCALE", value: locale, url: "http://localhost:3000" },
-    { name: "oc-theme", value: theme, url: "http://localhost:3000" },
+    { name: "DASHBOARD_LOCALE", value: locale, url: origin },
+    { name: "oc-theme", value: theme, url: origin },
   ]);
 }
 
@@ -102,9 +108,10 @@ export async function inviteAndAccept(
   await loginToDashboard(page);
   await page.goto("/dashboard/users");
   await waitReady(page);
+  await page.getByRole("button", { name: /دعوة مستخدم|Invite user/i }).click();
   await page.locator("#invite-name").fill(name);
   await page.locator("#invite-email").fill(email);
-  await page.locator("form").getByRole("button", { name: /^دعوة$|^Invite$/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: /^دعوة$|^Invite$/ }).click();
   await expect(page.getByRole("cell", { name: email })).toBeVisible();
   const acceptPath = inviteAcceptPath(email);
   await logoutDashboard(page);

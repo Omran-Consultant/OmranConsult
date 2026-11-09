@@ -36,12 +36,19 @@ export type AdminMfaPendingResponse = {
 
 export type AdminSummaryResponse = {
   kpis: {
+    projects_total: number;
     projects_published: number;
     projects_draft: number;
+    projects_content_drafts: number;
     inquiries_new: number;
+    inquiries_this_month: number;
+    inquiries_last_month: number;
     drafts_awaiting_publish: number;
+    last_content_edit_at: string | null;
     open_disputes: number;
+    disputes_blocking_publish: number;
     expired_certificates: number;
+    certificates_total: number;
   };
   inquiries_chart: { month: string; count: number }[];
   sectors: { slug: string; name: { ar: string; en: string }; count: number }[];
@@ -57,6 +64,10 @@ export type AdminProjectListItem = {
   status: string;
   client_id: number | null;
   sector_id: number | null;
+  client_name?: { ar?: string | null; en?: string | null } | null;
+  sector_name?: { ar?: string | null; en?: string | null } | null;
+  region_names?: { ar?: string | null; en?: string | null }[];
+  cover_path?: string | null;
   updated_at: string | null;
 };
 
