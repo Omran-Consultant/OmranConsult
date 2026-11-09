@@ -27,7 +27,7 @@ class AdminProjectsController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
         $projects = Project::query()
-            ->with(['client:id,name', 'sector:id,name', 'regions:id,name'])
+            ->with(['client:id,name', 'sector:id,name,default_image', 'regions:id,name'])
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($inner) use ($search): void {
                     $inner->where('slug', 'like', '%'.$search.'%')
@@ -185,7 +185,8 @@ class AdminProjectsController extends Controller
             'client_name' => $project->client?->name,
             'sector_name' => $project->sector?->name,
             'region_names' => $project->regions->map(fn ($region) => $region->name)->values(),
-            'cover_path' => is_array($project->gallery) ? ($project->gallery[0] ?? null) : null,
+            'cover_path' => $project->imageKey(),
+            'year' => $project->year,
             'updated_at' => $project->updated_at?->toIso8601String(),
         ];
     }
@@ -203,12 +204,18 @@ class AdminProjectsController extends Controller
             'client_id' => $project->client_id,
             'sector_id' => $project->sector_id,
             'year' => $project->year,
+            'location' => $project->location,
+            'scope' => $project->scope,
             'gallery' => $project->gallery,
             'region_ids' => $project->regions->modelKeys(),
             'is_featured' => $project->is_featured,
             'status' => $project->status?->value ?? $project->status,
             'has_unpublished_changes' => $draft !== null,
             'draft' => $draft?->payload,
+            'published_at' => $project->published_at?->toIso8601String(),
+            'publish_blockers' => $this->gate->blockers($project, $draft?->payload ?? $this->livePayload($project)),
+            'client_name' => $project->client?->name,
+            'sector_name' => $project->sector?->name,
             'updated_at' => $project->updated_at?->toIso8601String(),
         ];
     }

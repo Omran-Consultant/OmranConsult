@@ -1,15 +1,15 @@
 "use client";
 
-import { DndContext, type DragEndEvent, closestCenter } from "@dnd-kit/core";
-import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { Button } from "@/core/ui/button";
 import { Icon } from "@/core/ui/icon";
+import { formatFullDateTime } from "@/features/dashboard/format/relative-time";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
-import { controlMdClass } from "@/features/dashboard/ui/control-styles";
+import { GalleryEditor } from "@/features/dashboard/projects/gallery-editor";
+import { readLocalizedField, readLocalizedFieldPreferringLive } from "@/features/dashboard/projects/localized-field";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { DashboardSwitch, DashboardTextField, DashboardTextarea } from "@/features/dashboard/ui/dashboard-field";
 import { PageHeader } from "@/features/dashboard/ui/page-header";
 import { StatusPill } from "@/features/dashboard/ui/status-pill";
@@ -24,24 +24,6 @@ import {
 import { ApiError } from "@/lib/api/errors";
 import type { AdminProjectDetail } from "@/lib/api/types";
 import type { AppLocale } from "@/i18n/routing";
-
-function SortableKey({ id }: { id: string }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-  return (
-    <li
-      className="rounded-md border border-line px-3 py-2 text-body-s"
-      ref={setNodeRef}
-      style={{
-        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-        transition,
-      }}
-      {...attributes}
-      {...listeners}
-    >
-      {id}
-    </li>
-  );
-}
 
 export default function ProjectEditorPage() {
   const t = useTranslations("Dashboard.projects");
@@ -60,27 +42,35 @@ export default function ProjectEditorPage() {
   const [error, setError] = useState<string | null>(null);
 
   function applyDetail(detail: AdminProjectDetail) {
-    const source = (detail.draft as AdminProjectDetail | null) ?? detail;
+    const draft = detail.draft ?? {};
     setProject(detail);
-    setTitleAr(String(source.title?.ar ?? detail.title.ar ?? ""));
-    setTitleEn(String(source.title?.en ?? detail.title.en ?? ""));
-    setOverviewAr(String((source.overview as { ar?: string } | null)?.ar ?? detail.overview?.ar ?? ""));
-    setOverviewEn(String((source.overview as { en?: string } | null)?.en ?? detail.overview?.en ?? ""));
-    setGallery((source.gallery as string[] | null) ?? detail.gallery ?? []);
-    setFeatured(detail.is_featured);
+    setTitleAr(readLocalizedFieldPreferringLive(draft.title, detail.title, "ar"));
+    setTitleEn(readLocalizedFieldPreferringLive(draft.title, detail.title, "en"));
+    setOverviewAr(readLocalizedFieldPreferringLive(draft.overview, detail.overview, "ar"));
+    setOverviewEn(readLocalizedFieldPreferringLive(draft.overview, detail.overview, "en"));
+    const draftGallery = Array.isArray(draft.gallery) ? (draft.gallery as string[]) : null;
+    setGallery(draftGallery && draftGallery.length > 0 ? draftGallery : (detail.gallery ?? []));
+    setFeatured(Boolean(draft.is_featured ?? detail.is_featured));
   }
 
   useEffect(() => {
     void adminProject(id).then(applyDetail);
   }, [id]);
 
-  function onDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) {
-      return;
+  const blockers = useMemo(() => {
+    const fromApi = project?.publish_blockers ?? [];
+    const local: string[] = [];
+    if (!titleAr.trim() || !titleEn.trim()) {
+      local.push("title_required");
     }
-    setGallery((items) => arrayMove(items, items.indexOf(String(active.id)), items.indexOf(String(over.id))));
-  }
+    if (!overviewAr.trim() || !overviewEn.trim()) {
+      local.push("overview_required");
+    }
+    if (gallery.length === 0) {
+      local.push("cover_required");
+    }
+    return [...new Set([...fromApi, ...local])];
+  }, [project, titleAr, titleEn, overviewAr, overviewEn, gallery]);
 
   async function save() {
     setError(null);
@@ -99,6 +89,7 @@ export default function ProjectEditorPage() {
       const next = await adminPublishProject(id);
       applyDetail(next);
       setMessage(t("published"));
+      setError(null);
     } catch (caught) {
       setError(caught instanceof ApiError ? t("publishBlocked") : t("publishBlocked"));
     }
@@ -113,33 +104,27 @@ export default function ProjectEditorPage() {
     return null;
   }
 
+  const publishDisabled = blockers.length > 0;
+  const clientName = readLocalizedField(project.client_name, locale);
+  const sectorName = readLocalizedField(project.sector_name, locale);
+  const location = readLocalizedField(project.location, locale);
+  const scopeItems = locale === "ar" ? (project.scope?.ar ?? []) : (project.scope?.en ?? []);
+
   return (
     <div className="space-y-6" data-ready="true">
       <PageHeader
         actions={
-          <div className="flex flex-wrap gap-2">
-            <Button className={controlMdClass} onClick={() => void save()} type="button" variant="secondary">
-              {t("save")}
-            </Button>
-            <Button className={controlMdClass} onClick={() => void preview()} type="button" variant="ghost">
-              {t("preview")}
-            </Button>
-            <Button className={controlMdClass} onClick={() => void publish()} type="button">
-              {t("publish")}
-            </Button>
-            {project.has_unpublished_changes ? (
-              <Button
-                className={controlMdClass}
-                onClick={() => void adminDiscardProjectDraft(id).then(applyDetail)}
-                type="button"
-                variant="ghost"
-              >
-                {t("discard")}
-              </Button>
-            ) : null}
-          </div>
+          <DashboardButton
+            disabled={publishDisabled}
+            disabledReason={publishDisabled ? t("publishBlocked") : undefined}
+            onClick={() => void publish()}
+            type="button"
+          >
+            {t("publish")}
+          </DashboardButton>
         }
         breadcrumbs={project.slug}
+        subtitle={t("subtitle")}
         title={t("edit")}
       />
       {project.has_unpublished_changes ? (
@@ -158,40 +143,84 @@ export default function ProjectEditorPage() {
               active={langTab}
               onChange={(tab) => setLangTab(tab as "ar" | "en")}
               tabs={[
-                { id: "ar", label: t("titleAr") },
-                { id: "en", label: t("titleEn") },
+                { id: "ar", label: t("localeAr") },
+                { id: "en", label: t("localeEn") },
               ]}
             />
             <div className="mt-4 space-y-4">
               <div className={langTab === "ar" ? "space-y-4" : "hidden space-y-4"}>
-                <DashboardTextField id="title-ar" label={t("titleAr")} onChange={(event) => setTitleAr(event.target.value)} value={titleAr} />
-                <DashboardTextarea id="overview-ar" label={t("overviewAr")} onChange={(event) => setOverviewAr(event.target.value)} value={overviewAr} />
+                <DashboardTextField id="title-ar" label={t("titleLabel")} onChange={(event) => setTitleAr(event.target.value)} value={titleAr} />
+                <DashboardTextarea id="overview-ar" label={t("overviewLabel")} onChange={(event) => setOverviewAr(event.target.value)} value={overviewAr} />
               </div>
               <div className={langTab === "en" ? "space-y-4" : "hidden space-y-4"}>
-                <DashboardTextField id="title-en" label={t("titleEn")} onChange={(event) => setTitleEn(event.target.value)} value={titleEn} />
-                <DashboardTextarea id="overview-en" label={t("overviewEn")} onChange={(event) => setOverviewEn(event.target.value)} value={overviewEn} />
+                <DashboardTextField id="title-en" label={t("titleLabel")} onChange={(event) => setTitleEn(event.target.value)} value={titleEn} />
+                <DashboardTextarea id="overview-en" label={t("overviewLabel")} onChange={(event) => setOverviewEn(event.target.value)} value={overviewEn} />
               </div>
             </div>
           </section>
           <section className="rounded-2xl border border-line bg-elevated p-5">
             <h2 className="mb-4 text-h5">{t("gallery")}</h2>
-            <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-              <SortableContext items={gallery} strategy={verticalListSortingStrategy}>
-                <ul className="space-y-2">
-                  {gallery.map((key) => (
-                    <SortableKey id={key} key={key} />
+            <GalleryEditor items={gallery} onChange={setGallery} />
+          </section>
+          <section className="rounded-2xl border border-line bg-elevated p-5">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-h5">{t("relatedFields")}</h2>
+              <span className="text-caption text-muted">{t("editIn5b")}</span>
+            </div>
+            <dl className="grid gap-3 text-body-s sm:grid-cols-2">
+              <Fact label={t("client")} value={clientName || "—"} />
+              <Fact label={t("sector")} value={sectorName || "—"} />
+              <Fact label={t("location")} value={location || "—"} />
+              <Fact label={t("year")} value={project.year ? String(project.year) : "—"} />
+            </dl>
+            {scopeItems.length > 0 ? (
+              <div className="mt-4">
+                <p className="text-label-s text-secondary">{t("scope")}</p>
+                <ul className="mt-2 list-disc ps-5 text-body-s">
+                  {scopeItems.map((item) => (
+                    <li key={item}>{item}</li>
                   ))}
                 </ul>
-              </SortableContext>
-            </DndContext>
+              </div>
+            ) : (
+              <p className="mt-4 text-body-s text-muted">{t("scope")}: —</p>
+            )}
           </section>
         </div>
         <aside className="space-y-4">
           <section className="rounded-2xl border border-line bg-elevated p-5">
             <h2 className="mb-4 text-h5">{t("publishCard")}</h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <StatusPill locale={locale} status={project.status} />
+              <p className="text-caption text-muted">
+                {t("lastPublished")}: {formatFullDateTime(project.published_at, locale)}
+              </p>
               <DashboardSwitch checked={featured} id="featured" label={t("featured")} onChange={setFeatured} />
+              <div className="flex flex-col gap-2">
+                <DashboardButton onClick={() => void save()} type="button" variant="secondary">
+                  {t("save")}
+                </DashboardButton>
+                <DashboardButton icon={<Icon name="eye" />} onClick={() => void preview()} type="button" variant="ghost">
+                  {t("preview")}
+                </DashboardButton>
+                {project.has_unpublished_changes ? (
+                  <DashboardButton
+                    onClick={() => void adminDiscardProjectDraft(id).then(applyDetail)}
+                    type="button"
+                    variant="ghost"
+                  >
+                    {t("discard")}
+                  </DashboardButton>
+                ) : null}
+                <DashboardButton
+                  disabled={publishDisabled}
+                  disabledReason={publishDisabled ? t("publishBlocked") : undefined}
+                  onClick={() => void publish()}
+                  type="button"
+                >
+                  {t("publish")}
+                </DashboardButton>
+              </div>
             </div>
           </section>
           <section className="rounded-2xl border border-line bg-elevated p-5 text-body-s text-muted">
@@ -200,6 +229,15 @@ export default function ProjectEditorPage() {
           </section>
         </aside>
       </div>
+    </div>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-caption text-muted">{label}</dt>
+      <dd className="text-primary">{value}</dd>
     </div>
   );
 }

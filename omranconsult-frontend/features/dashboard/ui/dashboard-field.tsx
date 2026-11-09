@@ -87,27 +87,54 @@ export function DashboardSwitch({
   checked,
   onChange,
   description,
+  disabled,
+  disabledReason,
+  compact,
 }: {
   id: string;
   label: string;
   checked: boolean;
   onChange: (next: boolean) => void;
   description?: string;
+  disabled?: boolean;
+  disabledReason?: string;
+  compact?: boolean;
 }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[var(--control-radius)] border border-line bg-elevated px-4 py-3" htmlFor={id}>
+    <div
+      className={classNames(
+        "flex items-center justify-between gap-3",
+        compact ? undefined : "rounded-[var(--control-radius)] border border-line bg-elevated px-4 py-3",
+      )}
+    >
       <span>
-        <span className="block text-label-s text-primary">{label}</span>
+        <label className="block text-label-s text-primary" htmlFor={id}>
+          {label}
+        </label>
         {description ? <span className="text-caption text-muted">{description}</span> : null}
       </span>
-      <input
-        checked={checked}
-        className="size-5 accent-accent"
+      <button
+        aria-checked={checked}
+        aria-disabled={disabled || undefined}
+        className={classNames(
+          "relative h-6 w-11 shrink-0 rounded-full transition-colors",
+          checked ? "bg-accent-strong" : "bg-highlight",
+          disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer",
+        )}
+        disabled={disabled}
         id={id}
-        onChange={(event) => onChange(event.target.checked)}
+        onClick={() => onChange(!checked)}
         role="switch"
-        type="checkbox"
-      />
-    </label>
+        title={disabledReason}
+        type="button"
+      >
+        <span
+          className={classNames(
+            "absolute top-0.5 size-5 rounded-full bg-white transition-[inset-inline-start]",
+            checked ? "start-5" : "start-0.5",
+          )}
+        />
+      </button>
+    </div>
   );
 }
