@@ -7,4 +7,7 @@ export function loadE2eEnv(): void {
   if (existsSync(envLocal)) {
     process.loadEnvFile(envLocal);
   }
+
+  process.env.OMRAN_E2E = "1";
+  process.env.QUEUE_CONNECTION = "sync";
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\PingController;
 use App\Http\Controllers\Api\Admin\ProfileController;
 use App\Http\Controllers\Api\Admin\ResetPasswordController;
 use App\Http\Controllers\Api\Admin\SearchController;
+use App\Http\Controllers\Api\E2ePreflightController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\Internal\PreviewTokenLookupController;
 use App\Http\Middleware\SetPublicLocale;
@@ -38,6 +39,7 @@ use App\Support\DashboardPermission;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class);
+Route::get('/e2e/preflight', E2ePreflightController::class);
 
 Route::get('/internal/preview-tokens', PreviewTokenLookupController::class);
 

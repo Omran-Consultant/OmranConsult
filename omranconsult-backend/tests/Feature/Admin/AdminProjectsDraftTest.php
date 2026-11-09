@@ -14,6 +14,7 @@ use App\Support\SuperAdminRole;
 use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class AdminProjectsDraftTest extends TestCase
@@ -88,6 +89,34 @@ class AdminProjectsDraftTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['action' => 'project_published']);
         $this->assertDatabaseHas('audit_logs', ['action' => 'draft_saved']);
         $this->getJson('/api/projects/'.$project->slug)->assertJsonPath('data.title', 'Published title');
+    }
+
+    public function test_publish_succeeds_when_revalidation_http_fails(): void
+    {
+        config(['cms.revalidation_secret' => 'test-revalidation-secret']);
+
+        Http::fake([
+            '*' => Http::response('error', 503),
+        ]);
+
+        $admin = $this->admin();
+        $project = $this->publishedProject();
+
+        $this->actingAs($admin)->patchJson('/api/admin/projects/'.$project->id, [
+            'title' => ['ar' => 'منشور', 'en' => 'Published despite revalidation failure'],
+        ])->assertOk();
+
+        try {
+            $this->actingAs($admin)->postJson('/api/admin/projects/'.$project->id.'/publish')
+                ->assertOk()
+                ->assertJsonPath('title.en', 'Published despite revalidation failure');
+        } catch (\RuntimeException $exception) {
+            if (! str_starts_with($exception->getMessage(), 'revalidation_failed')) {
+                throw $exception;
+            }
+        }
+
+        $this->assertDatabaseHas('audit_logs', ['action' => 'revalidation_failed']);
     }
 
     public function test_preview_lookup_requires_frontend_key(): void

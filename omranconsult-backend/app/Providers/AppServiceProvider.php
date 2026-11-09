@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\E2e\E2eHarness;
 use App\Support\FrontendServerKey;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $e2e = filter_var(getenv('OMRAN_E2E') ?: env('OMRAN_E2E'), FILTER_VALIDATE_BOOL);
+        if ($e2e || (app()->environment('local', 'testing') && E2eHarness::isArmed())) {
+            config(['queue.default' => 'sync']);
+        }
+
         $rememberMinutes = (int) config('cms.remember_minutes', 60 * 24 * 14);
         $guard = Auth::guard('web');
         if (method_exists($guard, 'setRememberDuration')) {

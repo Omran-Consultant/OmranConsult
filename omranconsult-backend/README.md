@@ -38,6 +38,28 @@ php artisan test
 vendor/bin/pint --test
 ```
 
+### Local development (API + queue)
+
+Day-to-day work runs **both** the HTTP server and the queue worker together:
+
+```bash
+composer run dev
+```
+
+**MAMP MySQL 8 must be running** before `composer run dev`, `php artisan migrate`, or `php artisan test` against MySQL. Default port **8889** — see the table above.
+
+Normal development keeps `QUEUE_CONNECTION=database` so published changes are revalidated by the worker in that `dev` process.
+
+### Playwright E2E
+
+The frontend test harness sets `OMRAN_E2E=1` and `QUEUE_CONNECTION=sync` (it does not edit your `.env`). Start the API for E2E with:
+
+```bash
+composer run dev
+```
+
+`globalSetup` checks MySQL, arms sync-queue mode on the running API (`php artisan e2e:arm-harness`), then calls `GET /api/e2e/preflight` (database + sync queue) before any browser tests run.
+
 Health: `GET /up` (Laravel). API connectivity: `GET /api/health` (JSON `{ "status": "ok" }`).
 
 Sanctum (SPA session) and Spatie Permission are installed; admin auth routes land in Phase 0.5.

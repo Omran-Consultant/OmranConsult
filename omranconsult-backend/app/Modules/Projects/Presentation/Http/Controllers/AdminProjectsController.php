@@ -3,10 +3,10 @@
 namespace App\Modules\Projects\Presentation\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\RevalidateFrontendCache;
 use App\Modules\Content\Infrastructure\Models\ContentDraft;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Support\Audit\AuditLogger;
+use App\Support\Cms\DispatchFrontendRevalidation;
 use App\Support\Content\DraftStore;
 use App\Support\Content\PreviewTokenService;
 use App\Support\Content\PublicationStatus;
@@ -96,7 +96,7 @@ class AdminProjectsController extends Controller
         ])->save();
         $this->drafts->discard($project);
         $this->audit->write($request->user(), 'project_published', Project::class, $project->id, null, $request);
-        RevalidateFrontendCache::dispatch(['projects', 'project:'.$project->slug, 'home']);
+        DispatchFrontendRevalidation::forProject($project);
 
         return response()->json($this->detail($project->fresh(['client', 'sector', 'regions']), null));
     }

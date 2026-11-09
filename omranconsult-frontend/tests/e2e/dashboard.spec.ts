@@ -285,7 +285,6 @@ test.describe("dashboard authenticated", () => {
 
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
-    artisan(["queue:work", "--stop-when-empty", "--tries=1"]);
     await page.goto(`/ar/projects/${slug}`);
     await expect(page.getByRole("heading").first()).toContainText("مسودة-e2e");
 
@@ -297,7 +296,6 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
-    artisan(["queue:work", "--stop-when-empty", "--tries=1"]);
     await page.goto(`/ar/projects/${slug}`);
     await expect(page.getByRole("heading").first()).toContainText(original);
     await expect(page.getByRole("heading").first()).not.toContainText("مسودة-e2e");
