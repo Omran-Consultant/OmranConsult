@@ -313,8 +313,8 @@ test.describe("dashboard authenticated", () => {
     await page.goto("/dashboard/projects");
     await waitReady(page);
     await page.locator(`a[data-slug="${slug}"]`).first().click();
-    await waitReady(page);
-    await page.getByRole("tab").nth(0).click();
+    await page.waitForURL(new RegExp(`/dashboard/projects/${projectId}(?:[/?#]|$)`));
+    await expect(page.locator("#title-ar")).toBeVisible();
     const restored = original.replace(/\s*مسودة-e2e(?:-\d+)?/g, "").trim();
     await page.locator("#title-ar").fill(restored);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
