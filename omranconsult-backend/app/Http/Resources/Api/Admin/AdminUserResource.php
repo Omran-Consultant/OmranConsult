@@ -21,7 +21,7 @@ class AdminUserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'roles' => $this->getRoleNames()->values()->all(),
-            'permissions' => $this->getPermissionNames()->values()->all(),
+            'permissions' => $this->getAllPermissions()->pluck('name')->values()->all(),
             'is_active' => (bool) $this->is_active,
             'department' => $this->department,
             'dashboard_locale' => $this->dashboard_locale,

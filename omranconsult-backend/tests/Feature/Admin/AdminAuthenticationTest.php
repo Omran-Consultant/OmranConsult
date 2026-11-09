@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\User;
+use App\Support\DashboardPermission;
 use App\Support\SuperAdminRole;
 use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
@@ -44,6 +45,8 @@ class AdminAuthenticationTest extends TestCase
             ->assertJsonPath('user.roles', [SuperAdminRole::NAME])
             ->assertJsonMissingPath('user.password')
             ->assertJsonMissingPath('user.mfa_secret');
+        $this->assertContains(DashboardPermission::PROJECTS_VIEW, $response->json('user.permissions'));
+        $this->assertContains(DashboardPermission::USERS_VIEW, $response->json('user.permissions'));
     }
 
     public function test_login_rejects_invalid_credentials_without_leaking_account_existence(): void

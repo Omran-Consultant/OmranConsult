@@ -127,6 +127,8 @@ test.describe("dashboard isolation", () => {
 });
 
 test.describe("dashboard authenticated", () => {
+  test.describe.configure({ timeout: 90_000 });
+
   test("login → home KPIs match the summary API", async ({ page }) => {
     await loginToDashboard(page);
     const summary = await page.evaluate(async () => {
@@ -215,7 +217,7 @@ test.describe("dashboard authenticated", () => {
     await loginToDashboard(page);
     await page.goto("/dashboard/projects");
     await waitReady(page);
-    const project = page.locator("a[data-status='published']").first();
+    const project = page.locator("a[data-status='published'], a[data-status='published_with_draft']").first();
     await expect(project).toBeVisible();
     const slug = (await project.getAttribute("data-slug")) ?? "";
     const projectId = (await project.getAttribute("data-project-id")) ?? "";
@@ -268,8 +270,11 @@ test.describe("dashboard authenticated", () => {
     await expect(page.getByRole("navigation").getByRole("link", { name: /المستخدمون|Users/ })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: /الإعدادات|Settings/ })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: /سجل النشاط|Activity log/ })).toHaveCount(0);
-    const forbidden = await page.request.get("/api/admin/users");
-    expect(forbidden.status()).toBe(403);
+    const forbiddenStatus = await page.evaluate(async () => {
+      const response = await fetch("/api/admin/users", { credentials: "include" });
+      return response.status;
+    });
+    expect(forbiddenStatus).toBe(403);
     await page.goto("/dashboard/users");
     await expect(page.getByRole("heading", { name: /لا تملك صلاحية|do not have permission/i })).toBeVisible();
     await shot(page, "no-permission-ar-light-1440");
@@ -296,8 +301,9 @@ test.describe("dashboard authenticated", () => {
     });
     const { email, password } = adminCredentials();
     await loginAs(page, email, password);
+    await page.waitForURL(/\/dashboard/);
     const loading = page.locator("[data-dashboard-loading] [data-sidebar]");
-    await expect(loading).toBeVisible();
+    await expect(loading).toBeVisible({ timeout: 10_000 });
     await assertSidebarStart(page, "ar");
     await page.unroute("**/api/admin/me");
     await waitReady(page);

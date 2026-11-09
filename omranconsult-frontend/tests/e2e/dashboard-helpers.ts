@@ -89,8 +89,8 @@ export async function inviteAndAccept(
   await loginToDashboard(page);
   await page.goto("/dashboard/users");
   await waitReady(page);
-  await page.getByLabel(/^الاسم$|^Name$/).fill(name);
-  await page.getByLabel(/^البريد$|^Email$/).fill(email);
+  await page.locator("#invite-name").fill(name);
+  await page.locator("#invite-email").fill(email);
   await page.getByRole("button", { name: /دعوة|Invite/ }).click();
   await expect(page.getByText(/أُرسلت الدعوة|Invitation sent/i)).toBeVisible();
   const acceptPath = inviteAcceptPath(email);

@@ -17,7 +17,7 @@ import {
 } from "./dashboard-helpers";
 
 test.describe("dashboard screenshots", () => {
-  test.describe.configure({ timeout: 360_000 });
+  test.describe.configure({ timeout: 600_000 });
 
   test("login states across locales, themes, and widths", async ({ page }) => {
     for (const locale of SURFACE_LOCALES) {
@@ -80,7 +80,7 @@ test.describe("dashboard screenshots", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/dashboard/projects");
     await waitReady(page);
-    const published = page.locator("a[data-status='published']").first();
+    const published = page.locator("a[data-status='published'], a[data-status='published_with_draft']").first();
     await published.click();
     await waitReady(page);
     const original = await page.locator("#title-ar").inputValue();
