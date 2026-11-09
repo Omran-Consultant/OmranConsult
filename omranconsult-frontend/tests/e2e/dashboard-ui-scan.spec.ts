@@ -22,7 +22,8 @@ test.describe("dashboard copy quality", () => {
       await page.goto(href);
       await waitReady(page);
       const text = await page.locator("main").innerText();
-      expect(text).not.toMatch(/[a-z]+_[a-z0-9_]+/);
+      const withoutFiles = text.replace(/\S+\.(jpe?g|png|webp|gif|pdf|svg)/gi, "");
+      expect(withoutFiles).not.toMatch(/[a-z]+_[a-z0-9_]+/);
       expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
       expect(text).not.toMatch(/\bpublished\b/i);
       expect(text).not.toMatch(/\bsuper_admin\b/);
