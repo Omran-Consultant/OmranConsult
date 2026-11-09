@@ -80,9 +80,9 @@ export function DashboardShell({
 
   if (loading) {
     return (
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[280px_1fr]">
-        <Skeleton className="hidden h-screen lg:block" />
-        <div className="p-8">
+      <div className="flex min-h-screen" data-dashboard-loading>
+        <Skeleton className="hidden h-screen w-[280px] shrink-0 lg:block" data-sidebar />
+        <div className="flex-1 p-8">
           <Skeleton className="h-10 w-64" />
         </div>
       </div>
@@ -97,18 +97,14 @@ export function DashboardShell({
 
   return (
     <div className="min-h-screen bg-base text-primary">
-      <div className="lg:grid lg:grid-cols-[280px_1fr]">
+      <div className="lg:flex">
         <aside
           className={classNames(
-            "fixed inset-y-0 z-30 flex w-[280px] flex-col border-line bg-elevated lg:static",
-            locale === "ar" ? "right-0 border-s" : "left-0 border-e",
+            "fixed inset-y-0 start-0 z-30 flex w-[280px] shrink-0 flex-col border-e border-line bg-elevated lg:static",
             "transition-transform duration-200",
-            drawer
-              ? "translate-x-0"
-              : locale === "ar"
-                ? "max-lg:translate-x-full lg:translate-x-0"
-                : "max-lg:-translate-x-full lg:translate-x-0",
+            drawer ? "translate-x-0" : "max-lg:-translate-x-full rtl:max-lg:translate-x-full lg:translate-x-0",
           )}
+          data-sidebar
         >
           <div className="flex items-center justify-between px-5 py-5">
             <BrandLogo alt={t("brand")} className="h-9 w-auto" surface="adaptive" />
@@ -158,7 +154,7 @@ export function DashboardShell({
             </div>
           </div>
         </aside>
-        <div>
+        <div className="min-w-0 flex-1">
           <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-elevated/90 px-4 py-3 backdrop-blur">
             <button aria-label={t("openMenu")} className="lg:hidden" onClick={() => setDrawer(true)} type="button">
               <Icon name="menu" />

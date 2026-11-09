@@ -287,4 +287,44 @@ test.describe("dashboard authenticated", () => {
     await expect(page.locator("[data-media-details]")).toBeVisible();
     await page.getByRole("button", { name: /حذف قسري|Force delete/i }).click();
   });
+
+  test("sidebar stays on the inline-start edge in Arabic and English, including while loading", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.route("**/api/admin/me", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await route.continue();
+    });
+    const { email, password } = adminCredentials();
+    await loginAs(page, email, password);
+    const loading = page.locator("[data-dashboard-loading] [data-sidebar]");
+    await expect(loading).toBeVisible();
+    await assertSidebarStart(page, "ar");
+    await page.unroute("**/api/admin/me");
+    await waitReady(page);
+
+    for (const href of ["/dashboard", "/dashboard/projects", "/dashboard/users"]) {
+      await page.goto(href);
+      await waitReady(page);
+      await assertSidebarStart(page, "ar");
+    }
+
+    await page.getByRole("button", { name: "EN" }).click();
+    await waitReady(page);
+    await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+    await assertSidebarStart(page, "en");
+    await page.goto("/dashboard/projects");
+    await waitReady(page);
+    await assertSidebarStart(page, "en");
+  });
 });
+
+async function assertSidebarStart(page: Page, locale: "ar" | "en") {
+  const box = await page.locator("[data-sidebar]").boundingBox();
+  expect(box).toBeTruthy();
+  const width = page.viewportSize()?.width ?? 1440;
+  if (locale === "ar") {
+    expect(box!.x).toBeGreaterThan(width / 2);
+  } else {
+    expect(box!.x).toBeLessThan(width / 2);
+  }
+}
