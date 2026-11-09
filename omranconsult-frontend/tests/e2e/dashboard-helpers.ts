@@ -72,6 +72,7 @@ export async function loginAs(page: Page, email: string, password: string) {
 
 export async function loginToDashboard(page: Page, email = adminCredentials().email, password = adminCredentials().password) {
   artisan(["cache:clear"]);
+  artisan(["e2e:arm-harness", `--frontend-url=${dashboardOrigin()}`]);
   await loginAs(page, email, password);
   if (!page.url().includes("/dashboard") || page.url().includes("/login")) {
     await page.waitForURL((url) => url.pathname === "/dashboard", { timeout: 20_000 });
@@ -130,8 +131,8 @@ export async function deactivateUserByEmail(page: Page, email: string) {
   if ((await row.count()) === 0) {
     return;
   }
-  const toggle = row.getByRole("button", { name: /تعطيل|Deactivate/i });
-  if (await toggle.count()) {
+  const toggle = row.getByRole("switch");
+  if ((await toggle.count()) > 0 && (await toggle.getAttribute("aria-checked")) === "true") {
     await toggle.click();
   }
 }

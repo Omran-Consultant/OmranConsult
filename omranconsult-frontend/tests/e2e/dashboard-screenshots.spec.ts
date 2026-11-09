@@ -8,11 +8,11 @@ import {
   DASHBOARD_SHOTS,
   editorCredentials,
   loginToDashboard,
-  logoutDashboard,
   setDashboardSurface,
   SURFACE_LOCALES,
   SURFACE_THEMES,
   SURFACE_WIDTHS,
+  validJpegUpload,
   waitReady,
 } from "./dashboard-helpers";
 
@@ -129,6 +129,12 @@ test.describe("dashboard screenshots", () => {
 
   test("media details drawer", async ({ page }) => {
     await loginToDashboard(page);
+    await page.goto("/dashboard/media");
+    await waitReady(page);
+    if ((await page.locator("[data-media-item]").count()) === 0) {
+      await page.locator('input[type="file"]').setInputFiles(validJpegUpload());
+      await expect(page.getByText("e2e-valid.jpg")).toBeVisible({ timeout: 20_000 });
+    }
     for (const locale of SURFACE_LOCALES) {
       for (const theme of SURFACE_THEMES) {
         for (const width of SURFACE_WIDTHS) {
