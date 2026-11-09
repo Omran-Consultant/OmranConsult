@@ -6,12 +6,12 @@ import path from "node:path";
 import { artisan } from "./artisan";
 import {
   adminCredentials,
-  deactivateUserByEmail,
   editorCredentials,
   inviteAndAccept,
   loginAs,
   loginToDashboard,
   logoutDashboard,
+  purgeE2eExtras,
   assertDashboardTheme,
   ensureDashboardTheme,
   setDashboardSurface,
@@ -213,7 +213,7 @@ test.describe("dashboard authenticated", () => {
     await inviteAndAccept(page, "E2E Invitee", email, throwawayPassword);
     await loginToDashboard(page, email, throwawayPassword);
     await expect(page.getByRole("link", { name: /المستخدمون|Users/ })).toHaveCount(0);
-    await deactivateUserByEmail(page, email);
+    purgeE2eExtras();
   });
 
   test("MFA enable, TOTP login, recovery login, reused recovery rejected", async ({ page }) => {
@@ -253,7 +253,7 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("button", { name: /دخول|Sign in/i }).click();
     await expect(page.getByText(/غير صحيح|not valid/i)).toBeVisible();
 
-    await deactivateUserByEmail(page, email);
+    purgeE2eExtras();
   });
 
   test("five wrong passwords lock a throwaway user with 423", async ({ page }) => {
@@ -278,7 +278,7 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("button", { name: /دخول|Sign in/i }).click();
     await expect(page.getByText(/دقيقة|minutes/i)).toBeVisible();
     await expect(page).toHaveURL(/\/dashboard\/login/);
-    await deactivateUserByEmail(page, email);
+    purgeE2eExtras();
   });
 
   test("draft preview publish then restore the original title", async ({ page }) => {

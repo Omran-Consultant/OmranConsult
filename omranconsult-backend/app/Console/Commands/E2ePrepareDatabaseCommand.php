@@ -51,10 +51,12 @@ class E2ePrepareDatabaseCommand extends Command
 
         $this->components->info("Prepared database {$e2eDatabase}");
 
-        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('migrate:fresh', ['--force' => true]);
         $this->output->write(Artisan::output());
 
         $this->call(DatabaseSeeder::class);
+        Artisan::call('media:import-site-images');
+        $this->output->write(Artisan::output());
 
         return self::SUCCESS;
     }

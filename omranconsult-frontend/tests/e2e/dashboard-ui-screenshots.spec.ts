@@ -5,6 +5,7 @@ import path from "node:path";
 import {
   ensureDashboardTheme,
   loginToDashboard,
+  resetE2eSeed,
   setDashboardSurface,
   SURFACE_LOCALES,
   SURFACE_THEMES,
@@ -20,6 +21,7 @@ test.describe("dashboard 5A-ui screenshots", () => {
   test.describe.configure({ timeout: 1_200_000 });
 
   test("matrix and compare images", async ({ page }) => {
+    resetE2eSeed();
     mkdirSync(UI_SHOTS, { recursive: true });
 
     const guestTargets = [

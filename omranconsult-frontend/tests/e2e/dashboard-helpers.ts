@@ -113,6 +113,16 @@ export async function loginToDashboard(page: Page, email = adminCredentials().em
   await waitReady(page);
 }
 
+export function resetE2eSeed() {
+  artisan(["e2e:prepare-database"]);
+  artisan(["e2e:ensure-users"]);
+  artisan(["e2e:arm-harness", `--frontend-url=${dashboardOrigin()}`]);
+}
+
+export function purgeE2eExtras() {
+  artisan(["e2e:purge-extras"]);
+}
+
 export async function logoutDashboard(page: Page) {
   await page.getByRole("button", { name: /خروج|Log out/i }).click();
   await page.waitForURL(/\/dashboard\/login/);

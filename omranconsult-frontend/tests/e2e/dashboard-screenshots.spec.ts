@@ -8,6 +8,7 @@ import {
   DASHBOARD_SHOTS,
   editorCredentials,
   loginToDashboard,
+  resetE2eSeed,
   setDashboardSurface,
   SURFACE_LOCALES,
   SURFACE_THEMES,
@@ -20,6 +21,7 @@ test.describe("dashboard screenshots", () => {
   test.describe.configure({ timeout: 1_200_000 });
 
   test("login states across locales, themes, and widths", async ({ page }) => {
+    resetE2eSeed();
     for (const locale of SURFACE_LOCALES) {
       for (const theme of SURFACE_THEMES) {
         for (const width of SURFACE_WIDTHS) {
