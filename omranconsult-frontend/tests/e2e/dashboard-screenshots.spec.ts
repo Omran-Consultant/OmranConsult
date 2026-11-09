@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  capturePreview,
   captureReady,
   DASHBOARD_SHOTS,
   editorCredentials,
@@ -50,7 +51,7 @@ test.describe("dashboard screenshots", () => {
     }
   });
 
-  test("authenticated 5A screens with real content", async ({ page }) => {
+  test("authenticated list screens with real content", async ({ page }) => {
     await loginToDashboard(page);
     const pages = [
       { href: "/dashboard", name: "home" },
@@ -72,13 +73,21 @@ test.describe("dashboard screenshots", () => {
         }
       }
     }
+  });
 
+  test("project draft editor and public preview banner", async ({ page }) => {
+    await loginToDashboard(page);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/dashboard/projects");
     await waitReady(page);
     const published = page.locator("a[data-status='published'], a[data-status='published_with_draft']").first();
     await published.click();
     await waitReady(page);
+    const discard = page.getByRole("button", { name: /تجاهل التعديلات|Discard/i });
+    if (await discard.count()) {
+      await discard.click();
+      await expect(page.locator("[data-draft-badge]")).toHaveCount(0);
+    }
     const original = await page.locator("#title-ar").inputValue();
     await page.locator("#title-ar").fill(`${original} مسودة`);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
@@ -108,7 +117,7 @@ test.describe("dashboard screenshots", () => {
           localStorage.setItem("oc-theme", next);
           document.documentElement.classList.toggle("dark", next === "dark");
         }, theme);
-        await captureReady(preview, `preview-banner-${previewLocale}-${theme}-${width}`);
+        await capturePreview(preview, `preview-banner-${previewLocale}-${theme}-${width}`);
       }
     }
     await preview.close();
@@ -116,7 +125,10 @@ test.describe("dashboard screenshots", () => {
     await page.goto(editorUrl);
     await waitReady(page);
     await page.getByRole("button", { name: /تجاهل التعديلات|Discard/i }).click();
+  });
 
+  test("media details, MFA setup, and no-permission screens", async ({ page }) => {
+    await loginToDashboard(page);
     await page.goto("/dashboard/media");
     await waitReady(page);
     await page.locator("ul button").first().click();

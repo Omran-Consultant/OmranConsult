@@ -183,7 +183,7 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("button", { name: /تفعيل التطبيق|Enable authenticator/i }).click();
     const secret = (await page.locator("[data-mfa-secret]").innerText()).trim();
     expect(secret.length).toBeGreaterThan(10);
-    await page.getByLabel(/رمز من 6 أرقام|Authenticator code|6-digit code/i).fill(generateTotp(secret));
+    await page.locator("#mfa-on").fill(generateTotp(secret));
     await page.getByRole("button", { name: /^تأكيد$|^Confirm$/ }).click();
     const recovery = (await page.locator("[data-recovery-codes] li").first().innerText()).trim();
     expect(recovery.length).toBeGreaterThan(4);
@@ -216,7 +216,9 @@ test.describe("dashboard authenticated", () => {
   test("five wrong passwords lock a throwaway user with 423", async ({ page }) => {
     const email = uniqueTestEmail("e2e-lockout");
     await inviteAndAccept(page, "E2E Lockout", email, throwawayPassword);
+    artisan(["cache:clear"]);
     await page.goto("/dashboard/login");
+    await waitReady(page);
     for (let attempt = 0; attempt < 5; attempt += 1) {
       await page.locator("#email").fill(email);
       await page.locator("#password").fill("wrong-password");
@@ -246,6 +248,11 @@ test.describe("dashboard authenticated", () => {
     const projectId = (await project.getAttribute("data-project-id")) ?? "";
     await project.click();
     await waitReady(page);
+    const discard = page.getByRole("button", { name: /تجاهل التعديلات|Discard/i });
+    if (await discard.count()) {
+      await discard.click();
+      await expect(page.locator("[data-draft-badge]")).toHaveCount(0);
+    }
     const titleInput = page.locator("#title-ar");
     const original = await titleInput.inputValue();
     const draftTitle = `${original} مسودة-e2e`;
@@ -324,7 +331,7 @@ test.describe("dashboard authenticated", () => {
       await new Promise((resolve) => setTimeout(resolve, 4000));
       await route.continue();
     });
-    await page.reload();
+    await page.goto("/dashboard", { waitUntil: "commit" });
     const loading = page.locator("[data-dashboard-loading] [data-sidebar]");
     await expect(loading).toBeVisible({ timeout: 15_000 });
     await assertSidebarStart(page, "ar");

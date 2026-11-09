@@ -81,7 +81,9 @@ export function DashboardShell({
   if (loading) {
     return (
       <div className="flex min-h-screen" data-dashboard-loading>
-        <Skeleton className="hidden h-screen w-[280px] shrink-0 lg:block" data-sidebar />
+        <aside className="h-screen w-[280px] shrink-0 border-e border-line bg-elevated max-lg:hidden" data-sidebar>
+          <Skeleton className="h-full w-full" />
+        </aside>
         <div className="flex-1 p-8">
           <Skeleton className="h-10 w-64" />
         </div>

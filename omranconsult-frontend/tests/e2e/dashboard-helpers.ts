@@ -28,6 +28,12 @@ export async function captureReady(page: Page, name: string) {
   await page.screenshot({ path: path.join(DASHBOARD_SHOTS, `${name}.png`), fullPage: true });
 }
 
+export async function capturePreview(page: Page, name: string) {
+  await expect(page.locator("[data-preview-banner]")).toBeVisible();
+  mkdirSync(DASHBOARD_SHOTS, { recursive: true });
+  await page.screenshot({ path: path.join(DASHBOARD_SHOTS, `${name}.png`), fullPage: true });
+}
+
 export function adminCredentials(): { email: string; password: string } {
   const email = process.env.E2E_ADMIN_EMAIL;
   const password = process.env.E2E_ADMIN_PASSWORD;
