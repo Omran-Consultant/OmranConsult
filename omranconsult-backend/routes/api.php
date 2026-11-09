@@ -41,7 +41,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/health', HealthController::class);
 Route::get('/e2e/preflight', E2ePreflightController::class);
 
-Route::get('/internal/preview-tokens', PreviewTokenLookupController::class);
+Route::get('/internal/preview-tokens', PreviewTokenLookupController::class)
+    ->middleware('throttle:preview-token-lookup');
 
 // Public content reads (SDD §7.1). 120/min/IP; trusted egress IPs and a matching X-Omran-Frontend-Key skip that cap.
 Route::middleware([SetPublicLocale::class, 'throttle:public-read'])->group(function (): void {

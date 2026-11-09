@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Support\E2e\E2eHarness;
+use App\Support\E2e\E2eQueueMode;
 use App\Support\FrontendServerKey;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -26,9 +28,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $e2e = filter_var(getenv('OMRAN_E2E') ?: env('OMRAN_E2E'), FILTER_VALIDATE_BOOL);
-        if ($e2e || (app()->environment('local', 'testing') && E2eHarness::isArmed())) {
+        if (E2eQueueMode::shouldUseSync()) {
             config(['queue.default' => 'sync']);
+            if (E2eHarness::usesIsolatedDatabase()) {
+                $connection = config('database.default');
+                config([
+                    'database.connections.'.$connection.'.database' => config('e2e.database'),
+                ]);
+                DB::purge($connection);
+            }
         }
 
         $rememberMinutes = (int) config('cms.remember_minutes', 60 * 24 * 14);
@@ -68,5 +76,7 @@ class AppServiceProvider extends ServiceProvider
         // Public writes (SDD §7.2): 5 per minute per IP.
         RateLimiter::for('inquiries', fn (Request $request) => Limit::perMinute(5)->by((string) $request->ip()));
         RateLimiter::for('newsletter', fn (Request $request) => Limit::perMinute(5)->by((string) $request->ip()));
+
+        RateLimiter::for('preview-token-lookup', fn (Request $request) => Limit::perMinute(60)->by((string) $request->ip()));
     }
 }

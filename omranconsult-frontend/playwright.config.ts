@@ -17,6 +17,7 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   globalSetup: "./tests/e2e/global-setup.ts",
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   use: {
     baseURL: origin,
     trace: "on-first-retry",
