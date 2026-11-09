@@ -33,7 +33,9 @@ export async function POST(request: Request) {
   }
 
   for (const tag of parsed.data.tags) {
-    revalidateTag(tag, "max");
+    // CMS publish must not serve the previous page. `max` is stale-while-revalidate
+    // for up to a year; expire 0 blocks until the tagged cache is rebuilt.
+    revalidateTag(tag, { expire: 0 });
   }
 
   return NextResponse.json({ revalidated: parsed.data.tags });
