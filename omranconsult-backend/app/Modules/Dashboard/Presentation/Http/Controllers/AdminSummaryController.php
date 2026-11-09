@@ -69,9 +69,21 @@ class AdminSummaryController extends Controller
             ])->values(),
             'latest_inquiries' => Inquiry::query()->orderByDesc('id')->limit(5)->get(['id', 'name', 'email', 'status', 'created_at']),
             'latest_edits' => Project::query()->orderByDesc('updated_at')->limit(5)->get(['id', 'slug', 'title', 'status', 'updated_at']),
-            'recent_activity' => AuditLog::query()->orderByDesc('occurred_at')->limit(8)->get([
-                'id', 'action', 'subject_type', 'subject_id', 'occurred_at', 'user_id',
-            ]),
+            'recent_activity' => AuditLog::query()
+                ->with('user:id,name')
+                ->orderByDesc('occurred_at')
+                ->limit(24)
+                ->get()
+                ->map(fn (AuditLog $log): array => [
+                    'id' => $log->id,
+                    'action' => $log->action,
+                    'subject_type' => $log->subject_type,
+                    'subject_id' => $log->subject_id,
+                    'occurred_at' => $log->occurred_at?->toIso8601String(),
+                    'user_id' => $log->user_id,
+                    'user_name' => $log->user?->name,
+                ])
+                ->values(),
         ]);
     }
 

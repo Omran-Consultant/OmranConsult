@@ -12,6 +12,7 @@ import {
   loginAs,
   loginToDashboard,
   logoutDashboard,
+  setDashboardSurface,
   spoofedSvgAsJpeg,
   uniqueTestEmail,
   validJpegUpload,
@@ -135,12 +136,25 @@ test.describe("dashboard authenticated", () => {
       const response = await fetch("/api/admin/dashboard/summary", { credentials: "include" });
       return response.json();
     });
-    const fmt = (value: number) => new Intl.NumberFormat("ar-SA-u-nu-arab", { maximumFractionDigits: 0 }).format(value);
+    const fmt = (value: number) => new Intl.NumberFormat("ar-SA-u-nu-latn", { maximumFractionDigits: 0 }).format(value);
     await expect(page.locator('[data-kpi="projects-published"]')).toHaveText(fmt(summary.kpis.projects_published));
     await expect(page.locator('[data-kpi="projects-draft"]')).toHaveText(fmt(summary.kpis.projects_draft));
     await expect(page.locator('[data-kpi="drafts"]')).toContainText(fmt(summary.kpis.drafts_awaiting_publish));
     await shot(page, "home-ar-light-1440");
     await axeClean(page);
+  });
+
+  test("KPI cards match the concept type scale at 1440 and 1024", async ({ page }) => {
+    await loginToDashboard(page);
+    for (const width of [1440, 1024] as const) {
+      await setDashboardSurface(page, "ar", "light", width);
+      await page.goto("/dashboard");
+      await waitReady(page);
+      const valueSize = await page.locator("[data-kpi-value]").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+      const labelSize = await page.locator("[data-kpi-label]").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+      expect(valueSize).toBeGreaterThanOrEqual(30);
+      expect(labelSize).toBeGreaterThanOrEqual(13);
+    }
   });
 
   test("axe on authenticated screens in light and dark", async ({ page }) => {

@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import { Icon } from "@/core/ui/icon";
 import { EmptyState } from "@/core/ui/empty-state";
 import { formatDashboardNumber } from "@/features/dashboard/format/format-dashboard-number";
+import { activitySentence, prepareActivityFeed } from "@/features/dashboard/home/activity-feed";
 import { labelAuditAction } from "@/features/dashboard/labels";
 import { KpiCard } from "@/features/dashboard/ui/kpi-card";
 import { BarChart } from "@/features/dashboard/ui/charts/bar-chart";
@@ -16,6 +17,7 @@ import { PageHeader } from "@/features/dashboard/ui/page-header";
 import { Avatar } from "@/features/dashboard/ui/avatar";
 import { RelativeTime } from "@/features/dashboard/ui/relative-time";
 import { StatusPill } from "@/features/dashboard/ui/status-pill";
+import { DashboardSwitch } from "@/features/dashboard/ui/dashboard-field";
 import type { AppLocale } from "@/i18n/routing";
 import type { AdminSummaryResponse } from "@/lib/api/types";
 
@@ -33,22 +35,17 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
   const published = kpis.projects_published;
   const draft = kpis.projects_draft;
   const publishedRatio = kpis.projects_total > 0 ? published / kpis.projects_total : 0;
+  const [showLogins, setShowLogins] = useState(false);
 
   const inquiryDelta = kpis.inquiries_this_month - kpis.inquiries_last_month;
+  const hasInquirySeries = data.inquiries_chart.some((row) => row.count > 0);
   const deltaLabel =
     inquiryDelta > 0
-      ? locale === "ar"
-        ? `▲ ${formatDashboardNumber(inquiryDelta, locale)}`
-        : `▲ ${formatDashboardNumber(inquiryDelta, locale)}`
+      ? t("inquiriesDeltaUp", { n: formatDashboardNumber(inquiryDelta, locale) })
       : inquiryDelta < 0
-        ? locale === "ar"
-          ? `▼ ${formatDashboardNumber(Math.abs(inquiryDelta), locale)}`
-          : `▼ ${formatDashboardNumber(Math.abs(inquiryDelta), locale)}`
-        : locale === "ar"
-          ? "بلا تغيير"
-          : "No change";
-  const deltaTone =
-    inquiryDelta > 0 ? "text-success" : inquiryDelta < 0 ? "text-danger" : "text-muted";
+        ? t("inquiriesDeltaDown", { n: formatDashboardNumber(Math.abs(inquiryDelta), locale) })
+        : t("inquiriesDeltaFlat");
+  const deltaTone = inquiryDelta > 0 ? "text-success" : inquiryDelta < 0 ? "text-danger" : "text-muted";
 
   const sectorRows = data.sectors.map((sector) => ({
     id: sector.slug,
@@ -62,6 +59,21 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
     value: row.count,
   }));
 
+  const activity = useMemo(
+    () =>
+      prepareActivityFeed(
+        data.recent_activity.map((row) => ({
+          id: row.id,
+          action: row.action,
+          occurred_at: row.occurred_at,
+          user_id: row.user_id,
+          user_name: row.user_name,
+        })),
+        { includeLogins: showLogins },
+      ),
+    [data.recent_activity, showLogins],
+  );
+
   return (
     <div className="space-y-8" data-ready="true">
       <PageHeader subtitle={t("subtitle")} title={t("title")} />
@@ -70,39 +82,46 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
         <KpiCard
           accent={KPI_COLORS.projects}
           footer={
-            <KpiFooter>
+            <div className="flex w-full flex-col gap-2">
               <Progress ratio={publishedRatio} />
-              <span className="text-caption" data-kpi="projects">
-                <span data-kpi="projects-published">{formatDashboardNumber(published, locale)}</span>
-                {" · "}
-                <span data-kpi="projects-draft">{formatDashboardNumber(draft, locale)}</span>
-                {" — "}
-                {locale === "ar"
-                  ? `${formatDashboardNumber(published, locale)} منشور · ${formatDashboardNumber(draft, locale)} مسودة`
-                  : `${formatDashboardNumber(published, locale)} published · ${formatDashboardNumber(draft, locale)} draft`}
+              <span className="flex flex-wrap items-center gap-x-3 gap-y-1" data-kpi="projects">
+                <span className="inline-flex items-center gap-1">
+                  <span className="size-2 rounded-sm bg-success" />
+                  <span data-kpi="projects-published">{formatDashboardNumber(published, locale)}</span>
+                  <span>{locale === "ar" ? "منشور" : "published"}</span>
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="size-2 rounded-sm bg-highlight" />
+                  <span data-kpi="projects-draft">{formatDashboardNumber(draft, locale)}</span>
+                  <span>{locale === "ar" ? "مسودة" : "draft"}</span>
+                </span>
               </span>
-            </KpiFooter>
+            </div>
           }
           href="/dashboard/projects"
           icon={<Icon name="layers" />}
           label={t("kpiProjects")}
           locale={locale}
-          unit={locale === "ar" ? "مشروع" : "projects"}
+          unit={t("publishedUnit")}
           value={kpis.projects_total}
         />
         <KpiCard
           accent={KPI_COLORS.inquiries}
           footer={
-            <div className="flex w-full items-center justify-between gap-2">
-              <Sparkline color={KPI_COLORS.inquiries} values={data.inquiries_chart.map((row) => row.count)} />
-              <span className={deltaTone}>{deltaLabel}</span>
-            </div>
+            !hasInquirySeries && kpis.inquiries_this_month === 0 ? (
+              <span>{t("inquiriesEmptyMonth")}</span>
+            ) : (
+              <div className="flex w-full items-center justify-between gap-2">
+                <Sparkline color={KPI_COLORS.inquiries} values={data.inquiries_chart.map((row) => row.count)} />
+                <span className={`${deltaTone} shrink-0 whitespace-nowrap`}>{deltaLabel}</span>
+              </div>
+            )
           }
           href="/dashboard/inquiries"
           icon={<Icon name="mail" />}
           label={t("kpiInquiries")}
           locale={locale}
-          unit={locale === "ar" ? "هذا الشهر" : "this month"}
+          unit={t("unitThisMonth")}
           value={kpis.inquiries_this_month}
         />
         <KpiCard
@@ -111,7 +130,7 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
             <div className="flex w-full items-center justify-between gap-2">
               <RelativeTime locale={locale} value={kpis.last_content_edit_at} />
               <Link className="text-accent underline" href="/dashboard/projects?status=draft">
-                {locale === "ar" ? "مراجعة" : "Review"}
+                {t("review")}
               </Link>
             </div>
           }
@@ -120,7 +139,7 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
           icon={<Icon name="edit" />}
           label={t("kpiDrafts")}
           locale={locale}
-          unit={locale === "ar" ? "مسودة" : "drafts"}
+          unit={t("unitItems")}
           value={kpis.drafts_awaiting_publish}
         />
         <KpiCard
@@ -129,15 +148,13 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
             <div className="flex w-full items-center justify-between gap-2">
               {kpis.disputes_blocking_publish > 0 ? (
                 <span className="rounded-full bg-warning/15 px-2 py-0.5 text-caption text-warning">
-                  {locale === "ar"
-                    ? `${formatDashboardNumber(kpis.disputes_blocking_publish, locale)} تمنع النشر`
-                    : `${formatDashboardNumber(kpis.disputes_blocking_publish, locale)} block publish`}
+                  {t("blockersCount", { n: formatDashboardNumber(kpis.disputes_blocking_publish, locale) })}
                 </span>
               ) : (
-                <span>{locale === "ar" ? "لا عوائق" : "No blockers"}</span>
+                <span>{t("noBlockers")}</span>
               )}
               <Link className="text-accent underline" href="/dashboard/disputes">
-                {locale === "ar" ? "عرض" : "View"}
+                {t("view")}
               </Link>
             </div>
           }
@@ -145,21 +162,21 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
           icon={<Icon name="shield-check" />}
           label={t("kpiDisputes")}
           locale={locale}
-          unit={locale === "ar" ? "مفتوحة" : "open"}
+          unit={t("unitNotes")}
           value={kpis.open_disputes}
         />
         <KpiCard
           accent={kpis.expired_certificates === 0 ? KPI_COLORS.projects : KPI_COLORS.certificates}
           footer={
             kpis.expired_certificates === 0 ? (
-              <span className="text-success">{locale === "ar" ? "كل الشهادات سارية" : "All certificates valid"}</span>
+              <span className="text-success">{t("allCertsValid")}</span>
             ) : (
               <div className="flex w-full items-center justify-between gap-2">
                 <span className="rounded-full bg-danger/15 px-2 py-0.5 text-caption font-medium text-[#b42318] dark:text-[#fca5a5]">
-                  {locale === "ar" ? "تجديد مطلوب" : "Renewal needed"}
+                  {t("renewalNeeded")}
                 </span>
                 <Link className="text-accent underline" href="/dashboard/documents">
-                  {locale === "ar" ? "عرض" : "View"}
+                  {t("view")}
                 </Link>
               </div>
             )
@@ -199,6 +216,7 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
           ) : (
             <div className="mt-4">
               <DonutChart
+                centerLabel={t("donutCenter", { n: formatDashboardNumber(published, locale) })}
                 locale={locale}
                 slices={sectorRows.map((row) => ({ id: row.id, label: row.label, value: row.value }))}
                 title={t("sectors")}
@@ -232,27 +250,32 @@ export function DashboardHomeView({ data, locale }: { data: AdminSummaryResponse
           }))}
           title={t("latestEdits")}
         />
-        <ListBlock
-          empty={t("activityEmpty")}
-          items={data.recent_activity.map((row) => ({
-            id: row.id,
-            title: (
-              <div className="flex items-center gap-2">
-                <Avatar name={labelAuditAction(row.action, locale)} />
-                <span>{labelAuditAction(row.action, locale)}</span>
-              </div>
-            ),
-            meta: <RelativeTime locale={locale} value={row.occurred_at} />,
-          }))}
-          title={t("recentActivity")}
-        />
+        <section className="rounded-2xl border border-line bg-elevated p-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-h5">{t("recentActivity")}</h2>
+            <DashboardSwitch compact id="show-logins" label={t("showLogins")} checked={showLogins} onChange={setShowLogins} />
+          </div>
+          {activity.length === 0 ? (
+            <EmptyState title={t("activityEmpty")} />
+          ) : (
+            <ul className="divide-y divide-line">
+              {activity.map((item) => (
+                <li className="flex items-center justify-between gap-3 py-2 text-body-s" key={item.id}>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <Avatar name={item.user_name ?? item.action} />
+                    <span className="truncate">
+                      {activitySentence(item, labelAuditAction(item.action, locale), locale)}
+                    </span>
+                  </span>
+                  <RelativeTime className="shrink-0 text-caption text-muted" locale={locale} value={item.occurred_at} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   );
-}
-
-function KpiFooter({ children }: { children: ReactNode }) {
-  return <div className="flex w-full flex-col gap-2">{children}</div>;
 }
 
 function Progress({ ratio }: { ratio: number }) {

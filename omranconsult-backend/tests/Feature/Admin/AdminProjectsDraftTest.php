@@ -9,6 +9,7 @@ use App\Modules\Content\Infrastructure\Models\ContentDraft;
 use App\Modules\Projects\Infrastructure\Models\Client;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Modules\Projects\Infrastructure\Models\Sector;
+use App\Support\Audit\AuditLogger;
 use App\Support\Content\PublicationStatus;
 use App\Support\SuperAdminRole;
 use Database\Seeders\SuperAdminRoleSeeder;
@@ -162,6 +163,28 @@ class AdminProjectsDraftTest extends TestCase
             ->assertJsonPath('kpis.projects_published', $published)
             ->assertJsonPath('kpis.projects_total', $published + $drafts)
             ->assertJsonPath('kpis.inquiries_new', 0);
+    }
+
+    public function test_summary_activity_includes_actor_name(): void
+    {
+        $admin = $this->admin();
+        app(AuditLogger::class)->write($admin, 'project_published', Project::class, 1, null);
+
+        $this->actingAs($admin)->getJson('/api/admin/dashboard/summary')
+            ->assertOk()
+            ->assertJsonPath('recent_activity.0.user_name', $admin->name)
+            ->assertJsonPath('recent_activity.0.action', 'project_published');
+    }
+
+    public function test_project_detail_includes_overview_and_publish_blockers(): void
+    {
+        $admin = $this->admin();
+        $project = $this->publishedProject();
+
+        $this->actingAs($admin)->getJson('/api/admin/projects/'.$project->id)
+            ->assertOk()
+            ->assertJsonPath('overview.ar', 'نبذة')
+            ->assertJsonStructure(['publish_blockers', 'published_at', 'client_name', 'sector_name', 'location', 'scope']);
     }
 
     private function admin(): User

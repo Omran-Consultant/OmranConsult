@@ -54,7 +54,15 @@ export type AdminSummaryResponse = {
   sectors: { slug: string; name: { ar: string; en: string }; count: number }[];
   latest_inquiries: { id: number; name: string; email: string; status: string; created_at: string }[];
   latest_edits: { id: number; slug: string; title: { ar: string; en: string }; status: string; updated_at: string }[];
-  recent_activity: { id: number; action: string; subject_type: string | null; subject_id: number | null; occurred_at: string; user_id: number | null }[];
+  recent_activity: {
+    id: number;
+    action: string;
+    subject_type: string | null;
+    subject_id: number | null;
+    occurred_at: string;
+    user_id: number | null;
+    user_name: string | null;
+  }[];
 };
 
 export type AdminProjectListItem = {
@@ -68,6 +76,7 @@ export type AdminProjectListItem = {
   sector_name?: { ar?: string | null; en?: string | null } | null;
   region_names?: { ar?: string | null; en?: string | null }[];
   cover_path?: string | null;
+  year?: number | null;
   updated_at: string | null;
 };
 
@@ -79,11 +88,17 @@ export type AdminProjectDetail = {
   client_id: number | null;
   sector_id: number | null;
   year: number | null;
+  location: { ar?: string | null; en?: string | null } | null;
+  scope: { ar?: string[] | null; en?: string[] | null } | null;
   gallery: string[] | null;
   region_ids: number[];
   is_featured: boolean;
   status: string;
   has_unpublished_changes: boolean;
   draft: Record<string, unknown> | null;
+  published_at: string | null;
+  publish_blockers: string[];
+  client_name?: { ar?: string | null; en?: string | null } | null;
+  sector_name?: { ar?: string | null; en?: string | null } | null;
   updated_at: string | null;
 };
