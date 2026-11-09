@@ -92,7 +92,7 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-base text-primary" data-ready="true">
+    <div className="relative min-h-screen overflow-hidden bg-base text-primary" data-dashboard-surface data-ready="true">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_45%_at_85%_0%,rgb(14_132_66_/_0.16),transparent_70%),radial-gradient(45%_50%_at_10%_100%,rgb(27_61_101_/_0.16),transparent_70%),linear-gradient(rgb(12_27_48_/_0.05)_1px,transparent_1px),linear-gradient(90deg,rgb(12_27_48_/_0.05)_1px,transparent_1px)] bg-[length:auto,auto,48px_48px,48px_48px] [mask-image:radial-gradient(70%_70%_at_50%_45%,#000_40%,transparent_100%)]"

@@ -99,7 +99,7 @@ export function DashboardShell({
   const roleLabel = user.roles.includes("super_admin") ? t("roles.super_admin") : t("roles.editor");
 
   return (
-    <div className="min-h-screen bg-base text-primary">
+    <div className="min-h-screen bg-base text-primary" data-dashboard-surface>
       <div className="lg:flex">
         <aside
           className={classNames(

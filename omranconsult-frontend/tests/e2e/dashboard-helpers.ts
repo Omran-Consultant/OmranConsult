@@ -28,8 +28,41 @@ export async function setDashboardSurface(
   ]);
 }
 
-export async function captureReady(page: Page, name: string) {
+/** After navigation: match the user path (toggle persists cookie + localStorage) and prove dark is actually dark. */
+export async function ensureDashboardTheme(page: Page, theme: (typeof SURFACE_THEMES)[number]) {
+  const isDark = await page.locator("html").evaluate((el) => el.classList.contains("dark"));
+  if ((theme === "dark") !== isDark) {
+    await page.getByRole("button", { name: /تبديل السمة|Toggle theme/i }).click();
+  }
+  await assertDashboardTheme(page, theme);
+}
+
+export async function assertDashboardTheme(page: Page, theme: (typeof SURFACE_THEMES)[number]) {
+  if (theme === "dark") {
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+  } else {
+    await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
+  }
+  const luminance = await page.locator("[data-dashboard-surface]").evaluate((el) => {
+    const color = getComputedStyle(el).backgroundColor;
+    const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!match) {
+      return 255;
+    }
+    return 0.2126 * Number(match[1]) + 0.7152 * Number(match[2]) + 0.0722 * Number(match[3]);
+  });
+  if (theme === "dark") {
+    expect(luminance).toBeLessThan(60);
+  } else {
+    expect(luminance).toBeGreaterThan(200);
+  }
+}
+
+export async function captureReady(page: Page, name: string, theme?: (typeof SURFACE_THEMES)[number]) {
   await waitReady(page);
+  if (theme) {
+    await ensureDashboardTheme(page, theme);
+  }
   mkdirSync(DASHBOARD_SHOTS, { recursive: true });
   await page.screenshot({ path: path.join(DASHBOARD_SHOTS, `${name}.png`), fullPage: true });
 }

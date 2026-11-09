@@ -25,27 +25,27 @@ test.describe("dashboard screenshots", () => {
         for (const width of SURFACE_WIDTHS) {
           await setDashboardSurface(page, locale, theme, width);
           await page.goto("/dashboard/login");
-          await captureReady(page, `login-${locale}-${theme}-${width}`);
+          await captureReady(page, `login-${locale}-${theme}-${width}`, theme);
 
           await page.locator("#email").fill("nobody@example.com");
           await page.locator("#password").fill("wrong-password");
           await page.getByRole("button", { name: /دخول|Sign in/i }).click();
           await expect(page.getByText(/غير صحيحة|incorrect/i)).toBeVisible();
-          await captureReady(page, `login-invalid-${locale}-${theme}-${width}`);
+          await captureReady(page, `login-invalid-${locale}-${theme}-${width}`, theme);
 
           await page.goto("/dashboard/login");
           await page.getByRole("button", { name: /نسيت|Forgot/i }).click();
           await expect(page.getByRole("heading", { name: /إعادة تعيين|Reset password/i })).toBeVisible();
-          await captureReady(page, `login-forgot-${locale}-${theme}-${width}`);
+          await captureReady(page, `login-forgot-${locale}-${theme}-${width}`, theme);
           await page.locator("#forgot-email").fill("nobody@example.com");
           await page.getByRole("button", { name: /إرسال|Send/i }).click();
           await expect(page.getByText(/إن وُجد|If the account/i)).toBeVisible();
-          await captureReady(page, `login-reset-sent-${locale}-${theme}-${width}`);
+          await captureReady(page, `login-reset-sent-${locale}-${theme}-${width}`, theme);
 
           await page.goto("/dashboard/reset-password?token=expired&email=a@example.com");
-          await captureReady(page, `reset-${locale}-${theme}-${width}`);
+          await captureReady(page, `reset-${locale}-${theme}-${width}`, theme);
           await page.goto("/dashboard/accept-invite?token=expired&email=a@example.com");
-          await captureReady(page, `invite-${locale}-${theme}-${width}`);
+          await captureReady(page, `invite-${locale}-${theme}-${width}`, theme);
         }
       }
     }
@@ -68,7 +68,7 @@ test.describe("dashboard screenshots", () => {
           await setDashboardSurface(page, locale, theme, width);
           for (const item of pages) {
             await page.goto(item.href);
-            await captureReady(page, `${item.name}-${locale}-${theme}-${width}`);
+            await captureReady(page, `${item.name}-${locale}-${theme}-${width}`, theme);
           }
         }
       }
@@ -99,7 +99,7 @@ test.describe("dashboard screenshots", () => {
         for (const width of SURFACE_WIDTHS) {
           await setDashboardSurface(page, locale, theme, width);
           await page.goto(editorUrl);
-          await captureReady(page, `project-edit-draft-${locale}-${theme}-${width}`);
+          await captureReady(page, `project-edit-draft-${locale}-${theme}-${width}`, theme);
         }
       }
     }
@@ -114,9 +114,13 @@ test.describe("dashboard screenshots", () => {
       for (const width of SURFACE_WIDTHS) {
         await preview.setViewportSize({ width, height: width <= 390 ? 844 : 900 });
         await preview.evaluate((next) => {
+          document.cookie = `oc-theme=${next};path=/;max-age=31536000;SameSite=Lax`;
           localStorage.setItem("oc-theme", next);
           document.documentElement.classList.toggle("dark", next === "dark");
         }, theme);
+        if (theme === "dark") {
+          await expect(preview.locator("html")).toHaveClass(/\bdark\b/);
+        }
         await capturePreview(preview, `preview-banner-${previewLocale}-${theme}-${width}`);
       }
     }
@@ -145,7 +149,7 @@ test.describe("dashboard screenshots", () => {
           await expect(page.locator("[data-media-item]").first()).toBeVisible({ timeout: 20_000 });
           await page.locator("[data-media-item]").first().click();
           await expect(page.locator("[data-media-details]")).toBeVisible();
-          await captureReady(page, `media-details-${locale}-${theme}-${width}`);
+          await captureReady(page, `media-details-${locale}-${theme}-${width}`, theme);
         }
       }
     }
@@ -160,12 +164,9 @@ test.describe("dashboard screenshots", () => {
     await page.keyboard.press("Escape");
     for (const width of SURFACE_WIDTHS) {
       for (const theme of SURFACE_THEMES) {
-        await page.evaluate((next) => {
-          localStorage.setItem("oc-theme", next);
-          document.documentElement.classList.toggle("dark", next === "dark");
-        }, theme);
+        await page.context().addCookies([{ name: "oc-theme", value: theme, url: page.url() }]);
         await page.setViewportSize({ width, height: width <= 390 ? 844 : 900 });
-        await captureReady(page, `profile-mfa-setup-ar-${theme}-${width}`);
+        await captureReady(page, `profile-mfa-setup-ar-${theme}-${width}`, theme);
       }
     }
   });
@@ -178,7 +179,7 @@ test.describe("dashboard screenshots", () => {
         for (const width of SURFACE_WIDTHS) {
           await setDashboardSurface(page, locale, theme, width);
           await page.goto("/dashboard/users");
-          await captureReady(page, `no-permission-${locale}-${theme}-${width}`);
+          await captureReady(page, `no-permission-${locale}-${theme}-${width}`, theme);
         }
       }
     }

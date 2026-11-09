@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { publicFontVariables } from "@/core/fonts/public";
 import { themeInitScript } from "@/core/theme/theme-init-script";
 import { ThemeProvider } from "@/core/theme/theme-provider";
+import { DEFAULT_THEME, parseThemePreference, THEME_STORAGE_KEY } from "@/core/theme/theme-storage";
 import { parseDashboardLocale, DASHBOARD_LOCALE_COOKIE } from "@/features/dashboard/i18n/locale";
 import { getLocaleDirection } from "@/i18n/routing";
 
@@ -20,12 +21,18 @@ export const metadata: Metadata = {
 export default async function DashboardRootLayout({ children }: { children: ReactNode }) {
   const jar = await cookies();
   const locale = parseDashboardLocale(jar.get(DASHBOARD_LOCALE_COOKIE)?.value);
+  const theme = parseThemePreference(jar.get(THEME_STORAGE_KEY)?.value) ?? DEFAULT_THEME;
   const messages = (await import(`../../messages/${locale}.json`)).default;
   const dir = getLocaleDirection(locale);
 
   return (
-    <html className={publicFontVariables} dir={dir} lang={locale}>
-      <body>
+    <html
+      className={`${publicFontVariables}${theme === "dark" ? " dark" : ""}`}
+      dir={dir}
+      lang={locale}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full bg-base text-primary">
         <Script
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
           id="theme-init"

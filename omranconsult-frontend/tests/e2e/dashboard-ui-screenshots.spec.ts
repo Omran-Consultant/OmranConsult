@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  ensureDashboardTheme,
   loginToDashboard,
   setDashboardSurface,
   SURFACE_LOCALES,
@@ -31,6 +32,7 @@ test.describe("dashboard 5A-ui screenshots", () => {
           for (const target of guestTargets) {
             await page.goto(target.href);
             await waitReady(page);
+            await ensureDashboardTheme(page, theme);
             await page.screenshot({
               fullPage: true,
               path: path.join(UI_SHOTS, `${target.name}-${locale}-${theme}-${width}.png`),
@@ -68,6 +70,7 @@ test.describe("dashboard 5A-ui screenshots", () => {
           for (const target of targets) {
             await page.goto(target.href);
             await waitReady(page);
+            await ensureDashboardTheme(page, theme);
             await page.screenshot({
               fullPage: true,
               path: path.join(UI_SHOTS, `${target.name}-${locale}-${theme}-${width}.png`),
@@ -75,6 +78,7 @@ test.describe("dashboard 5A-ui screenshots", () => {
           }
           await page.goto(projectHref);
           await waitReady(page);
+          await ensureDashboardTheme(page, theme);
           await page.screenshot({
             fullPage: true,
             path: path.join(UI_SHOTS, `project-edit-${locale}-${theme}-${width}.png`),

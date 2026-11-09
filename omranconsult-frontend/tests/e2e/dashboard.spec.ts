@@ -12,6 +12,8 @@ import {
   loginAs,
   loginToDashboard,
   logoutDashboard,
+  assertDashboardTheme,
+  ensureDashboardTheme,
   setDashboardSurface,
   spoofedSvgAsJpeg,
   uniqueTestEmail,
@@ -63,7 +65,8 @@ test.describe("dashboard isolation", () => {
     await page.getByRole("button", { name: "EN" }).click();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await shot(page, "login-en-light-1440");
-    await page.getByRole("button").nth(1).click();
+    await page.getByRole("button", { name: /تبديل السمة|Toggle theme/i }).click();
+    await assertDashboardTheme(page, "dark");
     await shot(page, "login-en-dark-1440");
   });
 
@@ -168,13 +171,14 @@ test.describe("dashboard authenticated", () => {
       "/dashboard/media",
     ];
     for (const theme of ["light", "dark"] as const) {
-      await page.evaluate((next) => {
-        localStorage.setItem("oc-theme", next);
-        document.documentElement.classList.toggle("dark", next === "dark");
-      }, theme);
+      await setDashboardSurface(page, "ar", theme, 1440);
+      await page.goto("/dashboard");
+      await waitReady(page);
+      await ensureDashboardTheme(page, theme);
       for (const href of hrefs) {
         await page.goto(href);
         await waitReady(page);
+        await assertDashboardTheme(page, theme);
         await axeClean(page);
       }
     }
