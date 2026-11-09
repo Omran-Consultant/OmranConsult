@@ -1,12 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { ForbiddenScreen } from "@/features/dashboard/shell/forbidden-screen";
 
 export default function ForbiddenPage() {
-  const t = useTranslations("Dashboard");
-  return (
-    <div className="py-16 text-center">
-      <h1 className="font-display text-h3">{t("forbidden")}</h1>
-    </div>
-  );
+  return <ForbiddenScreen />;
 }

@@ -12,22 +12,32 @@ export default function ProjectsListPage() {
   const t = useTranslations("Dashboard.projects");
   const [items, setItems] = useState<AdminProjectListItem[]>([]);
   const [q, setQ] = useState("");
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
-      void adminProjects(q).then((payload) => setItems(payload.data));
+      void adminProjects(q).then((payload) => {
+        setItems(payload.data);
+        setLoaded(true);
+      });
     }, 200);
     return () => window.clearTimeout(handle);
   }, [q]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-ready={loaded ? "true" : "false"}>
       <h1 className="font-display text-h3">{t("title")}</h1>
       <InputField id="projects-q" label={t("search")} onChange={(event) => setQ(event.target.value)} value={q} />
       <ul className="divide-y divide-line rounded-2xl border border-line">
         {items.map((project) => (
           <li key={project.id}>
-            <Link className="flex items-center justify-between px-4 py-3 hover:bg-highlight" href={`/dashboard/projects/${project.id}`}>
+            <Link
+              className="flex items-center justify-between px-4 py-3 hover:bg-highlight"
+              data-project-id={String(project.id)}
+              data-slug={project.slug}
+              data-status={project.status}
+              href={`/dashboard/projects/${project.id}`}
+            >
               <span>{project.title.ar ?? project.title.en}</span>
               <span className="text-caption text-muted">{t(`status.${project.status}`)}</span>
             </Link>

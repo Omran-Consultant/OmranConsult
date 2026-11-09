@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
 import { persistDashboardLocale } from "@/features/dashboard/i18n/locale";
 import { DASHBOARD_NAV } from "@/features/dashboard/shell/nav";
+import { DashboardPermissionGate } from "@/features/dashboard/shell/permission-gate";
 import { useDashboardSession } from "@/features/dashboard/shell/session-context";
 import { useTheme } from "@/core/theme/theme-provider";
 import { Button } from "@/core/ui/button";
@@ -181,7 +182,9 @@ export function DashboardShell({
               <Icon label={t("notifications")} name="bell" />
             </span>
           </header>
-          <main className="px-4 py-6 lg:px-8">{children}</main>
+          <main className="px-4 py-6 lg:px-8">
+            <DashboardPermissionGate>{children}</DashboardPermissionGate>
+          </main>
         </div>
       </div>
       {palette ? (

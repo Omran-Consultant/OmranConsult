@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/core/ui/button";
 import { InputField } from "@/core/ui/input-field";
+import { ApiError } from "@/lib/api/errors";
 import {
   adminDeleteMedia,
   adminForceDeleteMedia,
@@ -33,6 +34,7 @@ export default function MediaPage() {
   const [q, setQ] = useState("");
   const [type, setType] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const [selected, setSelected] = useState<MediaDetail | null>(null);
   const [altAr, setAltAr] = useState("");
   const [altEn, setAltEn] = useState("");
@@ -48,6 +50,7 @@ export default function MediaPage() {
     const suffix = query.toString() ? `?${query.toString()}` : "";
     const payload = await adminMedia(suffix);
     setItems(payload.data);
+    setLoaded(true);
   }
 
   useEffect(() => {
@@ -60,7 +63,10 @@ export default function MediaPage() {
         query.set("type", type);
       }
       const suffix = query.toString() ? `?${query.toString()}` : "";
-      void adminMedia(suffix).then((payload) => setItems(payload.data));
+      void adminMedia(suffix).then((payload) => {
+        setItems(payload.data);
+        setLoaded(true);
+      });
     }, 200);
     return () => window.clearTimeout(handle);
   }, [q, type]);
@@ -75,8 +81,9 @@ export default function MediaPage() {
         await adminUploadMedia(file);
       }
       await load();
-    } catch {
-      setError(t("uploadFailed"));
+    } catch (caught) {
+      const code = caught instanceof ApiError ? caught.errors?.file?.[0] : undefined;
+      setError(code === "svg_not_allowed" || code === "mime_mismatch" ? t("svgRejected") : t("uploadFailed"));
     }
   }
 
@@ -88,7 +95,7 @@ export default function MediaPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-ready={loaded ? "true" : "false"}>
       <h1 className="font-display text-h3">{t("title")}</h1>
       <div className="flex flex-wrap gap-3">
         <InputField id="media-q" label={t("search")} onChange={(event) => setQ(event.target.value)} value={q} />
@@ -121,7 +128,7 @@ export default function MediaPage() {
         ))}
       </ul>
       {selected ? (
-        <aside className="rounded-2xl border border-line p-4">
+        <aside className="rounded-2xl border border-line p-4" data-media-details="true">
           <h2 className="text-h5">{selected.original_filename ?? selected.url}</h2>
           <p className="text-caption text-muted">{selected.mime_type}</p>
           <div className="mt-3 grid gap-3 md:grid-cols-2">

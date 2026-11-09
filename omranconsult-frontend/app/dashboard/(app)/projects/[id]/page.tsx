@@ -102,7 +102,7 @@ export default function ProjectEditorPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-ready="true">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-h3">{t("edit")}</h1>
         <div className="flex flex-wrap gap-2">
@@ -122,7 +122,11 @@ export default function ProjectEditorPage() {
           ) : null}
         </div>
       </div>
-      {project.has_unpublished_changes ? <p className="text-body-s text-accent">{t("unpublished")}</p> : null}
+      {project.has_unpublished_changes ? (
+        <p className="text-body-s text-accent" data-draft-badge="true">
+          {t("unpublished")}
+        </p>
+      ) : null}
       {message ? <p className="text-accent">{message}</p> : null}
       {error ? <p className="text-danger">{error}</p> : null}
       <div className="grid gap-4 md:grid-cols-2">

@@ -25,20 +25,18 @@ export default function UsersPage() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("editor");
   const [message, setMessage] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   async function load() {
     const payload = await adminUsers();
     setUsers(payload.data);
     setInvitations(payload.invitations);
     setCounts(payload.role_counts);
+    setLoaded(true);
   }
 
   useEffect(() => {
-    void adminUsers().then((payload) => {
-      setUsers(payload.data);
-      setInvitations(payload.invitations);
-      setCounts(payload.role_counts);
-    });
+    void load();
   }, []);
 
   async function invite(event: React.FormEvent) {
@@ -51,7 +49,7 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-ready={loaded ? "true" : "false"}>
       <h1 className="font-display text-h3">{t("title")}</h1>
       <div className="grid gap-3 sm:grid-cols-2">
         <article className="rounded-2xl border border-line p-4">

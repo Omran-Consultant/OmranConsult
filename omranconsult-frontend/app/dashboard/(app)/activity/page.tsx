@@ -12,6 +12,7 @@ export default function ActivityPage() {
   const [action, setAction] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const query = new URLSearchParams();
@@ -25,11 +26,14 @@ export default function ActivityPage() {
       query.set("to", to);
     }
     const suffix = query.toString() ? `?${query.toString()}` : "";
-    void adminAuditLogs(suffix).then((payload) => setRows(payload.data));
+    void adminAuditLogs(suffix).then((payload) => {
+      setRows(payload.data);
+      setLoaded(true);
+    });
   }, [action, from, to]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-ready={loaded ? "true" : "false"}>
       <h1 className="font-display text-h3">{t("title")}</h1>
       <div className="grid gap-3 md:grid-cols-3">
         <InputField id="audit-action" label={t("action")} onChange={(event) => setAction(event.target.value)} value={action} />

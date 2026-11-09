@@ -368,6 +368,7 @@
     "media": {
       "title": "Media library",
       "uploadFailed": "The file was rejected.",
+      "svgRejected": "SVG files are not allowed, even if the file is renamed.",
       "search": "Search",
       "type": "Type",
       "all": "All",

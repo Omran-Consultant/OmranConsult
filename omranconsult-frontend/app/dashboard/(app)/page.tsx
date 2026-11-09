@@ -24,11 +24,11 @@ export default function DashboardHomePage() {
   }
 
   const cards = [
-    { label: t("projects"), value: `${data.kpis.projects_published} / ${data.kpis.projects_draft}` },
-    { label: t("inquiries"), value: String(data.kpis.inquiries_new) },
-    { label: t("drafts"), value: String(data.kpis.drafts_awaiting_publish) },
-    { label: t("disputes"), value: String(data.kpis.open_disputes) },
-    { label: t("expired"), value: String(data.kpis.expired_certificates) },
+    { kpi: "projects", label: t("projects"), value: `${data.kpis.projects_published} / ${data.kpis.projects_draft}` },
+    { kpi: "inquiries", label: t("inquiries"), value: String(data.kpis.inquiries_new) },
+    { kpi: "drafts", label: t("drafts"), value: String(data.kpis.drafts_awaiting_publish) },
+    { kpi: "disputes", label: t("disputes"), value: String(data.kpis.open_disputes) },
+    { kpi: "expired", label: t("expired"), value: String(data.kpis.expired_certificates) },
   ];
 
   const max = Math.max(1, ...data.inquiries_chart.map((row) => row.count));
@@ -42,7 +42,7 @@ export default function DashboardHomePage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" data-ready="true">
       <div>
         <h1 className="font-display text-h3">{t("title")}</h1>
         <p className="text-body-s text-secondary">{t("subtitle")}</p>
@@ -51,7 +51,9 @@ export default function DashboardHomePage() {
         {cards.map((card) => (
           <article className="rounded-2xl border border-line bg-elevated p-5" key={card.label}>
             <p className="text-caption text-muted">{card.label}</p>
-            <p className="mt-2 font-display text-h3">{card.value}</p>
+            <p className="mt-2 font-display text-h3" data-kpi={card.kpi}>
+              {card.value}
+            </p>
           </article>
         ))}
       </div>

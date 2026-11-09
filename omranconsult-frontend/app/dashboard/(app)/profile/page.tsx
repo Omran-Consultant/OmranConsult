@@ -30,7 +30,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" data-ready="true">
       <h1 className="font-display text-h3">{t("title")}</h1>
       {message ? <p className="text-accent">{message}</p> : null}
       <form
@@ -131,7 +131,11 @@ export default function ProfilePage() {
               {t("enableMfa")}
             </Button>
             {qr ? <div dangerouslySetInnerHTML={{ __html: qr }} /> : null}
-            {secret ? <p className="text-caption">{secret}</p> : null}
+            {secret ? (
+              <p className="text-caption" data-mfa-secret>
+                {secret}
+              </p>
+            ) : null}
             {secret ? (
               <form
                 className="space-y-3"
@@ -148,9 +152,16 @@ export default function ProfilePage() {
               </form>
             ) : null}
             {codes ? (
-              <a download="omranconsult-recovery-codes.txt" href={`data:text/plain,${encodeURIComponent(codes.join("\n"))}`}>
-                {t("downloadCodes")}
-              </a>
+              <div className="space-y-2">
+                <ul className="grid gap-1 font-mono text-body-s" data-recovery-codes>
+                  {codes.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <a download="omranconsult-recovery-codes.txt" href={`data:text/plain,${encodeURIComponent(codes.join("\n"))}`}>
+                  {t("downloadCodes")}
+                </a>
+              </div>
             ) : null}
           </div>
         )}
