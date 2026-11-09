@@ -1,13 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
-import { Button } from "@/core/ui/button";
 import { Icon } from "@/core/ui/icon";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
+import { dashboardCoverSrc } from "@/features/dashboard/projects/cover-image";
 import { DataTable } from "@/features/dashboard/ui/data-table";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { DashboardPagination } from "@/features/dashboard/ui/pagination";
 import { PageHeader } from "@/features/dashboard/ui/page-header";
 import { controlMdClass, controlRowClass } from "@/features/dashboard/ui/control-styles";
@@ -30,13 +33,29 @@ function localizedName(value: { ar?: string | null; en?: string | null } | null 
   return (locale === "ar" ? value.ar : value.en) ?? value.en ?? value.ar ?? "—";
 }
 
+function CoverThumb({ coverPath }: { coverPath?: string | null }) {
+  const src = dashboardCoverSrc(coverPath);
+  if (src) {
+    return <Image alt="" className="size-11 shrink-0 rounded-lg object-cover" height={44} src={src} width={44} />;
+  }
+  return (
+    <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-highlight text-muted">
+      <Icon name="image" />
+    </span>
+  );
+}
+
 export default function ProjectsListPage() {
   const t = useTranslations("Dashboard.projects");
   const locale: AppLocale = readDashboardLocaleFromDocument();
+  const router = useRouter();
   const [items, setItems] = useState<AdminProjectListItem[]>([]);
   const [total, setTotal] = useState(0);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
+  const [sector, setSector] = useState("");
+  const [region, setRegion] = useState("");
+  const [year, setYear] = useState("");
   const [view, setView] = useState<"table" | "grid">("table");
   const [loaded, setLoaded] = useState(false);
 
@@ -61,12 +80,52 @@ export default function ProjectsListPage() {
     return tally;
   }, [items]);
 
-  const filtered = useMemo(() => {
-    if (status === "all") {
-      return items;
+  const sectors = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const row of items) {
+      const name = localizedName(row.sector_name ?? null, locale);
+      if (name !== "—") {
+        map.set(name, name);
+      }
     }
-    return items.filter((row) => row.status === status);
-  }, [items, status]);
+    return [...map.values()];
+  }, [items, locale]);
+
+  const regions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const row of items) {
+      for (const name of row.region_names ?? []) {
+        const label = localizedName(name, locale);
+        if (label !== "—") {
+          map.set(label, label);
+        }
+      }
+    }
+    return [...map.values()];
+  }, [items, locale]);
+
+  const years = useMemo(() => {
+    const values = [...new Set(items.map((row) => row.year).filter((value): value is number => typeof value === "number"))];
+    return values.sort((a, b) => b - a);
+  }, [items]);
+
+  const filtered = useMemo(() => {
+    return items.filter((row) => {
+      if (status !== "all" && row.status !== status) {
+        return false;
+      }
+      if (sector && localizedName(row.sector_name ?? null, locale) !== sector) {
+        return false;
+      }
+      if (region && !(row.region_names ?? []).some((name) => localizedName(name, locale) === region)) {
+        return false;
+      }
+      if (year && String(row.year ?? "") !== year) {
+        return false;
+      }
+      return true;
+    });
+  }, [items, status, sector, region, year, locale]);
 
   const columns = [
     {
@@ -80,12 +139,10 @@ export default function ProjectsListPage() {
           data-status={row.status}
           href={`/dashboard/projects/${row.id}`}
         >
-          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-highlight text-muted">
-            {row.cover_path ? <Icon name="image" /> : <Icon name="layers" />}
-          </span>
+          <CoverThumb coverPath={row.cover_path} />
           <span className="min-w-0">
-            <span className="block truncate font-medium">{localizedName(row.title, locale)}</span>
-            <span className="text-caption text-muted">{row.slug}</span>
+            <span className="line-clamp-2 block font-medium">{localizedName(row.title, locale)}</span>
+            <span className="block truncate text-caption text-muted">{row.slug}</span>
           </span>
         </Link>
       ),
@@ -93,27 +150,45 @@ export default function ProjectsListPage() {
     {
       id: "sector",
       header: t("colSector"),
-      cell: (row: AdminProjectListItem) => localizedName(row.sector_name ?? null, locale),
+      width: "140px",
+      cell: (row: AdminProjectListItem) => (
+        <span className="line-clamp-2">{localizedName(row.sector_name ?? null, locale)}</span>
+      ),
     },
     {
       id: "client",
       header: t("colClient"),
-      cell: (row: AdminProjectListItem) => localizedName(row.client_name ?? null, locale),
+      width: "200px",
+      cell: (row: AdminProjectListItem) => {
+        const name = localizedName(row.client_name ?? null, locale);
+        return (
+          <span className="line-clamp-2" title={name}>
+            {name}
+          </span>
+        );
+      },
     },
     {
       id: "regions",
       header: t("colRegions"),
-      cell: (row: AdminProjectListItem) =>
-        row.region_names?.map((name) => localizedName(name, locale)).join(locale === "ar" ? "، " : ", ") || "—",
+      width: "140px",
+      cell: (row: AdminProjectListItem) => (
+        <span className="line-clamp-2">
+          {row.region_names?.map((name) => localizedName(name, locale)).join(locale === "ar" ? "، " : ", ") || "—"}
+        </span>
+      ),
     },
     {
       id: "updated",
       header: t("colUpdated"),
+      width: "120px",
+      className: "whitespace-nowrap",
       cell: (row: AdminProjectListItem) => <RelativeTime locale={locale} value={row.updated_at} />,
     },
     {
       id: "status",
       header: t("colStatus"),
+      width: "110px",
       cell: (row: AdminProjectListItem) => <StatusPill locale={locale} status={row.status} />,
     },
   ];
@@ -122,11 +197,11 @@ export default function ProjectsListPage() {
     <div className="space-y-6" data-ready="true" data-dashboard-toolbar>
       <PageHeader
         actions={
-          <Button disabled title={t("addDisabled")} type="button">
-            <Icon name="plus" />
+          <DashboardButton disabled disabledReason={t("addDisabled")} icon={<Icon name="plus" />} type="button">
             {t("add")}
-          </Button>
+          </DashboardButton>
         }
+        subtitle={t("subtitle")}
         title={t("title")}
       />
       <DashboardTabs
@@ -141,12 +216,38 @@ export default function ProjectsListPage() {
       />
       <FilterBar className={controlRowClass}>
         <input
-          className={`${controlMdClass} min-w-[12rem] flex-1`}
+          className={`${controlMdClass} w-[22.5rem] max-w-full`}
           onChange={(event) => setQ(event.target.value)}
           placeholder={t("search")}
           type="search"
           value={q}
         />
+        <select className={`${controlMdClass} w-40`} onChange={(event) => setSector(event.target.value)} value={sector}>
+          <option value="">{t("filterSector")}: {t("filterAll")}</option>
+          {sectors.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        <select className={`${controlMdClass} w-40`} onChange={(event) => setRegion(event.target.value)} value={region}>
+          <option value="">{t("filterRegion")}: {t("filterAll")}</option>
+          {regions.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        {years.length > 0 ? (
+          <select className={`${controlMdClass} w-32`} onChange={(event) => setYear(event.target.value)} value={year}>
+            <option value="">{t("filterYear")}: {t("filterAll")}</option>
+            {years.map((value) => (
+              <option key={value} value={String(value)}>
+                {value}
+              </option>
+            ))}
+          </select>
+        ) : null}
         <ViewToggle
           gridLabel={t("viewGrid")}
           onChange={setView}
@@ -156,6 +257,7 @@ export default function ProjectsListPage() {
       </FilterBar>
       {view === "table" ? (
         <DataTable
+          actionsWidth="8.25rem"
           columns={columns}
           emptyTitle={t("empty")}
           loading={!loaded}
@@ -168,20 +270,15 @@ export default function ProjectsListPage() {
               </div>
             </article>
           )}
+          onRowClick={(row) => router.push(`/dashboard/projects/${row.id}`)}
           rowActions={(row) => (
             <>
-              <Link
-                className={controlMdClass}
-                href={`/dashboard/projects/${row.id}?preview=1`}
-                title={t("preview")}
-              >
+              <RowActionButton label={t("preview")} onClick={() => router.push(`/dashboard/projects/${row.id}?preview=1`)}>
                 <Icon name="eye" />
-                <span className="sr-only">{t("preview")}</span>
-              </Link>
-              <Link className={controlMdClass} href={`/dashboard/projects/${row.id}`} title={t("edit")}>
+              </RowActionButton>
+              <RowActionButton label={t("edit")} onClick={() => router.push(`/dashboard/projects/${row.id}`)}>
                 <Icon name="edit" />
-                <span className="sr-only">{t("edit")}</span>
-              </Link>
+              </RowActionButton>
               <RowActionButton disabled label={t("deleteDisabled")}>
                 <Icon name="trash" />
               </RowActionButton>
@@ -193,17 +290,23 @@ export default function ProjectsListPage() {
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((row) => (
             <Link
-              className="rounded-2xl border border-line bg-elevated p-4 transition-shadow hover:shadow-[var(--elevation-lift)]"
+              className="rounded-2xl border border-line bg-elevated p-4 text-start transition-shadow hover:shadow-[var(--elevation-lift)]"
               data-project-id={String(row.id)}
               data-slug={row.slug}
               data-status={row.status}
               href={`/dashboard/projects/${row.id}`}
               key={row.id}
             >
-              <div className="mb-3 grid aspect-video place-items-center rounded-xl bg-highlight text-muted">
-                <Icon name="image" />
+              <div className="mb-3 overflow-hidden rounded-xl bg-highlight">
+                {dashboardCoverSrc(row.cover_path) ? (
+                  <Image alt="" className="aspect-video w-full object-cover" height={180} src={dashboardCoverSrc(row.cover_path) ?? ""} width={320} />
+                ) : (
+                  <div className="grid aspect-video place-items-center text-muted">
+                    <Icon name="image" />
+                  </div>
+                )}
               </div>
-              <p className="font-medium">{localizedName(row.title, locale)}</p>
+              <p className="line-clamp-2 font-medium">{localizedName(row.title, locale)}</p>
               <p className="text-caption text-muted">{row.slug}</p>
               <div className="mt-3 flex items-center justify-between gap-2">
                 <StatusPill locale={locale} status={row.status} />
