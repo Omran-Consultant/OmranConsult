@@ -243,34 +243,27 @@ test.describe("dashboard authenticated", () => {
     await loginToDashboard(page);
     await page.goto("/dashboard/projects");
     await waitReady(page);
-    const cards = page.locator("a[data-status='published'], a[data-status='published_with_draft']");
-    await expect(cards.first()).toBeVisible();
-    let slug = "";
-    let projectId = "";
-    const total = await cards.count();
-    for (let index = 0; index < total; index += 1) {
-      slug = (await cards.nth(index).getAttribute("data-slug")) ?? "";
-      projectId = (await cards.nth(index).getAttribute("data-project-id")) ?? "";
-      await cards.nth(index).click();
-      await waitReady(page);
-      const discard = page.getByRole("button", { name: /تجاهل التعديلات|Discard/i });
-      if (await discard.count()) {
-        await discard.click();
-        await expect(page.locator("[data-draft-badge]")).toHaveCount(0);
-      }
-      const overviewAr = (await page.locator("#overview-ar").inputValue()).trim();
-      const overviewEn = (await page.locator("#overview-en").inputValue()).trim();
-      if (overviewAr !== "" && overviewEn !== "") {
-        break;
-      }
-      await page.goto("/dashboard/projects");
-      await waitReady(page);
-    }
-    expect(slug).not.toBe("");
+    const project = page.locator("a[data-status='published'], a[data-status='published_with_draft']").first();
+    await expect(project).toBeVisible();
+    const slug = (await project.getAttribute("data-slug")) ?? "";
+    const projectId = (await project.getAttribute("data-project-id")) ?? "";
     await page.goto(`/ar/projects/${slug}`);
     const original = (await page.getByRole("heading").first().innerText()).replace(/\s+/g, " ").trim();
     await page.goto(`/dashboard/projects/${projectId}`);
     await waitReady(page);
+    const discard = page.getByRole("button", { name: /تجاهل التعديلات|Discard/i });
+    if (await discard.count()) {
+      await discard.click();
+      await expect(page.locator("[data-draft-badge]")).toHaveCount(0);
+    }
+    const overviewAr = await page.locator("#overview-ar").inputValue();
+    const overviewEn = await page.locator("#overview-en").inputValue();
+    if (overviewAr.trim() === "") {
+      await page.locator("#overview-ar").fill("نبذة لاختبار المسودة");
+    }
+    if (overviewEn.trim() === "") {
+      await page.locator("#overview-en").fill("Overview for the draft e2e test");
+    }
     const draftTitle = `${original} مسودة-e2e`;
     await page.locator("#title-ar").fill(draftTitle);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
