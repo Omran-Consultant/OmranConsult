@@ -10,4 +10,5 @@ export function loadE2eEnv(): void {
 
   process.env.OMRAN_E2E = "1";
   process.env.QUEUE_CONNECTION = "sync";
+  process.env.E2E_DATABASE = process.env.E2E_DATABASE ?? "omranconsult_e2e";
 }

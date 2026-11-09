@@ -58,7 +58,9 @@ The frontend test harness sets `OMRAN_E2E=1` and `QUEUE_CONNECTION=sync` (it doe
 composer run dev
 ```
 
-`globalSetup` checks MySQL, arms sync-queue mode on the running API (`php artisan e2e:arm-harness`), then calls `GET /api/e2e/preflight` (database + sync queue) before any browser tests run.
+`globalSetup` creates/migrates/seeds the isolated database `omranconsult_e2e` (`php artisan e2e:prepare-database`), arms the running API (`php artisan e2e:arm-harness`), then calls `GET /api/e2e/preflight` before browser tests. The API `.env` keeps `DB_DATABASE=omranconsult`; only the harness switches the HTTP app to `E2E_DATABASE` (default `omranconsult_e2e`). Create that database in MAMP MySQL with the same user as dev if it does not exist yet (the prepare command creates it when permissions allow).
+
+After polluting the dev dashboard, run `php artisan e2e:purge-dev` (local only).
 
 Health: `GET /up` (Laravel). API connectivity: `GET /api/health` (JSON `{ "status": "ok" }`).
 

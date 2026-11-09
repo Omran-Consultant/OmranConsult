@@ -47,6 +47,19 @@ async function assertApi(): Promise<void> {
   }
 
   try {
+    execFileSync("php", ["artisan", "e2e:prepare-database"], {
+      cwd: backendRoot,
+      env: { ...process.env, DB_DATABASE: process.env.E2E_DATABASE },
+      stdio: "pipe",
+    });
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `[E2E] تعذّر تجهيز قاعدة الاختبار ${process.env.E2E_DATABASE} / prepare-database failed.\n${detail}`,
+    );
+  }
+
+  try {
     execFileSync("php", ["artisan", "e2e:arm-harness"], {
       cwd: backendRoot,
       env: process.env,
@@ -104,7 +117,12 @@ export default async function globalSetup(): Promise<void> {
 
   execFileSync("php", ["artisan", "e2e:ensure-users"], {
     cwd: backendRoot,
-    env: process.env,
+    env: {
+      ...process.env,
+      DB_DATABASE: process.env.E2E_DATABASE,
+      OMRAN_E2E: "1",
+      QUEUE_CONNECTION: "sync",
+    },
     stdio: "pipe",
   });
 }
