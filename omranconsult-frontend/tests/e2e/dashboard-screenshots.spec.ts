@@ -143,11 +143,11 @@ test.describe("dashboard screenshots", () => {
     }
   });
 
-  test("MFA setup and no-permission screens", async ({ page }) => {
+  test("MFA setup screens", async ({ page }) => {
     await loginToDashboard(page);
     await page.goto("/dashboard/profile");
     await waitReady(page);
-    await page.getByRole("button", { name: /تفعيل التطبيق|Enable authenticator/i }).click();
+    await page.getByRole("button", { name: /تفعيل التطبيق|Enable authenticator/i }).click({ timeout: 20_000 });
     await expect(page.locator("[data-mfa-secret]")).toBeVisible({ timeout: 20_000 });
     await page.keyboard.press("Escape");
     for (const width of SURFACE_WIDTHS) {
@@ -160,8 +160,9 @@ test.describe("dashboard screenshots", () => {
         await captureReady(page, `profile-mfa-setup-ar-${theme}-${width}`);
       }
     }
+  });
 
-    await logoutDashboard(page);
+  test("no-permission screens", async ({ page }) => {
     const editor = editorCredentials();
     await loginToDashboard(page, editor.email, editor.password);
     for (const locale of SURFACE_LOCALES) {

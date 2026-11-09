@@ -56,6 +56,9 @@ export async function waitReady(page: Page) {
 export async function loginAs(page: Page, email: string, password: string) {
   await page.goto("/dashboard/login");
   await waitReady(page);
+  if ((await page.locator("#email").count()) === 0) {
+    return;
+  }
   await page.locator("#email").fill(email);
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: /دخول|Sign in/i }).click();
@@ -64,7 +67,9 @@ export async function loginAs(page: Page, email: string, password: string) {
 export async function loginToDashboard(page: Page, email = adminCredentials().email, password = adminCredentials().password) {
   artisan(["cache:clear"]);
   await loginAs(page, email, password);
-  await page.waitForURL((url) => url.pathname === "/dashboard", { timeout: 20_000 });
+  if (!page.url().includes("/dashboard") || page.url().includes("/login")) {
+    await page.waitForURL((url) => url.pathname === "/dashboard", { timeout: 20_000 });
+  }
   await waitReady(page);
 }
 
