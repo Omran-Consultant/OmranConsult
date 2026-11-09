@@ -19,7 +19,7 @@ export function formatRelativeTime(value: string | null | undefined, locale: App
   }
 
   const diff = now.getTime() - date.getTime();
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  const rtf = new Intl.RelativeTimeFormat(locale === "ar" ? "ar-SA-u-nu-latn" : "en", { numeric: "auto" });
 
   if (diff < MINUTE) {
     return locale === "ar" ? "الآن" : "Just now";
@@ -37,7 +37,7 @@ export function formatRelativeTime(value: string | null | undefined, locale: App
     return rtf.format(-Math.round(diff / DAY), "day");
   }
 
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory" : "en-GB", {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {
     day: "2-digit",
     month: "short",
   }).format(date);
@@ -49,7 +49,7 @@ export function formatFullDateTime(value: string | null | undefined, locale: App
     return "—";
   }
 
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory" : "en-GB", {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);

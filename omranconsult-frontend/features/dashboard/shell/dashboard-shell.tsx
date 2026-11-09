@@ -11,7 +11,7 @@ import { DASHBOARD_NAV } from "@/features/dashboard/shell/nav";
 import { DashboardPermissionGate } from "@/features/dashboard/shell/permission-gate";
 import { useDashboardSession } from "@/features/dashboard/shell/session-context";
 import { useTheme } from "@/core/theme/theme-provider";
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import { ToolbarSearch } from "@/features/dashboard/ui/toolbar-search";
@@ -151,9 +151,9 @@ export function DashboardShell({
                 <p className="truncate text-label-m">{user.name}</p>
                 <p className="text-caption text-muted">{roleLabel}</p>
               </Link>
-              <Button onClick={() => void logout()} type="button" variant="ghost">
+              <DashboardButton onClick={() => void logout()} type="button" variant="ghost">
                 {t("logout")}
-              </Button>
+              </DashboardButton>
             </div>
           </div>
         </aside>

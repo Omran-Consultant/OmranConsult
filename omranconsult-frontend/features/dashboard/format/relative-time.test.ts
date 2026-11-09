@@ -21,4 +21,5 @@ test("formatFullDateTime localizes month", () => {
   const ar = formatFullDateTime(value, "ar");
   const en = formatFullDateTime(value, "en");
   assert.notEqual(ar, en);
+  assert.doesNotMatch(ar, /[٠-٩۰-۹]/);
 });

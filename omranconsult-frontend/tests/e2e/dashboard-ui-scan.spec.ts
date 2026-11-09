@@ -26,6 +26,7 @@ test.describe("dashboard copy quality", () => {
       expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
       expect(text).not.toMatch(/\bpublished\b/i);
       expect(text).not.toMatch(/\bsuper_admin\b/);
+      expect(text).not.toMatch(/[٠-٩۰-۹]/);
     }
   });
 });

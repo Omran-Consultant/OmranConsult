@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { Modal } from "@/features/dashboard/ui/modal";
 
 export function ConfirmDialog({
@@ -26,12 +26,12 @@ export function ConfirmDialog({
     <Modal
       footer={
         <div className="flex justify-end gap-2">
-          <Button onClick={onCancel} type="button" variant="ghost">
+          <DashboardButton onClick={onCancel} type="button" variant="ghost">
             {cancelLabel}
-          </Button>
-          <Button onClick={onConfirm} type="button" variant={destructive ? "primary" : "secondary"}>
+          </DashboardButton>
+          <DashboardButton onClick={onConfirm} type="button" variant={destructive ? "primary" : "secondary"}>
             {confirmLabel}
-          </Button>
+          </DashboardButton>
         </div>
       }
       onClose={onCancel}

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { Icon } from "@/core/ui/icon";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
 import { useDashboardSession } from "@/features/dashboard/shell/session-context";
@@ -65,9 +65,9 @@ export default function DashboardUiGalleryPage() {
           <input className={`${controlMdClass} w-60`} readOnly type="search" value={t("search")} />
           <DashboardTabs active="a" onChange={() => undefined} tabs={[{ id: "a", label: t("tab"), count: 3 }]} />
           <ViewToggle gridLabel={t("grid")} onChange={() => undefined} tableLabel={t("tableMode")} value="table" />
-          <Button className={controlMdClass} type="button">
+          <DashboardButton type="button">
             {t("primary")}
-          </Button>
+          </DashboardButton>
         </FilterBar>
         <DashboardTextField id="gallery-field" label={t("field")} readOnly value={t("sample")} />
         <DashboardCheckbox checked description={t("checkboxHint")} id="gallery-check" label={t("checkbox")} onChange={() => undefined} />
@@ -98,6 +98,7 @@ export default function DashboardUiGalleryPage() {
       <section className="space-y-4">
         <h2 className="text-h5">{t("charts")}</h2>
         <DonutChart
+          centerLabel={t("sample")}
           locale={locale}
           slices={[
             { id: "a", label: "A", value: 3 },

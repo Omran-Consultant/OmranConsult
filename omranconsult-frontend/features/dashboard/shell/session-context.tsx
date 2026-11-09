@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { InputField } from "@/core/ui/input-field";
 import { persistDashboardLocale } from "@/features/dashboard/i18n/locale";
 import { adminLogin, adminLogout, adminMe } from "@/lib/api/admin-browser";
@@ -161,9 +161,9 @@ export function DashboardSessionProvider({
             <InputField id="relogin-email" label={t("email")} onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
             <InputField id="relogin-password" label={t("password")} onChange={(event) => setPassword(event.target.value)} type="password" value={password} />
             {error ? <p className="text-body-s text-danger">{error}</p> : null}
-            <Button loading={submitting} type="submit">
+            <DashboardButton loading={submitting} type="submit">
               {t("submit")}
-            </Button>
+            </DashboardButton>
           </form>
         </div>
       ) : null}

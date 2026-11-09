@@ -16,13 +16,13 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={classNames("flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between", className)}>
-      <div className="min-w-0 space-y-2">
-        {breadcrumbs ? <div className="text-caption text-muted">{breadcrumbs}</div> : null}
+    <header className={classNames("flex flex-col gap-2", className)}>
+      {breadcrumbs ? <div className="text-caption text-muted">{breadcrumbs}</div> : null}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="font-display text-h3 text-primary">{title}</h1>
-        {subtitle ? <p className="text-body-s text-secondary">{subtitle}</p> : null}
+        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
-      {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+      {subtitle ? <p className="text-body-s text-secondary">{subtitle}</p> : null}
     </header>
   );
 }

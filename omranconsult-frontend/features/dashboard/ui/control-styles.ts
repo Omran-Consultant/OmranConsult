@@ -17,7 +17,7 @@ export const controlLgClass = classNames(
   "transition-[border-color,box-shadow] duration-150",
   "placeholder:text-muted",
   "focus:border-accent focus:ring-3 focus:ring-accent/20 focus:outline-none",
-  "disabled:cursor-not-allowed disabled:opacity-40",
+  "disabled:cursor-not-allowed disabled:opacity-70 disabled:text-secondary",
 );
 
 export const controlRowClass = "flex flex-wrap items-center gap-2";
