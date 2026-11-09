@@ -14,6 +14,7 @@ import {
 
 const UI_SHOTS = path.join(process.cwd(), "..", "review-shots", "dashboard", "5A-ui");
 const FIGMA = path.join(process.cwd(), "..", "docs", "design-reference", "figma-screens");
+const CONCEPTS = path.join(process.cwd(), "..", "docs", "design-reference", "concepts");
 
 test.describe("dashboard 5A-ui screenshots", () => {
   test.describe.configure({ timeout: 1_200_000 });
@@ -95,6 +96,20 @@ test.describe("dashboard 5A-ui screenshots", () => {
     ] as const;
 
     await setDashboardSurface(page, "ar", "light", 1440);
+    await page.goto("/dashboard");
+    await waitReady(page);
+    const kpiOurs = await page.screenshot({ type: "png" });
+    const kpiConceptPath = path.join(CONCEPTS, "dashboard-kpi-cards.png");
+    if (existsSync(kpiConceptPath)) {
+      const concept = readFileSync(kpiConceptPath);
+      await page.setContent(`<!doctype html><html><body style="margin:0;background:#111;display:flex">
+        <img alt="concept" src="data:image/png;base64,${concept.toString("base64")}" style="width:50%;object-fit:contain;background:#fff">
+        <img alt="ours" src="data:image/png;base64,${kpiOurs.toString("base64")}" style="width:50%;object-fit:contain;background:#fff">
+      </body></html>`);
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.screenshot({ path: path.join(UI_SHOTS, "compare-kpi-ar-1440.png"), fullPage: true });
+    }
+
     for (const item of compares) {
       await page.goto(item.href);
       await waitReady(page);

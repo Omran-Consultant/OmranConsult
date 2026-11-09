@@ -31,13 +31,13 @@ export function KpiCard({
   const body = (
     <article
       className={classNames(
-        "relative flex min-h-[10.5rem] flex-col gap-3 overflow-hidden rounded-[1.125rem] border border-line bg-elevated p-5",
+        "relative flex min-h-[10.5rem] flex-col gap-3 overflow-hidden rounded-[1.125rem] border border-line bg-elevated p-[18px]",
         className,
       )}
       style={{ borderInlineStartWidth: 3, borderInlineStartColor: accent }}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[0.875rem] leading-5 font-medium text-secondary" data-kpi-label>
+        <p className="text-[13.5px] leading-5 font-medium text-secondary" data-kpi-label>
           {label}
         </p>
         <span
@@ -49,15 +49,15 @@ export function KpiCard({
       </div>
       <div className="flex items-baseline gap-2">
         <span
-          className="font-display text-[2.125rem] leading-none font-semibold tracking-tight text-primary tabular-nums"
+          className="font-display text-[34px] leading-none font-semibold tracking-tight text-primary tabular-nums"
           data-kpi={dataKpi}
           data-kpi-value
         >
           {formatDashboardNumber(value, locale)}
         </span>
-        {unit ? <span className="text-[0.8125rem] text-muted">{unit}</span> : null}
+        {unit ? <span className="text-[12.5px] text-muted">{unit}</span> : null}
       </div>
-      <div className="mt-auto min-h-6 text-[0.8125rem] leading-5 text-muted">{footer}</div>
+      <div className="mt-auto min-h-6 text-[12.5px] leading-5 text-muted" data-kpi-context>{footer}</div>
     </article>
   );
 

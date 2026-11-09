@@ -163,10 +163,24 @@ test.describe("dashboard authenticated", () => {
       await setDashboardSurface(page, "ar", "light", width);
       await page.goto("/dashboard");
       await waitReady(page);
-      const valueSize = await page.locator("[data-kpi-value]").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-      const labelSize = await page.locator("[data-kpi-label]").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-      expect(valueSize).toBeGreaterThanOrEqual(30);
-      expect(labelSize).toBeGreaterThanOrEqual(13);
+      const cards = page.locator("[data-kpi-value]");
+      const count = await cards.count();
+      expect(count).toBeGreaterThan(0);
+      for (let index = 0; index < count; index += 1) {
+        const sizes = await page.evaluate((i) => {
+          const value = document.querySelectorAll("[data-kpi-value]")[i];
+          const label = document.querySelectorAll("[data-kpi-label]")[i];
+          const context = document.querySelectorAll("[data-kpi-context]")[i];
+          return {
+            value: value ? parseFloat(getComputedStyle(value).fontSize) : 0,
+            label: label ? parseFloat(getComputedStyle(label).fontSize) : 0,
+            context: context ? parseFloat(getComputedStyle(context).fontSize) : 0,
+          };
+        }, index);
+        expect(sizes.label).toBeGreaterThanOrEqual(13);
+        expect(sizes.value).toBeGreaterThanOrEqual(32);
+        expect(sizes.context).toBeGreaterThanOrEqual(12);
+      }
     }
   });
 
