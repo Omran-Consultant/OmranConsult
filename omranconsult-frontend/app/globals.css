@@ -76,6 +76,11 @@
   --section-gap: 1.5rem;
   --card-gap: 1rem;
 
+  /* Dashboard controls (PHASE5A U1) */
+  --control-md-height: 2.75rem; /* 44px toolbars */
+  --control-lg-height: 3rem; /* 48px form fields */
+  --control-radius: var(--radius-md);
+
   /* Type scale — mobile first (tokens.css) */
   --fs-display-xl: 2.75rem;
   --fs-display-l: 2.75rem;
@@ -193,6 +198,16 @@ html[lang="ar"] {
 
   --animate-ring-in: ring-in 1200ms ease-out both;
   --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@utility h-control-md {
+  height: var(--control-md-height);
+  min-height: var(--control-md-height);
+}
+
+@utility h-control-lg {
+  height: var(--control-lg-height);
+  min-height: var(--control-lg-height);
 }
 
 @theme inline {
