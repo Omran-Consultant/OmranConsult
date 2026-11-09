@@ -9,6 +9,7 @@ use App\Support\EditorRole;
 use App\Support\SuperAdminRole;
 use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -44,8 +45,12 @@ class AdminUsersTest extends TestCase
         $plain = '';
         Notification::assertSentOnDemand(UserInvitationNotification::class, function (UserInvitationNotification $notification) use (&$plain): bool {
             $plain = $notification->token;
+            $mail = $notification->toMail(
+                (new AnonymousNotifiable)->route('mail', 'new-editor@omranconsult.test'),
+            );
 
-            return true;
+            return str_contains($mail->toArray()['actionUrl'] ?? '', 'accept-invite')
+                && str_contains($mail->toArray()['actionUrl'] ?? '', 'new-editor%40omranconsult.test');
         });
 
         $this->postJson('/api/admin/accept-invite', [

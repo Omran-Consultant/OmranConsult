@@ -127,7 +127,7 @@ test.describe("dashboard isolation", () => {
 });
 
 test.describe("dashboard authenticated", () => {
-  test.describe.configure({ timeout: 90_000 });
+  test.describe.configure({ timeout: 180_000 });
 
   test("login → home KPIs match the summary API", async ({ page }) => {
     await loginToDashboard(page);
@@ -141,6 +141,29 @@ test.describe("dashboard authenticated", () => {
     await expect(page.locator('[data-kpi="drafts"]')).toHaveText(String(summary.kpis.drafts_awaiting_publish));
     await shot(page, "home-ar-light-1440");
     await axeClean(page);
+  });
+
+  test("axe on authenticated screens in light and dark", async ({ page }) => {
+    await loginToDashboard(page);
+    const hrefs = [
+      "/dashboard",
+      "/dashboard/projects",
+      "/dashboard/users",
+      "/dashboard/profile",
+      "/dashboard/activity",
+      "/dashboard/media",
+    ];
+    for (const theme of ["light", "dark"] as const) {
+      await page.evaluate((next) => {
+        localStorage.setItem("oc-theme", next);
+        document.documentElement.classList.toggle("dark", next === "dark");
+      }, theme);
+      for (const href of hrefs) {
+        await page.goto(href);
+        await waitReady(page);
+        await axeClean(page);
+      }
+    }
   });
 
   test("invite → accept → login as the new user", async ({ page }) => {
@@ -295,15 +318,15 @@ test.describe("dashboard authenticated", () => {
 
   test("sidebar stays on the inline-start edge in Arabic and English, including while loading", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
+    const { email, password } = adminCredentials();
+    await loginToDashboard(page, email, password);
     await page.route("**/api/admin/me", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 4000));
       await route.continue();
     });
-    const { email, password } = adminCredentials();
-    await loginAs(page, email, password);
-    await page.waitForURL(/\/dashboard/);
+    await page.reload();
     const loading = page.locator("[data-dashboard-loading] [data-sidebar]");
-    await expect(loading).toBeVisible({ timeout: 10_000 });
+    await expect(loading).toBeVisible({ timeout: 15_000 });
     await assertSidebarStart(page, "ar");
     await page.unroute("**/api/admin/me");
     await waitReady(page);

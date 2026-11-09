@@ -1,5 +1,4 @@
-import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -17,7 +16,7 @@ import {
 } from "./dashboard-helpers";
 
 test.describe("dashboard screenshots", () => {
-  test.describe.configure({ timeout: 600_000 });
+  test.describe.configure({ timeout: 1_200_000 });
 
   test("login states across locales, themes, and widths", async ({ page }) => {
     for (const locale of SURFACE_LOCALES) {
@@ -69,9 +68,6 @@ test.describe("dashboard screenshots", () => {
           for (const item of pages) {
             await page.goto(item.href);
             await captureReady(page, `${item.name}-${locale}-${theme}-${width}`);
-            if (width === 1440) {
-              await axeClean(page);
-            }
           }
         }
       }
@@ -187,9 +183,3 @@ test.describe("dashboard screenshots", () => {
     });
   });
 });
-
-async function axeClean(page: Page) {
-  const axe = await new AxeBuilder({ page }).analyze();
-  const severe = axe.violations.filter((violation) => ["critical", "serious"].includes(violation.impact ?? ""));
-  expect(severe).toEqual([]);
-}

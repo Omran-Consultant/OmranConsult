@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -23,8 +24,10 @@ class UserInvitationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $frontend = rtrim((string) config('cms.frontend_url', 'http://localhost:3000'), '/');
-        $email = urlencode((string) $notifiable->email);
-        $url = $frontend.'/dashboard/accept-invite?token='.urlencode($this->token).'&email='.$email;
+        $rawEmail = $notifiable instanceof AnonymousNotifiable
+            ? (string) $notifiable->routeNotificationFor('mail')
+            : (string) $notifiable->email;
+        $url = $frontend.'/dashboard/accept-invite?token='.urlencode($this->token).'&email='.urlencode($rawEmail);
 
         return (new MailMessage)
             ->subject('Invitation to the omranconsult dashboard')
