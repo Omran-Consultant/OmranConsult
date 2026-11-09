@@ -40,6 +40,7 @@ export function FileDrop({
       </button>
       <input
         accept={accept}
+        aria-label={label}
         className="sr-only"
         onChange={(event) => {
           if (onFiles && event.target.files) {

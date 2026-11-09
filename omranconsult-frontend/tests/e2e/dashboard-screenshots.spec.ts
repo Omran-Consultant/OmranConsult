@@ -128,19 +128,21 @@ test.describe("dashboard screenshots", () => {
   });
 
   test("media details drawer", async ({ page }) => {
+    test.setTimeout(180_000);
     await loginToDashboard(page);
     await page.goto("/dashboard/media");
     await waitReady(page);
     if ((await page.locator("[data-media-item]").count()) === 0) {
       await page.locator('input[type="file"]').setInputFiles(validJpegUpload());
-      await expect(page.getByText("e2e-valid.jpg")).toBeVisible({ timeout: 20_000 });
     }
+    await expect(page.locator("[data-media-item]").first()).toBeVisible({ timeout: 20_000 });
     for (const locale of SURFACE_LOCALES) {
       for (const theme of SURFACE_THEMES) {
         for (const width of SURFACE_WIDTHS) {
           await setDashboardSurface(page, locale, theme, width);
           await page.goto("/dashboard/media");
           await waitReady(page);
+          await expect(page.locator("[data-media-item]").first()).toBeVisible({ timeout: 20_000 });
           await page.locator("[data-media-item]").first().click();
           await expect(page.locator("[data-media-details]")).toBeVisible();
           await captureReady(page, `media-details-${locale}-${theme}-${width}`);

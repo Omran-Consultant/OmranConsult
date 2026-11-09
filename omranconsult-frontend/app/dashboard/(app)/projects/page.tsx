@@ -216,13 +216,14 @@ export default function ProjectsListPage() {
       />
       <FilterBar className={controlRowClass}>
         <input
+          aria-label={t("search")}
           className={`${controlMdClass} w-[22.5rem] max-w-full`}
           onChange={(event) => setQ(event.target.value)}
           placeholder={t("search")}
           type="search"
           value={q}
         />
-        <select className={`${controlMdClass} w-40`} onChange={(event) => setSector(event.target.value)} value={sector}>
+        <select aria-label={t("filterSector")} className={`${controlMdClass} w-40`} onChange={(event) => setSector(event.target.value)} value={sector}>
           <option value="">{t("filterSector")}: {t("filterAll")}</option>
           {sectors.map((name) => (
             <option key={name} value={name}>
@@ -230,7 +231,7 @@ export default function ProjectsListPage() {
             </option>
           ))}
         </select>
-        <select className={`${controlMdClass} w-40`} onChange={(event) => setRegion(event.target.value)} value={region}>
+        <select aria-label={t("filterRegion")} className={`${controlMdClass} w-40`} onChange={(event) => setRegion(event.target.value)} value={region}>
           <option value="">{t("filterRegion")}: {t("filterAll")}</option>
           {regions.map((name) => (
             <option key={name} value={name}>
@@ -239,7 +240,7 @@ export default function ProjectsListPage() {
           ))}
         </select>
         {years.length > 0 ? (
-          <select className={`${controlMdClass} w-32`} onChange={(event) => setYear(event.target.value)} value={year}>
+          <select aria-label={t("filterYear")} className={`${controlMdClass} w-32`} onChange={(event) => setYear(event.target.value)} value={year}>
             <option value="">{t("filterYear")}: {t("filterAll")}</option>
             {years.map((value) => (
               <option key={value} value={String(value)}>
