@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { useTheme } from "@/core/theme/theme-provider";
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import { AuthField } from "@/features/dashboard/auth/auth-field";
@@ -162,9 +162,9 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
                 </button>
               </div>
               {error ? <p className="text-body-s text-danger">{error}</p> : null}
-              <Button arrow className="h-[52px] rounded-xl!" loading={loading} type="submit">
+              <DashboardButton loading={loading} type="submit">
                 {t("submit")}
-              </Button>
+              </DashboardButton>
               <p className="flex items-center gap-2 text-caption text-muted">
                 <Icon name="shield-check" />
                 {t("lockNote")}
@@ -188,9 +188,9 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
                 {recovery ? t("useApp") : t("useRecovery")}
               </button>
               {error ? <p className="text-body-s text-danger">{error}</p> : null}
-              <Button arrow className="h-[52px] rounded-xl!" loading={loading} type="submit">
+              <DashboardButton loading={loading} type="submit">
                 {t("submit")}
-              </Button>
+              </DashboardButton>
             </form>
           ) : null}
           {mode === "forgot" ? (
@@ -205,9 +205,9 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
                 type="email"
                 value={email}
               />
-              <Button arrow className="h-[52px] rounded-xl!" loading={loading} type="submit">
+              <DashboardButton loading={loading} type="submit">
                 {t("sendReset")}
-              </Button>
+              </DashboardButton>
               <button className="text-body-s text-accent" onClick={() => setMode("login")} type="button">
                 {t("backLogin")}
               </button>

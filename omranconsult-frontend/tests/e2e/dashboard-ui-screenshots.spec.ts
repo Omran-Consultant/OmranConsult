@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -19,12 +19,37 @@ test.describe("dashboard 5A-ui screenshots", () => {
 
   test("matrix and compare images", async ({ page }) => {
     mkdirSync(UI_SHOTS, { recursive: true });
+
+    const guestTargets = [
+      { href: "/dashboard/login", name: "login" },
+    ] as const;
+
+    for (const locale of SURFACE_LOCALES) {
+      for (const theme of SURFACE_THEMES) {
+        for (const width of SURFACE_WIDTHS) {
+          await setDashboardSurface(page, locale, theme, width);
+          for (const target of guestTargets) {
+            await page.goto(target.href);
+            await waitReady(page);
+            await page.screenshot({
+              fullPage: true,
+              path: path.join(UI_SHOTS, `${target.name}-${locale}-${theme}-${width}.png`),
+            });
+          }
+        }
+      }
+    }
+
     await loginToDashboard(page);
 
     const targets = [
       { href: "/dashboard", name: "home" },
       { href: "/dashboard/projects", name: "projects" },
       { href: "/dashboard/users", name: "users" },
+      { href: "/dashboard/activity", name: "activity" },
+      { href: "/dashboard/media", name: "media" },
+      { href: "/dashboard/profile", name: "profile" },
+      { href: "/dashboard/forbidden", name: "no-permission" },
       { href: "/dashboard/ui-gallery", name: "ui-gallery" },
     ] as const;
 
@@ -71,6 +96,9 @@ test.describe("dashboard 5A-ui screenshots", () => {
       await waitReady(page);
       const ours = await page.screenshot({ type: "png" });
       const figmaPath = path.join(FIGMA, item.figma);
+      if (!existsSync(figmaPath)) {
+        continue;
+      }
       const figma = readFileSync(figmaPath);
       await page.setContent(`<!doctype html><html><body style="margin:0;background:#111;display:flex">
         <img alt="figma" src="data:image/png;base64,${figma.toString("base64")}" style="width:50%;object-fit:contain;background:#fff">

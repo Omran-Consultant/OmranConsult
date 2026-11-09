@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { InputField } from "@/core/ui/input-field";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
 import { adminAcceptInvite } from "@/lib/api/admin-browser";
@@ -47,9 +47,9 @@ export function AcceptInviteScreen() {
           <InputField id="invite-password" label={t("password")} onChange={(event) => setPassword(event.target.value)} required type="password" value={password} />
           <InputField id="invite-confirm" label={t("passwordConfirm")} onChange={(event) => setConfirmation(event.target.value)} required type="password" value={confirmation} />
           {error ? <p className="text-body-s text-danger">{error}</p> : null}
-          <Button loading={loading} type="submit">
+          <DashboardButton loading={loading} type="submit">
             {t("acceptInvite")}
-          </Button>
+          </DashboardButton>
         </form>
       </section>
     </main>

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { Button } from "@/core/ui/button";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { InputField } from "@/core/ui/input-field";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
 import { adminResetPassword } from "@/lib/api/admin-browser";
@@ -46,9 +46,9 @@ export function ResetPasswordScreen() {
         {done ? (
           <div className="space-y-4">
             <p>{t("resetSuccess")}</p>
-            <Button onClick={() => router.push("/dashboard/login")} type="button">
+            <DashboardButton onClick={() => router.push("/dashboard/login")} type="button">
               {t("submit")}
-            </Button>
+            </DashboardButton>
           </div>
         ) : (
           <form className="flex flex-col gap-5" onSubmit={(event) => void submit(event)}>
@@ -56,9 +56,9 @@ export function ResetPasswordScreen() {
             <InputField id="new-password" label={t("password")} onChange={(event) => setPassword(event.target.value)} required type="password" value={password} />
             <InputField id="confirm-password" label={t("passwordConfirm")} onChange={(event) => setConfirmation(event.target.value)} required type="password" value={confirmation} />
             {error ? <p className="text-body-s text-danger">{error}</p> : null}
-            <Button loading={loading} type="submit">
+            <DashboardButton loading={loading} type="submit">
               {t("savePassword")}
-            </Button>
+            </DashboardButton>
           </form>
         )}
       </section>
