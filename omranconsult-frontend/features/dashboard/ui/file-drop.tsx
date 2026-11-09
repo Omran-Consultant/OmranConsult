@@ -8,15 +8,18 @@ import { Icon } from "@/core/ui/icon";
 export function FileDrop({
   label,
   hint,
+  buttonLabel,
   onFiles,
   accept,
 }: {
   label: string;
   hint?: string;
+  buttonLabel?: string;
   onFiles?: (files: FileList) => void;
   accept?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const action = buttonLabel ?? label;
 
   return (
     <div
@@ -36,12 +39,13 @@ export function FileDrop({
       <p className="text-label-m">{label}</p>
       {hint ? <p className="text-caption text-muted">{hint}</p> : null}
       <button className="text-label-s text-accent underline" onClick={() => inputRef.current?.click()} type="button">
-        {label}
+        {action}
       </button>
       <input
         accept={accept}
-        aria-label={label}
+        aria-label={action}
         className="sr-only"
+        multiple
         onChange={(event) => {
           if (onFiles && event.target.files) {
             onFiles(event.target.files);

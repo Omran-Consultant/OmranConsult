@@ -27,6 +27,7 @@ class AdminMediaController extends Controller
         ]);
 
         $items = Media::query()
+            ->with('references')
             ->when(isset($validated['q']), function ($query) use ($validated): void {
                 $term = '%'.$validated['q'].'%';
                 $query->where(function ($inner) use ($term): void {

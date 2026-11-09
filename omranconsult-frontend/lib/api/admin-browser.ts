@@ -176,7 +176,19 @@ export async function adminProjectPreviewToken(id: number, locale: "ar" | "en"):
   });
 }
 
-export async function adminMedia(query = ""): Promise<{ data: { id: number; url: string; original_filename: string | null; mime_type: string; import_key: string | null }[]; meta: { total: number } }> {
+export async function adminMedia(query = ""): Promise<{
+  data: {
+    id: number;
+    url: string;
+    path: string;
+    original_filename: string | null;
+    mime_type: string;
+    size_bytes: number | null;
+    import_key: string | null;
+    references: { type: string; id: number; field: string }[];
+  }[];
+  meta: { total: number; current_page: number; last_page: number };
+}> {
   return browserApiRequest(`/api/admin/media${query}`, { method: "GET", csrf: false });
 }
 
