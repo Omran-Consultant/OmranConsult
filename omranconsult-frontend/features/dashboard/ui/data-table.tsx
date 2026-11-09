@@ -103,7 +103,7 @@ export function DataTable<T extends { id: string | number }>({
             {rows.map((row) => (
               <tr
                 className={classNames(
-                  "h-[4.5rem] max-h-[4.5rem] overflow-hidden border-b border-line transition-colors hover:bg-highlight/60",
+                  "h-[72px] max-h-[72px] overflow-hidden shadow-[inset_0_-1px_0_0_var(--border-subtle)] transition-colors hover:bg-highlight/60",
                   onRowClick ? "cursor-pointer" : undefined,
                 )}
                 data-dashboard-row
@@ -113,13 +113,13 @@ export function DataTable<T extends { id: string | number }>({
                 tabIndex={onRowClick ? 0 : undefined}
               >
                 {columns.map((column) => (
-                  <td className={classNames("overflow-hidden px-3 py-2 align-middle", column.className)} key={column.id}>
+                  <td className={classNames("h-[72px] max-h-[72px] overflow-hidden px-3 py-0 align-middle", column.className)} key={column.id}>
                     {column.cell(row)}
                   </td>
                 ))}
                 {rowActions ? (
                   <td
-                    className="sticky end-0 bg-elevated px-3 py-2 align-middle"
+                    className="sticky end-0 h-[72px] max-h-[72px] overflow-hidden bg-elevated px-3 py-0 align-middle"
                     onClick={(event) => event.stopPropagation()}
                     style={{ width: actionsWidth, minWidth: actionsWidth }}
                   >
