@@ -157,6 +157,38 @@ test.describe("dashboard authenticated", () => {
     expect(height).toBeLessThanOrEqual(72);
   });
 
+  test("project row actions stay fully inside the table at 1440, 1024, and 768", async ({ page }) => {
+    await loginToDashboard(page);
+    for (const width of [1440, 1024, 768] as const) {
+      await setDashboardSurface(page, "ar", "light", width);
+      await page.goto("/dashboard/projects");
+      await waitReady(page);
+      const table = page.locator("[data-dashboard-table]");
+      await expect(table).toBeVisible();
+      const clipped = await table.evaluate((el) => {
+        const bounds = el.getBoundingClientRect();
+        const buttons = [...el.querySelectorAll("[data-dashboard-row-action]")];
+        if (buttons.length === 0) {
+          return "no-actions";
+        }
+        const slack = 1;
+        for (const button of buttons) {
+          const box = button.getBoundingClientRect();
+          if (
+            box.left < bounds.left - slack ||
+            box.right > bounds.right + slack ||
+            box.top < bounds.top - slack ||
+            box.bottom > bounds.bottom + slack
+          ) {
+            return `${Math.round(box.left)},${Math.round(box.top)} ${Math.round(box.width)}x${Math.round(box.height)} outside ${Math.round(bounds.width)}x${Math.round(bounds.height)}`;
+          }
+        }
+        return null;
+      });
+      expect(clipped, `clipped actions at ${width}px`).toBeNull();
+    }
+  });
+
   test("KPI cards match the concept type scale at 1440 and 1024", async ({ page }) => {
     await loginToDashboard(page);
     for (const width of [1440, 1024] as const) {

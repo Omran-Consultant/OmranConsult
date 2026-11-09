@@ -17,6 +17,7 @@ export function RowActionButton({
   return (
     <button
       className={classNames(controlMdClass, "w-11 shrink-0 border-0 px-0")}
+      data-dashboard-row-action
       disabled={disabled}
       onClick={onClick}
       title={label}

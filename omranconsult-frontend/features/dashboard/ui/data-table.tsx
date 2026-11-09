@@ -13,6 +13,20 @@ export type DataTableColumn<T> = {
   minWidth?: string;
 };
 
+/** 3×44px row actions + gaps + cell padding; never shrink below this. */
+const DEFAULT_ACTIONS_WIDTH = "11rem";
+
+function cssLengthToPx(value: string | undefined): number {
+  if (!value) {
+    return 0;
+  }
+  const amount = Number.parseFloat(value);
+  if (Number.isNaN(amount)) {
+    return 0;
+  }
+  return value.endsWith("rem") ? amount * 16 : amount;
+}
+
 export function DataTable<T extends { id: string | number }>({
   columns,
   rows,
@@ -22,7 +36,7 @@ export function DataTable<T extends { id: string | number }>({
   retryLabel,
   onRetry,
   emptyTitle,
-  actionsWidth = "8.25rem",
+  actionsWidth = DEFAULT_ACTIONS_WIDTH,
   mobileCard,
   onRowClick,
 }: {
@@ -69,10 +83,17 @@ export function DataTable<T extends { id: string | number }>({
     }
   }
 
+  const minTableWidth =
+    columns.reduce((sum, column) => sum + cssLengthToPx(column.minWidth ?? column.width), 0) +
+    (rowActions ? cssLengthToPx(actionsWidth) : 0);
+
   return (
     <>
       <div className="hidden overflow-x-auto rounded-2xl border border-line bg-elevated md:block" data-dashboard-table>
-        <table className="w-full table-fixed text-start text-body-s">
+        <table
+          className="w-full table-fixed text-start text-body-s"
+          style={minTableWidth > 0 ? { minWidth: minTableWidth } : undefined}
+        >
           <thead className="sticky top-0 z-[1] bg-elevated text-caption text-muted">
             <tr className="border-b border-line">
               {columns.map((column) => (
@@ -90,7 +111,7 @@ export function DataTable<T extends { id: string | number }>({
               ))}
               {rowActions ? (
                 <th
-                  className="sticky end-0 bg-elevated px-3 py-2.5 font-medium"
+                  className="sticky end-0 z-[2] bg-elevated px-2 py-2.5 font-medium pe-3"
                   scope="col"
                   style={{ width: actionsWidth, minWidth: actionsWidth }}
                 >
@@ -103,7 +124,7 @@ export function DataTable<T extends { id: string | number }>({
             {rows.map((row) => (
               <tr
                 className={classNames(
-                  "h-[72px] max-h-[72px] overflow-hidden shadow-[inset_0_-1px_0_0_var(--border-subtle)] transition-colors hover:bg-highlight/60",
+                  "h-[72px] max-h-[72px] shadow-[inset_0_-1px_0_0_var(--border-subtle)] transition-colors hover:bg-highlight/60",
                   onRowClick ? "cursor-pointer" : undefined,
                 )}
                 data-dashboard-row
@@ -119,11 +140,11 @@ export function DataTable<T extends { id: string | number }>({
                 ))}
                 {rowActions ? (
                   <td
-                    className="sticky end-0 h-[72px] max-h-[72px] overflow-hidden bg-elevated px-3 py-0 align-middle"
+                    className="sticky end-0 z-[2] h-[72px] max-h-[72px] overflow-visible bg-elevated px-2 py-0 pe-3 align-middle"
                     onClick={(event) => event.stopPropagation()}
                     style={{ width: actionsWidth, minWidth: actionsWidth }}
                   >
-                    <div className="flex items-center justify-end gap-1">{rowActions(row)}</div>
+                    <div className="flex w-full flex-nowrap items-center justify-end gap-1">{rowActions(row)}</div>
                   </td>
                 ) : null}
               </tr>

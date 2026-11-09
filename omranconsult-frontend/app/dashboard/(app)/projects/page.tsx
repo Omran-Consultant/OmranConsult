@@ -268,7 +268,6 @@ export default function ProjectsListPage() {
       </FilterBar>
       {view === "table" ? (
         <DataTable
-          actionsWidth="8.25rem"
           columns={columns}
           emptyTitle={t("empty")}
           loading={!loaded}
