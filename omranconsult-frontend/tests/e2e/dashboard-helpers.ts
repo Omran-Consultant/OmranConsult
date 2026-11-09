@@ -1,8 +1,32 @@
 import { expect, type Page } from "@playwright/test";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { artisan } from "./artisan";
+
+export const DASHBOARD_SHOTS = path.join(process.cwd(), "..", "review-shots", "dashboard", "5A");
+export const SURFACE_WIDTHS = [1440, 1024, 768, 390] as const;
+export const SURFACE_LOCALES = ["ar", "en"] as const;
+export const SURFACE_THEMES = ["light", "dark"] as const;
+
+export async function setDashboardSurface(
+  page: Page,
+  locale: (typeof SURFACE_LOCALES)[number],
+  theme: (typeof SURFACE_THEMES)[number],
+  width: (typeof SURFACE_WIDTHS)[number],
+) {
+  await page.setViewportSize({ width, height: width <= 390 ? 844 : 900 });
+  await page.context().addCookies([
+    { name: "DASHBOARD_LOCALE", value: locale, url: "http://localhost:3000" },
+    { name: "oc-theme", value: theme, url: "http://localhost:3000" },
+  ]);
+}
+
+export async function captureReady(page: Page, name: string) {
+  await waitReady(page);
+  mkdirSync(DASHBOARD_SHOTS, { recursive: true });
+  await page.screenshot({ path: path.join(DASHBOARD_SHOTS, `${name}.png`), fullPage: true });
+}
 
 export function adminCredentials(): { email: string; password: string } {
   const email = process.env.E2E_ADMIN_EMAIL;
