@@ -222,8 +222,10 @@ export async function adminMediaItem(id: number): Promise<{
   data: {
     id: number;
     url: string;
+    path: string;
     original_filename: string | null;
     mime_type: string;
+    size_bytes: number | null;
     alt: { ar?: string | null; en?: string | null } | null;
     caption: { ar?: string | null; en?: string | null } | null;
     references: { type: string; id: number; field: string }[];
