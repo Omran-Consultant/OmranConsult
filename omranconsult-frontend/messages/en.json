@@ -314,6 +314,8 @@
       "inviteInvalid": "This invitation is invalid or has expired.",
       "back": "Back to the website",
       "backLogin": "Back to sign in",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
       "theme": "Toggle theme"
     },
     "home": {

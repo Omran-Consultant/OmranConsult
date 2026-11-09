@@ -20,6 +20,7 @@ import { DotsThree } from "@phosphor-icons/react/dist/ssr/DotsThree";
 import { Drone } from "@phosphor-icons/react/dist/ssr/Drone";
 import { Envelope } from "@phosphor-icons/react/dist/ssr/Envelope";
 import { Eye } from "@phosphor-icons/react/dist/ssr/Eye";
+import { EyeSlash } from "@phosphor-icons/react/dist/ssr/EyeSlash";
 import { File } from "@phosphor-icons/react/dist/ssr/File";
 import { Fingerprint } from "@phosphor-icons/react/dist/ssr/Fingerprint";
 import { Funnel } from "@phosphor-icons/react/dist/ssr/Funnel";
@@ -31,6 +32,7 @@ import { HardHat } from "@phosphor-icons/react/dist/ssr/HardHat";
 import { Image } from "@phosphor-icons/react/dist/ssr/Image";
 import { Jeep } from "@phosphor-icons/react/dist/ssr/Jeep";
 import { Link } from "@phosphor-icons/react/dist/ssr/Link";
+import { Lock } from "@phosphor-icons/react/dist/ssr/Lock";
 import { List } from "@phosphor-icons/react/dist/ssr/List";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
 import { MapPin } from "@phosphor-icons/react/dist/ssr/MapPin";
@@ -43,6 +45,7 @@ import { Phone } from "@phosphor-icons/react/dist/ssr/Phone";
 import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
 import { Printer } from "@phosphor-icons/react/dist/ssr/Printer";
 import { Quotes } from "@phosphor-icons/react/dist/ssr/Quotes";
+import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
 import { SignOut } from "@phosphor-icons/react/dist/ssr/SignOut";
 import { SquaresFour } from "@phosphor-icons/react/dist/ssr/SquaresFour";
 import { Stack } from "@phosphor-icons/react/dist/ssr/Stack";
@@ -85,6 +88,7 @@ const ICONS = {
   drone: Drone,
   edit: PencilSimple,
   eye: Eye,
+  "eye-slash": EyeSlash,
   file: File,
   filter: Funnel,
   fingerprint: Fingerprint,
@@ -99,6 +103,7 @@ const ICONS = {
   layers: Stack,
   link: Link,
   list: List,
+  lock: Lock,
   logout: SignOut,
   mail: Envelope,
   menu: List,
@@ -110,6 +115,7 @@ const ICONS = {
   printer: Printer,
   quote: Quotes,
   search: MagnifyingGlass,
+  "shield-check": ShieldCheck,
   send: PaperPlaneTilt,
   sun: Sun,
   target: Target,

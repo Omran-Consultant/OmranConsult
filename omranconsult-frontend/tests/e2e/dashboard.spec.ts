@@ -41,8 +41,8 @@ test.describe("dashboard isolation", () => {
     await page.waitForURL(/\/dashboard\/login/);
     expect(page.url()).toContain("next=");
     await page.goto("/dashboard/login?next=//evil.com");
-    await page.getByLabel(/البريد|Email/i).fill(email);
-    await page.getByLabel(/كلمة المرور|Password/i).first().fill(password);
+    await page.locator("#email").fill(email);
+    await page.locator("#password").fill(password);
     await page.getByRole("button", { name: /دخول|Sign in/i }).click();
     await page.waitForURL((url) => url.pathname === "/dashboard");
     expect(page.url()).not.toMatch(/evil\.com/);
@@ -74,8 +74,8 @@ test.describe("dashboard isolation", () => {
 
   test("invalid credentials, forgot password, reset and invite screens", async ({ page }) => {
     await page.goto("/dashboard/login");
-    await page.getByLabel(/البريد|Email/i).fill("nobody@example.com");
-    await page.getByLabel(/كلمة المرور|Password/i).first().fill("wrong-password");
+    await page.locator("#email").fill("nobody@example.com");
+    await page.locator("#password").fill("wrong-password");
     await page.getByRole("button", { name: /دخول|Sign in/i }).click();
     await expect(page.getByText(/غير صحيحة|incorrect/i)).toBeVisible();
     await shot(page, "login-ar-light-invalid-1440");
@@ -193,8 +193,8 @@ test.describe("dashboard authenticated", () => {
     await inviteAndAccept(page, "E2E Lockout", email, throwawayPassword);
     await page.goto("/dashboard/login");
     for (let attempt = 0; attempt < 5; attempt += 1) {
-      await page.getByLabel(/البريد|Email/i).fill(email);
-      await page.getByLabel(/كلمة المرور|Password/i).first().fill("wrong-password");
+      await page.locator("#email").fill(email);
+      await page.locator("#password").fill("wrong-password");
       await page.getByRole("button", { name: /دخول|Sign in/i }).click();
       if (attempt < 4) {
         await expect(page.getByText(/غير صحيحة|incorrect/i)).toBeVisible();
@@ -203,8 +203,8 @@ test.describe("dashboard authenticated", () => {
     await expect(page.getByText(/دقيقة|minutes/i)).toBeVisible();
     await shot(page, "login-ar-light-locked-1440");
     artisan(["cache:clear"]);
-    await page.getByLabel(/البريد|Email/i).fill(email);
-    await page.getByLabel(/كلمة المرور|Password/i).first().fill(throwawayPassword);
+    await page.locator("#email").fill(email);
+    await page.locator("#password").fill(throwawayPassword);
     await page.getByRole("button", { name: /دخول|Sign in/i }).click();
     await expect(page.getByText(/دقيقة|minutes/i)).toBeVisible();
     await expect(page).toHaveURL(/\/dashboard\/login/);

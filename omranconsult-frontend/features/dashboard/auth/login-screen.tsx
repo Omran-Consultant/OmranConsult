@@ -7,8 +7,9 @@ import { useState } from "react";
 
 import { useTheme } from "@/core/theme/theme-provider";
 import { Button } from "@/core/ui/button";
+import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
-import { InputField } from "@/core/ui/input-field";
+import { AuthField } from "@/features/dashboard/auth/auth-field";
 import { persistDashboardLocale, safeDashboardNext } from "@/features/dashboard/i18n/locale";
 import { BrandLogo } from "@/features/layout/components/brand-logo";
 import { adminForgotPassword, adminLogin, adminLoginMfa } from "@/lib/api/admin-browser";
@@ -91,7 +92,7 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-base text-primary">
+    <div className="relative min-h-screen overflow-hidden bg-base text-primary" data-ready="true">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_45%_at_85%_0%,rgb(14_132_66_/_0.16),transparent_70%),radial-gradient(45%_50%_at_10%_100%,rgb(27_61_101_/_0.16),transparent_70%),linear-gradient(rgb(12_27_48_/_0.05)_1px,transparent_1px),linear-gradient(90deg,rgb(12_27_48_/_0.05)_1px,transparent_1px)] bg-[length:auto,auto,48px_48px,48px_48px] [mask-image:radial-gradient(70%_70%_at_50%_45%,#000_40%,transparent_100%)]"
@@ -118,11 +119,42 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
                 <h1 className="font-display text-h3">{t("title")}</h1>
                 <p className="mt-2 text-body-s text-secondary">{t("subtitle")}</p>
               </div>
-              <InputField autoComplete="username" id="email" label={t("email")} onChange={(event) => setEmail(event.target.value)} required type="email" value={email} />
-              <InputField autoComplete="current-password" id="password" label={t("password")} onChange={(event) => setPassword(event.target.value)} required type="password" value={password} />
+              <AuthField
+                autoComplete="username"
+                icon="mail"
+                id="email"
+                label={t("email")}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                type="email"
+                value={email}
+              />
+              <AuthField
+                autoComplete="current-password"
+                icon="lock"
+                id="password"
+                label={t("password")}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                type="password"
+                value={password}
+              />
               <div className="flex items-center justify-between gap-3 text-body-s">
-                <label className="flex items-center gap-2">
-                  <input checked={remember} onChange={(event) => setRemember(event.target.checked)} type="checkbox" />
+                <label className="flex items-center gap-2 rounded-sm text-secondary has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent">
+                  <span
+                    className={classNames(
+                      "grid size-[18px] place-items-center rounded-[5px] border",
+                      remember ? "border-accent-strong bg-accent-strong text-white" : "border-line-strong bg-white",
+                    )}
+                  >
+                    {remember ? <Icon className="size-3" name="check" /> : null}
+                  </span>
+                  <input
+                    checked={remember}
+                    className="sr-only"
+                    onChange={(event) => setRemember(event.target.checked)}
+                    type="checkbox"
+                  />
                   {t("remember")}
                 </label>
                 <button className="text-accent" onClick={() => setMode("forgot")} type="button">
@@ -130,11 +162,11 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
                 </button>
               </div>
               {error ? <p className="text-body-s text-danger">{error}</p> : null}
-              <Button loading={loading} type="submit">
+              <Button arrow className="h-[52px] rounded-xl!" loading={loading} type="submit">
                 {t("submit")}
               </Button>
               <p className="flex items-center gap-2 text-caption text-muted">
-                <Icon name="fingerprint" />
+                <Icon name="shield-check" />
                 {t("lockNote")}
               </p>
             </form>
@@ -142,8 +174,9 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
           {mode === "mfa" ? (
             <form className="flex flex-col gap-5" onSubmit={(event) => void submitMfa(event)}>
               <h1 className="font-display text-h3">{t("mfaTitle")}</h1>
-              <InputField
+              <AuthField
                 autoComplete="one-time-code"
+                icon="shield-check"
                 id="mfa"
                 inputMode="numeric"
                 label={recovery ? t("recovery") : t("code")}
@@ -155,7 +188,7 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
                 {recovery ? t("useApp") : t("useRecovery")}
               </button>
               {error ? <p className="text-body-s text-danger">{error}</p> : null}
-              <Button loading={loading} type="submit">
+              <Button arrow className="h-[52px] rounded-xl!" loading={loading} type="submit">
                 {t("submit")}
               </Button>
             </form>
@@ -163,8 +196,16 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
           {mode === "forgot" ? (
             <form className="flex flex-col gap-5" onSubmit={(event) => void submitForgot(event)}>
               <h1 className="font-display text-h3">{t("forgotTitle")}</h1>
-              <InputField id="forgot-email" label={t("email")} onChange={(event) => setEmail(event.target.value)} required type="email" value={email} />
-              <Button loading={loading} type="submit">
+              <AuthField
+                icon="mail"
+                id="forgot-email"
+                label={t("email")}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                type="email"
+                value={email}
+              />
+              <Button arrow className="h-[52px] rounded-xl!" loading={loading} type="submit">
                 {t("sendReset")}
               </Button>
               <button className="text-body-s text-accent" onClick={() => setMode("login")} type="button">
@@ -181,7 +222,8 @@ export function LoginScreen({ locale }: { locale: AppLocale }) {
             </div>
           ) : null}
         </section>
-        <Link className="text-body-s text-accent" href="/en">
+        <Link className="inline-flex items-center gap-1.5 text-body-s text-accent" href="/en">
+          <Icon name="arrow" />
           {t("back")}
         </Link>
       </main>

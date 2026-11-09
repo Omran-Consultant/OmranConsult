@@ -25,8 +25,8 @@ export async function waitReady(page: Page) {
 
 export async function loginAs(page: Page, email: string, password: string) {
   await page.goto("/dashboard/login");
-  await page.getByLabel(/البريد|Email/i).fill(email);
-  await page.getByLabel(/كلمة المرور|Password/i).first().fill(password);
+  await page.locator("#email").fill(email);
+  await page.locator("#password").fill(password);
   await page.getByRole("button", { name: /دخول|Sign in/i }).click();
 }
 
