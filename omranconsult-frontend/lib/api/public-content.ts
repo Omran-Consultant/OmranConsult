@@ -53,6 +53,15 @@ function withLocaleHeaders(locale: AppLocale): HeadersInit {
   };
 }
 
+/** Tag the fetch Data Cache with the same tags as `"use cache"`, or `revalidateTag` only expires the function cache and this layer keeps serving the previous API JSON. */
+function taggedCache(locale: AppLocale, tags: string[]) {
+  return {
+    headers: withLocaleHeaders(locale),
+    cache: "force-cache" as const,
+    next: { tags },
+  };
+}
+
 function buildProjectsQuery(query: ProjectsQuery = {}): string {
   const params = new URLSearchParams();
 
@@ -88,10 +97,7 @@ export async function fetchPublicSettings(locale: AppLocale) {
   cacheTag("settings", "footer");
 
   return settingsResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/settings", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/settings", taggedCache(locale, ["settings", "footer"])),
   );
 }
 
@@ -101,10 +107,7 @@ export async function fetchPublicHome(locale: AppLocale) {
   cacheTag("home");
 
   return homeResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/home", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/home", taggedCache(locale, ["home"])),
   );
 }
 
@@ -113,19 +116,17 @@ export type PublicPageKey = "home" | "about" | "services" | "projects" | "contac
 export async function fetchPublicPage(locale: AppLocale, page: PublicPageKey) {
   "use cache";
   cacheLife("hours");
-  cacheTag("pages", `pages:${page}`);
+  const tags = ["pages", `pages:${page}`];
   if (page === "contact") {
-    cacheTag("contact");
+    tags.push("contact");
   }
   if (page === "layout") {
-    cacheTag("footer");
+    tags.push("footer");
   }
+  cacheTag(...tags);
 
   return pageResponseSchema.parse(
-    await serverApiRequest<unknown>(`/api/pages/${page}`, {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>(`/api/pages/${page}`, taggedCache(locale, tags)),
   );
 }
 
@@ -135,10 +136,7 @@ export async function fetchPublicServices(locale: AppLocale) {
   cacheTag("services");
 
   return servicesResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/services", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/services", taggedCache(locale, ["services"])),
   );
 }
 
@@ -148,10 +146,7 @@ export async function fetchPublicProjects(locale: AppLocale, query?: ProjectsQue
   cacheTag("projects");
 
   return projectsIndexResponseSchema.parse(
-    await serverApiRequest<unknown>(`/api/projects${buildProjectsQuery(query)}`, {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>(`/api/projects${buildProjectsQuery(query)}`, taggedCache(locale, ["projects"])),
   );
 }
 
@@ -162,10 +157,7 @@ export async function fetchPublicProjectBySlug(locale: AppLocale, slug: string) 
   cacheTag(`project:${slug}`);
 
   const payload = await nullOnNotFound(
-    serverApiRequest<unknown>(`/api/projects/${slug}`, {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    serverApiRequest<unknown>(`/api/projects/${slug}`, taggedCache(locale, ["projects", `project:${slug}`])),
   );
   return payload === null ? null : projectDetailResponseSchema.parse(payload);
 }
@@ -189,10 +181,7 @@ export async function fetchPublicClients(locale: AppLocale) {
   cacheTag("clients");
 
   return clientsResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/clients", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/clients", taggedCache(locale, ["clients"])),
   );
 }
 
@@ -202,10 +191,7 @@ export async function fetchPublicRegions(locale: AppLocale) {
   cacheTag("regions");
 
   return regionsResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/regions", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/regions", taggedCache(locale, ["regions"])),
   );
 }
 
@@ -215,10 +201,7 @@ export async function fetchPublicExperts(locale: AppLocale) {
   cacheTag("team");
 
   return expertsResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/experts", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/experts", taggedCache(locale, ["team"])),
   );
 }
 
@@ -228,10 +211,7 @@ export async function fetchPublicOrgChart(locale: AppLocale) {
   cacheTag("team");
 
   return orgChartResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/org-chart", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/org-chart", taggedCache(locale, ["team"])),
   );
 }
 
@@ -241,10 +221,7 @@ export async function fetchPublicDocuments(locale: AppLocale, kind?: "iso_certif
   cacheTag("documents");
 
   return documentsResponseSchema.parse(
-    await serverApiRequest<unknown>(kind ? `/api/documents?kind=${kind}` : "/api/documents", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>(kind ? `/api/documents?kind=${kind}` : "/api/documents", taggedCache(locale, ["documents"])),
   );
 }
 
@@ -254,10 +231,7 @@ export async function fetchPublicPartners(locale: AppLocale) {
   cacheTag("partners");
 
   return partnersResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/partners", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/partners", taggedCache(locale, ["partners"])),
   );
 }
 
@@ -267,10 +241,7 @@ export async function fetchPublicSectors(locale: AppLocale) {
   cacheTag("sectors");
 
   return sectorsResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/sectors", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/sectors", taggedCache(locale, ["sectors"])),
   );
 }
 
@@ -305,10 +276,7 @@ export async function fetchPublicNewsCategories(locale: AppLocale) {
   cacheTag("news");
 
   return newsCategoriesResponseSchema.parse(
-    await serverApiRequest<unknown>("/api/news-categories", {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>("/api/news-categories", taggedCache(locale, ["news"])),
   );
 }
 
@@ -318,10 +286,7 @@ export async function fetchPublicNews(locale: AppLocale, query?: NewsQuery) {
   cacheTag("news");
 
   return newsIndexResponseSchema.parse(
-    await serverApiRequest<unknown>(`/api/news${buildNewsQuery(query)}`, {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    await serverApiRequest<unknown>(`/api/news${buildNewsQuery(query)}`, taggedCache(locale, ["news"])),
   );
 }
 
@@ -332,10 +297,10 @@ export async function fetchPublicNewsPost(locale: AppLocale, slug: string) {
   cacheTag(`news:${slug}`);
 
   const payload = await nullOnNotFound(
-    serverApiRequest<unknown>(`/api/news/${encodeURIComponent(slug)}`, {
-      headers: withLocaleHeaders(locale),
-      cache: "force-cache",
-    }),
+    serverApiRequest<unknown>(
+      `/api/news/${encodeURIComponent(slug)}`,
+      taggedCache(locale, ["news", `news:${slug}`]),
+    ),
   );
   return payload === null ? null : newsDetailResponseSchema.parse(payload);
 }

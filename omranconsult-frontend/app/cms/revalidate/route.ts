@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -13,6 +13,27 @@ function secretMatches(provided: string | null, expected: string): boolean {
     return false;
   }
   return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
+}
+
+function pathsForTag(tag: string): string[] {
+  if (tag === "home") {
+    return ["/ar", "/en"];
+  }
+  if (tag === "projects") {
+    return ["/ar/projects", "/en/projects"];
+  }
+  if (tag === "news") {
+    return ["/ar/media", "/en/media"];
+  }
+  const project = /^project:(.+)$/.exec(tag);
+  if (project) {
+    return [`/ar/projects/${project[1]}`, `/en/projects/${project[1]}`];
+  }
+  const news = /^news:(.+)$/.exec(tag);
+  if (news) {
+    return [`/ar/media/${news[1]}`, `/en/media/${news[1]}`];
+  }
+  return [];
 }
 
 export async function POST(request: Request) {
@@ -36,6 +57,9 @@ export async function POST(request: Request) {
     // CMS publish must not serve the previous page. `max` is stale-while-revalidate
     // for up to a year; expire 0 blocks until the tagged cache is rebuilt.
     revalidateTag(tag, { expire: 0 });
+    for (const path of pathsForTag(tag)) {
+      revalidatePath(path);
+    }
   }
 
   return NextResponse.json({ revalidated: parsed.data.tags });

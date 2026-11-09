@@ -301,6 +301,7 @@ test.describe("dashboard authenticated", () => {
     await expect(preview.locator("[data-preview-banner]")).toBeVisible();
     await expect(preview.getByRole("heading").first()).toContainText(marker);
     await preview.close();
+    await page.request.get("/cms/preview/exit");
 
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).first().click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
