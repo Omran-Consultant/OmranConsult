@@ -36,7 +36,12 @@ export default function UsersPage() {
   }
 
   useEffect(() => {
-    void load();
+    void adminUsers().then((payload) => {
+      setUsers(payload.data);
+      setInvitations(payload.invitations);
+      setCounts(payload.role_counts);
+      setLoaded(true);
+    });
   }, []);
 
   async function invite(event: React.FormEvent) {

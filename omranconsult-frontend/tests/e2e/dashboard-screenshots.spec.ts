@@ -4,7 +4,6 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
-  adminCredentials,
   captureReady,
   DASHBOARD_SHOTS,
   editorCredentials,
