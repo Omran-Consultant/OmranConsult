@@ -191,31 +191,31 @@ export default function MediaPage() {
           const used = item.references.length;
           const image = item.mime_type.startsWith("image/");
           return (
-            <li key={item.id}>
+            <li className="h-full" key={item.id}>
               <button
-                className="flex w-full flex-col overflow-hidden rounded-xl border border-line bg-elevated text-start"
+                className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-line bg-elevated text-start"
                 data-media-item
                 onClick={() => void open(item.id)}
                 type="button"
               >
-                <span className="grid aspect-video place-items-center bg-highlight">
+                <span className="relative aspect-[4/3] w-full shrink-0 bg-highlight">
                   {image ? (
                     // Dashboard library thumbs are untrusted CMS URLs; a plain img avoids next/image remote config.
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img alt="" className="size-full object-cover" src={mediaThumb(item)} />
+                    <img alt="" className="absolute inset-0 size-full object-contain" src={mediaThumb(item)} />
                   ) : (
-                    <span className="text-caption text-muted">{typeBadge(item.mime_type)}</span>
+                    <span className="absolute inset-0 grid place-items-center text-caption text-muted">{typeBadge(item.mime_type)}</span>
                   )}
                 </span>
-                <span className="flex flex-col gap-1 p-2">
-                  <span className="truncate text-caption font-medium">{name}</span>
-                  <span className="flex flex-wrap gap-1">
-                    <span className="rounded-full bg-highlight px-2 py-0.5 text-[11px] text-secondary">
+                <span className="flex min-h-[3.25rem] flex-col justify-between gap-1 p-2">
+                  <span className="block truncate text-caption leading-5 font-medium">{name}</span>
+                  <span className="flex h-6 min-h-6 items-center gap-1 overflow-hidden">
+                    <span className="shrink-0 rounded-full bg-highlight px-2 py-0.5 text-[11px] leading-4 text-secondary">
                       {typeBadge(item.mime_type)}
                       {item.size_bytes ? ` · ${formatBytes(item.size_bytes, locale)}` : ""}
                     </span>
                     {used > 0 ? (
-                      <span className="rounded-full bg-tint px-2 py-0.5 text-[11px] text-accent">{t("usedIn", { n: used })}</span>
+                      <span className="truncate rounded-full bg-tint px-2 py-0.5 text-[11px] leading-4 text-accent">{t("usedIn", { n: used })}</span>
                     ) : null}
                   </span>
                 </span>

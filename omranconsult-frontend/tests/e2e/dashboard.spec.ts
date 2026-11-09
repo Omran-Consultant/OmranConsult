@@ -189,6 +189,30 @@ test.describe("dashboard authenticated", () => {
     }
   });
 
+  test("media library tiles share one height per row at 1440", async ({ page }) => {
+    await loginToDashboard(page);
+    await setDashboardSurface(page, "ar", "light", 1440);
+    await page.goto("/dashboard/media");
+    await waitReady(page);
+    const tiles = page.locator("[data-media-item]");
+    await expect(tiles.first()).toBeVisible();
+    const spread = await tiles.evaluateAll((nodes) => {
+      const rows = new Map<number, number[]>();
+      for (const node of nodes) {
+        const box = node.getBoundingClientRect();
+        const top = Math.round(box.top);
+        const heights = rows.get(top) ?? [];
+        heights.push(Math.round(box.height));
+        rows.set(top, heights);
+      }
+      return [...rows.values()].map((heights) => Math.max(...heights) - Math.min(...heights));
+    });
+    expect(spread.length).toBeGreaterThan(0);
+    for (const delta of spread) {
+      expect(delta).toBeLessThanOrEqual(1);
+    }
+  });
+
   test("KPI cards match the concept type scale at 1440 and 1024", async ({ page }) => {
     await loginToDashboard(page);
     for (const width of [1440, 1024] as const) {
