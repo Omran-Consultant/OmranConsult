@@ -3,13 +3,13 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/core/ui/button";
 import { Icon } from "@/core/ui/icon";
 import { labelRole } from "@/features/dashboard/labels";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
+import { ActionMenu } from "@/features/dashboard/ui/action-menu";
 import { Avatar } from "@/features/dashboard/ui/avatar";
-import { controlMdClass } from "@/features/dashboard/ui/control-styles";
-import { DashboardTextField, DashboardSelect } from "@/features/dashboard/ui/dashboard-field";
+import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
+import { DashboardSwitch, DashboardTextField, DashboardSelect } from "@/features/dashboard/ui/dashboard-field";
 import { DataTable } from "@/features/dashboard/ui/data-table";
 import { Drawer } from "@/features/dashboard/ui/drawer";
 import { PageHeader } from "@/features/dashboard/ui/page-header";
@@ -56,7 +56,10 @@ export default function UsersPage() {
   }
 
   useEffect(() => {
-    void load();
+    const handle = window.setTimeout(() => {
+      void load();
+    }, 0);
+    return () => window.clearTimeout(handle);
   }, []);
 
   async function invite(event: React.FormEvent) {
@@ -69,20 +72,21 @@ export default function UsersPage() {
     await load();
   }
 
+  const lastSuperAdmin = (counts.super_admin ?? 0) <= 1;
   const rows = [
     ...users.map((user) => ({ kind: "user" as const, id: `u-${user.id}`, user })),
-    ...invitations.map((invite) => ({ kind: "invite" as const, id: `i-${invite.id}`, invite })),
+    ...invitations.map((inviteRow) => ({ kind: "invite" as const, id: `i-${inviteRow.id}`, invite: inviteRow })),
   ];
 
   return (
     <div className="space-y-6" data-dashboard-toolbar data-ready="true">
       <PageHeader
         actions={
-          <Button onClick={() => setDrawerOpen(true)} type="button">
-            <Icon name="plus" />
+          <DashboardButton icon={<Icon name="plus" />} onClick={() => setDrawerOpen(true)} type="button">
             {t("inviteUser")}
-          </Button>
+          </DashboardButton>
         }
+        subtitle={t("subtitle")}
         title={t("title")}
       />
       <div className="grid gap-4 sm:grid-cols-2">
@@ -91,7 +95,7 @@ export default function UsersPage() {
             <span className="mb-2 inline-block size-2 rounded-full" style={{ background: ROLE_META[roleKey].color }} />
             <h2 className="text-h5">{labelRole(roleKey, locale)}</h2>
             <p className="mt-1 text-body-s text-muted">{t(ROLE_META[roleKey].descriptionKey)}</p>
-            <p className="mt-3 font-display text-h3">{counts[roleKey] ?? 0}</p>
+            <p className="mt-3 font-display text-h3 tabular-nums">{counts[roleKey] ?? 0}</p>
           </article>
         ))}
       </div>
@@ -123,6 +127,7 @@ export default function UsersPage() {
           {
             id: "role",
             header: t("role"),
+            width: "140px",
             cell: (row) => (
               <RoleBadge locale={locale} role={row.kind === "user" ? row.user.roles[0] ?? "editor" : row.invite.role} />
             ),
@@ -130,28 +135,31 @@ export default function UsersPage() {
           {
             id: "department",
             header: t("department"),
+            width: "140px",
             cell: (row) => (row.kind === "user" ? row.user.department ?? "—" : "—"),
           },
           {
             id: "lastLogin",
             header: t("lastLogin"),
+            width: "140px",
             cell: (row) =>
               row.kind === "user" ? <RelativeTime locale={locale} value={row.user.last_login_at} /> : "—",
           },
           {
             id: "status",
             header: t("status"),
+            width: "140px",
             cell: (row) =>
               row.kind === "user" ? (
-                <label className="flex items-center gap-2 text-body-s">
-                  <input
-                    checked={row.user.is_active}
-                    className="size-5 accent-accent"
-                    onChange={() => void adminPatchUser(row.user.id, { is_active: !row.user.is_active }).then(load)}
-                    type="checkbox"
-                  />
-                  {row.user.is_active ? t("active") : t("inactive")}
-                </label>
+                <DashboardSwitch
+                  checked={row.user.is_active}
+                  compact
+                  disabled={lastSuperAdmin && row.user.roles.includes("super_admin") && row.user.is_active}
+                  disabledReason={t("lastSuperAdmin")}
+                  id={`user-active-${row.user.id}`}
+                  label={row.user.is_active ? t("active") : t("inactive")}
+                  onChange={(next) => void adminPatchUser(row.user.id, { is_active: next }).then(load)}
+                />
               ) : (
                 <span className="text-muted">{t("pending")}</span>
               ),
@@ -165,14 +173,23 @@ export default function UsersPage() {
         )}
         rowActions={(row) =>
           row.kind === "user" ? (
-            <>
-              <RowActionButton label={t("resetMfa")} onClick={() => void adminResetUserMfa(row.user.id).then(load)}>
-                <Icon name="fingerprint" />
-              </RowActionButton>
-              <RowActionButton label={t("revokeSessions")} onClick={() => void adminRevokeUserSessions(row.user.id)}>
-                <Icon name="logout" />
-              </RowActionButton>
-            </>
+            <ActionMenu
+              items={[
+                {
+                  id: "mfa",
+                  label: t("resetMfa"),
+                  icon: <Icon name="fingerprint" />,
+                  onClick: () => void adminResetUserMfa(row.user.id).then(load),
+                },
+                {
+                  id: "sessions",
+                  label: t("revokeSessions"),
+                  icon: <Icon name="logout" />,
+                  onClick: () => void adminRevokeUserSessions(row.user.id),
+                },
+              ]}
+              label={t("more")}
+            />
           ) : (
             <>
               <RowActionButton label={t("resend")} onClick={() => void adminResendInvite(row.invite.id).then(load)}>
@@ -201,9 +218,7 @@ export default function UsersPage() {
             <option value="editor">{labelRole("editor", locale)}</option>
             <option value="super_admin">{labelRole("super_admin", locale)}</option>
           </DashboardSelect>
-          <Button className={controlMdClass} type="submit">
-            {t("invite")}
-          </Button>
+          <DashboardButton type="submit">{t("invite")}</DashboardButton>
         </form>
       </Drawer>
     </div>
