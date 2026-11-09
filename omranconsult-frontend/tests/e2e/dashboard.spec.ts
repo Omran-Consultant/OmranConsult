@@ -173,16 +173,21 @@ test.describe("dashboard isolation", () => {
   });
 });
 
-const adminEmail = process.env.E2E_ADMIN_EMAIL;
-const adminPassword = process.env.E2E_ADMIN_PASSWORD;
+function adminCredentials(): { email: string; password: string } {
+  const email = process.env.E2E_ADMIN_EMAIL;
+  const password = process.env.E2E_ADMIN_PASSWORD;
+  if (!email || !password) {
+    throw new Error("E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD must be set");
+  }
+  return { email, password };
+}
 
 test.describe("dashboard authenticated", () => {
-  test.skip(!adminEmail || !adminPassword, "Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD");
-
   test("login reaches the home screen", async ({ page }) => {
+    const { email, password } = adminCredentials();
     await page.goto("/dashboard/login");
-    await page.getByLabel(/البريد|Email/i).fill(adminEmail as string);
-    await page.getByLabel(/كلمة المرور|Password/i).first().fill(adminPassword as string);
+    await page.getByLabel(/البريد|Email/i).fill(email);
+    await page.getByLabel(/كلمة المرور|Password/i).first().fill(password);
     await page.getByRole("button", { name: /دخول|Sign in/i }).click();
     await expect(page).toHaveURL(/\/dashboard$/);
     await shot(page, "home-ar-light-1440");

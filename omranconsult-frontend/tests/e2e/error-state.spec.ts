@@ -15,7 +15,7 @@ test("localized error when the API is unreachable, and retry recovers", async ({
   });
 
   for (const locale of locales) {
-    await page.context().addCookies([{ name: "x-omran-api", value: "down", domain: "127.0.0.1", path: "/" }]);
+    await page.context().addCookies([{ name: "x-omran-api", value: "down", domain: "localhost", path: "/" }]);
     await page.goto(locale.path);
     await expect(page.getByRole("heading", { name: locale.title })).toBeVisible();
     await expect(page.getByRole("button", { name: locale.retry })).toBeVisible();
