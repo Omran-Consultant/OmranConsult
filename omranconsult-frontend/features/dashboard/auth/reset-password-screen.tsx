@@ -40,7 +40,7 @@ export function ResetPasswordScreen() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-[460px] flex-col items-center justify-center gap-6 px-5" data-ready="true">
+    <main className="mx-auto flex min-h-screen max-w-[460px] flex-col items-center justify-center gap-6 bg-canvas px-5" data-dashboard-surface data-ready="true">
       <BrandLogo alt={t("brand")} className="h-14 w-auto" surface="adaptive" />
       <section className="w-full rounded-3xl border border-line bg-elevated p-8">
         {done ? (

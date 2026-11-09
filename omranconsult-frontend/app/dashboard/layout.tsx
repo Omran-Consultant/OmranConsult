@@ -27,12 +27,12 @@ export default async function DashboardRootLayout({ children }: { children: Reac
 
   return (
     <html
-      className={`${publicFontVariables}${theme === "dark" ? " dark" : ""}`}
+      className={`${publicFontVariables} h-full bg-canvas${theme === "dark" ? " dark" : ""}`}
       dir={dir}
       lang={locale}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-base text-primary">
+      <body className="min-h-full bg-canvas text-primary">
         <Script
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
           id="theme-init"

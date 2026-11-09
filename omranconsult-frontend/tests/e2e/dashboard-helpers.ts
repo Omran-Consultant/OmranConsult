@@ -32,7 +32,16 @@ export async function setDashboardSurface(
 export async function ensureDashboardTheme(page: Page, theme: (typeof SURFACE_THEMES)[number]) {
   const isDark = await page.locator("html").evaluate((el) => el.classList.contains("dark"));
   if ((theme === "dark") !== isDark) {
-    await page.getByRole("button", { name: /تبديل السمة|Toggle theme/i }).click();
+    const toggle = page.getByRole("button", { name: /تبديل السمة|Toggle theme/i });
+    if ((await toggle.count()) > 0) {
+      await toggle.click();
+    } else {
+      await page.evaluate((next) => {
+        document.cookie = `oc-theme=${next};path=/;max-age=31536000;SameSite=Lax`;
+        localStorage.setItem("oc-theme", next);
+        document.documentElement.classList.toggle("dark", next === "dark");
+      }, theme);
+    }
   }
   await assertDashboardTheme(page, theme);
 }
@@ -44,12 +53,26 @@ export async function assertDashboardTheme(page: Page, theme: (typeof SURFACE_TH
     await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
   }
   const luminance = await page.locator("[data-dashboard-surface]").evaluate((el) => {
-    const color = getComputedStyle(el).backgroundColor;
-    const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (!match) {
-      return 255;
+    const parse = (color: string): number | null => {
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
+      if (!match) {
+        return null;
+      }
+      const alpha = match[4] === undefined ? 1 : Number(match[4]);
+      if (alpha < 0.5) {
+        return null;
+      }
+      return 0.2126 * Number(match[1]) + 0.7152 * Number(match[2]) + 0.0722 * Number(match[3]);
+    };
+    let node: Element | null = el;
+    while (node) {
+      const value = parse(getComputedStyle(node).backgroundColor);
+      if (value !== null) {
+        return value;
+      }
+      node = node.parentElement;
     }
-    return 0.2126 * Number(match[1]) + 0.7152 * Number(match[2]) + 0.0722 * Number(match[3]);
+    return -1;
   });
   if (theme === "dark") {
     expect(luminance).toBeLessThan(60);

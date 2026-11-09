@@ -81,7 +81,7 @@ export function DashboardShell({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen" data-dashboard-loading>
+      <div className="flex min-h-screen bg-canvas" data-dashboard-loading data-dashboard-surface>
         <aside className="h-screen w-[280px] shrink-0 border-e border-line bg-elevated max-lg:hidden" data-sidebar>
           <Skeleton className="h-full w-full" />
         </aside>
@@ -99,7 +99,7 @@ export function DashboardShell({
   const roleLabel = user.roles.includes("super_admin") ? t("roles.super_admin") : t("roles.editor");
 
   return (
-    <div className="min-h-screen bg-base text-primary" data-dashboard-surface>
+    <div className="min-h-screen bg-canvas text-primary" data-dashboard-surface>
       <div className="lg:flex">
         <aside
           className={classNames(
