@@ -10,6 +10,7 @@ export type DataTableColumn<T> = {
   cell: (row: T) => ReactNode;
   className?: string;
   width?: string;
+  minWidth?: string;
 };
 
 export function DataTable<T extends { id: string | number }>({
@@ -79,7 +80,10 @@ export function DataTable<T extends { id: string | number }>({
                   className={classNames("px-3 py-2.5 font-medium", column.className)}
                   key={column.id}
                   scope="col"
-                  style={column.width ? { width: column.width } : undefined}
+                  style={{
+                    width: column.width,
+                    minWidth: column.minWidth ?? column.width,
+                  }}
                 >
                   {column.header}
                 </th>
@@ -99,16 +103,17 @@ export function DataTable<T extends { id: string | number }>({
             {rows.map((row) => (
               <tr
                 className={classNames(
-                  "h-[4.5rem] max-h-[4.5rem] border-b border-line transition-colors hover:bg-highlight/60",
+                  "h-[4.5rem] max-h-[4.5rem] overflow-hidden border-b border-line transition-colors hover:bg-highlight/60",
                   onRowClick ? "cursor-pointer" : undefined,
                 )}
+                data-dashboard-row
                 key={row.id}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 onKeyDown={onRowClick ? (event) => handleRowKey(event, row) : undefined}
                 tabIndex={onRowClick ? 0 : undefined}
               >
                 {columns.map((column) => (
-                  <td className={classNames("px-3 py-2 align-middle", column.className)} key={column.id}>
+                  <td className={classNames("overflow-hidden px-3 py-2 align-middle", column.className)} key={column.id}>
                     {column.cell(row)}
                   </td>
                 ))}

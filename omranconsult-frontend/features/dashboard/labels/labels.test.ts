@@ -11,6 +11,6 @@ test("audit actions localize to Arabic sentences", () => {
 });
 
 test("status and role labels avoid raw keys in Arabic", () => {
-  assert.equal(labelContentStatus("published_with_draft", "ar"), "منشور مع تعديلات");
+  assert.equal(labelContentStatus("published_with_draft", "ar"), "تعديلات غير منشورة");
   assert.equal(labelRole("super_admin", "ar"), "مدير النظام");
 });

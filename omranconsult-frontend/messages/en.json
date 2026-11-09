@@ -540,7 +540,7 @@
       "status": {
         "draft": "Draft",
         "published": "Published",
-        "published_with_draft": "Published with unpublished edits",
+        "published_with_draft": "Unpublished changes",
         "trashed": "In trash"
       }
     }

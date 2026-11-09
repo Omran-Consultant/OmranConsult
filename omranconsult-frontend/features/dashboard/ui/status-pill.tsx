@@ -18,7 +18,7 @@ export function StatusPill({ status, locale }: { status: string; locale: AppLoca
   return (
     <span
       className={classNames(
-        "inline-flex h-[1.625rem] max-w-full items-center gap-1.5 rounded-full px-2.5 text-caption font-medium",
+        "inline-flex h-[1.625rem] max-w-full items-center gap-1.5 rounded-full px-2.5 text-caption font-medium whitespace-nowrap",
         tone,
       )}
     >

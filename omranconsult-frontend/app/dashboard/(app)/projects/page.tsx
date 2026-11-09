@@ -127,10 +127,16 @@ export default function ProjectsListPage() {
     });
   }, [items, status, sector, region, year, locale]);
 
+  const hasRegions = useMemo(
+    () => items.some((row) => (row.region_names ?? []).length > 0),
+    [items],
+  );
+
   const columns = [
     {
       id: "project",
       header: t("colProject"),
+      minWidth: "380px",
       cell: (row: AdminProjectListItem) => (
         <Link
           className="flex min-w-0 items-center gap-3"
@@ -141,8 +147,8 @@ export default function ProjectsListPage() {
         >
           <CoverThumb coverPath={row.cover_path} />
           <span className="min-w-0">
-            <span className="line-clamp-2 block font-medium">{localizedName(row.title, locale)}</span>
-            <span className="block truncate text-caption text-muted">{row.slug}</span>
+            <span className="line-clamp-2 block leading-5 font-medium">{localizedName(row.title, locale)}</span>
+            <span className="block truncate text-caption leading-4 text-muted">{row.slug}</span>
           </span>
         </Link>
       ),
@@ -168,16 +174,20 @@ export default function ProjectsListPage() {
         );
       },
     },
-    {
-      id: "regions",
-      header: t("colRegions"),
-      width: "140px",
-      cell: (row: AdminProjectListItem) => (
-        <span className="line-clamp-2">
-          {row.region_names?.map((name) => localizedName(name, locale)).join(locale === "ar" ? "، " : ", ") || "—"}
-        </span>
-      ),
-    },
+    ...(hasRegions
+      ? [
+          {
+            id: "regions",
+            header: t("colRegions"),
+            width: "140px",
+            cell: (row: AdminProjectListItem) => (
+              <span className="line-clamp-2">
+                {row.region_names?.map((name) => localizedName(name, locale)).join(locale === "ar" ? "، " : ", ") || "—"}
+              </span>
+            ),
+          },
+        ]
+      : []),
     {
       id: "updated",
       header: t("colUpdated"),
@@ -188,7 +198,7 @@ export default function ProjectsListPage() {
     {
       id: "status",
       header: t("colStatus"),
-      width: "110px",
+      width: "152px",
       cell: (row: AdminProjectListItem) => <StatusPill locale={locale} status={row.status} />,
     },
   ];

@@ -3,7 +3,7 @@ import type { AppLocale } from "@/i18n/routing";
 const AR: Record<string, string> = {
   published: "منشور",
   draft: "مسودة",
-  published_with_draft: "منشور مع تعديلات",
+  published_with_draft: "تعديلات غير منشورة",
   trashed: "في السلة",
   new: "جديد",
   read: "مقروء",
@@ -14,7 +14,7 @@ const AR: Record<string, string> = {
 const EN: Record<string, string> = {
   published: "Published",
   draft: "Draft",
-  published_with_draft: "Published with changes",
+  published_with_draft: "Unpublished changes",
   trashed: "Trashed",
   new: "New",
   read: "Read",

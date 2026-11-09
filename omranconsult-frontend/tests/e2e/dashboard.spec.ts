@@ -147,6 +147,16 @@ test.describe("dashboard authenticated", () => {
     await axeClean(page);
   });
 
+  test("project table rows stay within 72px at 1440", async ({ page }) => {
+    await loginToDashboard(page);
+    await setDashboardSurface(page, "ar", "light", 1440);
+    await page.goto("/dashboard/projects");
+    await waitReady(page);
+    const height = await page.locator("[data-dashboard-row]").first().evaluate((el) => Math.round(el.getBoundingClientRect().height));
+    expect(height).toBeGreaterThan(0);
+    expect(height).toBeLessThanOrEqual(72);
+  });
+
   test("KPI cards match the concept type scale at 1440 and 1024", async ({ page }) => {
     await loginToDashboard(page);
     for (const width of [1440, 1024] as const) {
