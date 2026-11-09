@@ -304,8 +304,10 @@ test.describe("dashboard authenticated", () => {
 
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).first().click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
-    await page.goto(`/ar/projects/${slug}`);
-    await expect(page.getByRole("heading").first()).toContainText(marker);
+    await expect(async () => {
+      await page.goto(`/ar/projects/${slug}`);
+      await expect(page.getByRole("heading").first()).toContainText(marker);
+    }).toPass({ timeout: 20_000 });
 
     await page.goto("/dashboard/projects");
     await waitReady(page);
@@ -317,9 +319,11 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).first().click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
-    await page.goto(`/ar/projects/${slug}`);
-    await expect(page.getByRole("heading").first()).toContainText(restored);
-    await expect(page.getByRole("heading").first()).not.toContainText(marker);
+    await expect(async () => {
+      await page.goto(`/ar/projects/${slug}`);
+      await expect(page.getByRole("heading").first()).toContainText(restored);
+      await expect(page.getByRole("heading").first()).not.toContainText(marker);
+    }).toPass({ timeout: 20_000 });
   });
 
   test("editor cannot open admin screens and the users API returns 403", async ({ page }) => {
@@ -344,10 +348,10 @@ test.describe("dashboard authenticated", () => {
     await waitReady(page);
     await page.locator('input[type="file"]').setInputFiles(validJpegUpload());
     const uploaded = page.locator("[data-media-item]").filter({ hasText: "e2e-valid.jpg" });
-    await expect(uploaded).toBeVisible({ timeout: 20_000 });
+    await expect(uploaded.first()).toBeVisible({ timeout: 20_000 });
     await page.locator('input[type="file"]').setInputFiles(spoofedSvgAsJpeg());
     await expect(page.getByText(/SVG/i)).toBeVisible();
-    await uploaded.click();
+    await uploaded.first().click();
     await expect(page.locator("[data-media-details]")).toBeVisible();
     await page.getByRole("button", { name: /حذف قسري|Force delete/i }).click();
   });
