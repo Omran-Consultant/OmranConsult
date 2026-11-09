@@ -121,7 +121,7 @@ export default function MediaPage() {
       <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {items.map((item) => (
           <li key={item.id}>
-            <button className="w-full rounded-xl border border-line p-2 text-start text-caption" onClick={() => void open(item.id)} type="button">
+            <button className="w-full rounded-xl border border-line p-2 text-start text-caption" data-media-item onClick={() => void open(item.id)} type="button">
               {item.original_filename ?? item.url}
             </button>
           </li>

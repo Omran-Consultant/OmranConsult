@@ -183,8 +183,9 @@ test.describe("dashboard authenticated", () => {
     await page.getByRole("button", { name: /تفعيل التطبيق|Enable authenticator/i }).click();
     const secret = (await page.locator("[data-mfa-secret]").innerText()).trim();
     expect(secret.length).toBeGreaterThan(10);
-    await page.locator("#mfa-on").fill(generateTotp(secret));
+    await page.getByRole("textbox", { name: /رمز التطبيق|Authenticator code/i }).fill(generateTotp(secret));
     await page.getByRole("button", { name: /^تأكيد$|^Confirm$/ }).click();
+    await expect(page.locator("[data-recovery-codes] li").first()).toBeVisible({ timeout: 20_000 });
     const recovery = (await page.locator("[data-recovery-codes] li").first().innerText()).trim();
     expect(recovery.length).toBeGreaterThan(4);
     await logoutDashboard(page);
@@ -246,17 +247,17 @@ test.describe("dashboard authenticated", () => {
     await expect(project).toBeVisible();
     const slug = (await project.getAttribute("data-slug")) ?? "";
     const projectId = (await project.getAttribute("data-project-id")) ?? "";
-    await project.click();
+    await page.goto(`/ar/projects/${slug}`);
+    const original = (await page.getByRole("heading").first().innerText()).replace(/\s+/g, " ").trim();
+    await page.goto(`/dashboard/projects/${projectId}`);
     await waitReady(page);
     const discard = page.getByRole("button", { name: /تجاهل التعديلات|Discard/i });
     if (await discard.count()) {
       await discard.click();
       await expect(page.locator("[data-draft-badge]")).toHaveCount(0);
     }
-    const titleInput = page.locator("#title-ar");
-    const original = await titleInput.inputValue();
     const draftTitle = `${original} مسودة-e2e`;
-    await titleInput.fill(draftTitle);
+    await page.locator("#title-ar").fill(draftTitle);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await expect(page.locator("[data-draft-badge]")).toBeVisible();
 

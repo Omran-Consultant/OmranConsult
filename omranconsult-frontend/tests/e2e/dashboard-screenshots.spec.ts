@@ -127,25 +127,24 @@ test.describe("dashboard screenshots", () => {
     await page.getByRole("button", { name: /تجاهل التعديلات|Discard/i }).click();
   });
 
-  test("media details, MFA setup, and no-permission screens", async ({ page }) => {
+  test("media details drawer", async ({ page }) => {
     await loginToDashboard(page);
-    await page.goto("/dashboard/media");
-    await waitReady(page);
-    await page.locator("ul button").first().click();
-    await expect(page.locator("[data-media-details]")).toBeVisible();
     for (const locale of SURFACE_LOCALES) {
       for (const theme of SURFACE_THEMES) {
         for (const width of SURFACE_WIDTHS) {
           await setDashboardSurface(page, locale, theme, width);
           await page.goto("/dashboard/media");
           await waitReady(page);
-          await page.locator("ul button").first().click();
+          await page.locator("[data-media-item]").first().click();
           await expect(page.locator("[data-media-details]")).toBeVisible();
           await captureReady(page, `media-details-${locale}-${theme}-${width}`);
         }
       }
     }
+  });
 
+  test("MFA setup and no-permission screens", async ({ page }) => {
+    await loginToDashboard(page);
     await page.goto("/dashboard/profile");
     await waitReady(page);
     await page.getByRole("button", { name: /تفعيل التطبيق|Enable authenticator/i }).click();

@@ -130,7 +130,7 @@ export default function ProfilePage() {
             >
               {t("enableMfa")}
             </Button>
-            {qr ? <div dangerouslySetInnerHTML={{ __html: qr }} /> : null}
+            {qr ? <div dangerouslySetInnerHTML={{ __html: qr.replace(/<\?xml[^>]*>/, "") }} /> : null}
             {secret ? (
               <p className="text-caption" data-mfa-secret>
                 {secret}
@@ -141,30 +141,32 @@ export default function ProfilePage() {
                 className="space-y-3"
                 onSubmit={(event) => {
                   event.preventDefault();
-                  void adminMfaConfirm(code).then((payload) => {
-                    setCodes(payload.recovery_codes);
-                    void refresh();
-                  });
+                  void adminMfaConfirm(code)
+                    .then((payload) => {
+                      setCodes(payload.recovery_codes);
+                      void refresh();
+                    })
+                    .catch(() => setMessage(t("mfaInvalid")));
                 }}
               >
                 <InputField id="mfa-on" label={t("code")} onChange={(event) => setCode(event.target.value)} value={code} />
                 <Button type="submit">{t("confirmMfa")}</Button>
               </form>
             ) : null}
-            {codes ? (
-              <div className="space-y-2">
-                <ul className="grid gap-1 font-mono text-body-s" data-recovery-codes>
-                  {codes.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                <a download="omranconsult-recovery-codes.txt" href={`data:text/plain,${encodeURIComponent(codes.join("\n"))}`}>
-                  {t("downloadCodes")}
-                </a>
-              </div>
-            ) : null}
           </div>
         )}
+        {codes ? (
+          <div className="space-y-2">
+            <ul className="grid gap-1 font-mono text-body-s" data-recovery-codes>
+              {codes.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <a download="omranconsult-recovery-codes.txt" href={`data:text/plain,${encodeURIComponent(codes.join("\n"))}`}>
+              {t("downloadCodes")}
+            </a>
+          </div>
+        ) : null}
       </section>
     </div>
   );

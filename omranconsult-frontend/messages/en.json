@@ -400,6 +400,7 @@
       "mfa": "Two-factor authentication",
       "enableMfa": "Enable authenticator",
       "confirmMfa": "Confirm",
+      "mfaInvalid": "That code is not valid.",
       "disableMfa": "Disable",
       "password": "Current password",
       "code": "Authenticator code",
