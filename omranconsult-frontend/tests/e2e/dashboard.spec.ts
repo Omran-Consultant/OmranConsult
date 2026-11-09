@@ -263,6 +263,7 @@ test.describe("dashboard authenticated", () => {
     const projectId = (await project.getAttribute("data-project-id")) ?? "";
     await page.goto(`/ar/projects/${slug}`);
     const original = (await page.getByRole("heading").first().innerText()).replace(/\s+/g, " ").trim();
+    const marker = `مسودة-e2e-${Date.now()}`;
     await page.goto(`/dashboard/projects/${projectId}`);
     await waitReady(page);
     const discard = page.getByRole("button", { name: /تجاهل التعديلات|Discard/i });
@@ -281,15 +282,15 @@ test.describe("dashboard authenticated", () => {
       await page.getByRole("tab").nth(1).click();
       await page.locator("#overview-en").fill("Overview for the draft e2e test", { force: true });
     }
-    const draftTitle = `${original} مسودة-e2e`;
+    const draftTitle = `${original.replace(/\s*مسودة-e2e(?:-\d+)?/g, "")} ${marker}`.trim();
     await page.getByRole("tab").nth(0).click();
     await page.locator("#title-ar").fill(draftTitle);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await expect(page.locator("[data-draft-badge]")).toBeVisible();
 
     await page.goto(`/ar/projects/${slug}`);
-    await expect(page.getByRole("heading").first()).toContainText(original);
-    await expect(page.getByRole("heading").first()).not.toContainText("مسودة-e2e");
+    await expect(page.getByRole("heading").first()).toContainText(original.replace(/\s*مسودة-e2e(?:-\d+)?/g, "").trim());
+    await expect(page.getByRole("heading").first()).not.toContainText(marker);
 
     await page.goto(`/dashboard/projects/${projectId}`);
     await waitReady(page);
@@ -298,26 +299,27 @@ test.describe("dashboard authenticated", () => {
     const preview = await popupPromise;
     await preview.waitForLoadState("domcontentloaded");
     await expect(preview.locator("[data-preview-banner]")).toBeVisible();
-    await expect(preview.getByRole("heading").first()).toContainText("مسودة-e2e");
+    await expect(preview.getByRole("heading").first()).toContainText(marker);
     await preview.close();
 
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).first().click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
     await page.goto(`/ar/projects/${slug}`);
-    await expect(page.getByRole("heading").first()).toContainText("مسودة-e2e");
+    await expect(page.getByRole("heading").first()).toContainText(marker);
 
     await page.goto("/dashboard/projects");
     await waitReady(page);
-    await page.locator(`a[data-slug="${slug}"]`).click();
+    await page.locator(`a[data-slug="${slug}"]`).first().click();
     await waitReady(page);
     await page.getByRole("tab").nth(0).click();
-    await page.locator("#title-ar").fill(original);
+    const restored = original.replace(/\s*مسودة-e2e(?:-\d+)?/g, "").trim();
+    await page.locator("#title-ar").fill(restored);
     await page.getByRole("button", { name: /حفظ المسودة|Save draft/i }).click();
     await page.getByRole("button", { name: /نشر التعديلات|Publish/i }).first().click();
     await expect(page.getByText(/نُشر\.|Published\./)).toBeVisible();
     await page.goto(`/ar/projects/${slug}`);
-    await expect(page.getByRole("heading").first()).toContainText(original);
-    await expect(page.getByRole("heading").first()).not.toContainText("مسودة-e2e");
+    await expect(page.getByRole("heading").first()).toContainText(restored);
+    await expect(page.getByRole("heading").first()).not.toContainText(marker);
   });
 
   test("editor cannot open admin screens and the users API returns 403", async ({ page }) => {
@@ -341,10 +343,11 @@ test.describe("dashboard authenticated", () => {
     await page.goto("/dashboard/media");
     await waitReady(page);
     await page.locator('input[type="file"]').setInputFiles(validJpegUpload());
-    await expect(page.getByText("e2e-valid.jpg")).toBeVisible({ timeout: 20_000 });
+    const uploaded = page.locator("[data-media-item]").filter({ hasText: "e2e-valid.jpg" });
+    await expect(uploaded).toBeVisible({ timeout: 20_000 });
     await page.locator('input[type="file"]').setInputFiles(spoofedSvgAsJpeg());
     await expect(page.getByText(/SVG/i)).toBeVisible();
-    await page.getByText("e2e-valid.jpg").click();
+    await uploaded.click();
     await expect(page.locator("[data-media-details]")).toBeVisible();
     await page.getByRole("button", { name: /حذف قسري|Force delete/i }).click();
   });
