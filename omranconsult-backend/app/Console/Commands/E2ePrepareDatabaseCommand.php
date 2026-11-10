@@ -4,7 +4,8 @@ namespace App\Console\Commands;
 
 use App\Modules\Projects\Domain\DeliveryStatus;
 use App\Modules\Projects\Infrastructure\Models\Project;
-use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\Profile\ProfileContentSeeder;
+use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
@@ -56,7 +57,9 @@ class E2ePrepareDatabaseCommand extends Command
         Artisan::call('migrate:fresh', ['--force' => true]);
         $this->output->write(Artisan::output());
 
-        $this->call(DatabaseSeeder::class);
+        // Without the demo project seeder: the layout tests rely on projects with no optional facts.
+        $this->call(SuperAdminRoleSeeder::class);
+        $this->call(ProfileContentSeeder::class);
         $this->enrichProjectDetailFixtures();
         Artisan::call('media:import-site-images');
         $this->output->write(Artisan::output());
@@ -96,5 +99,8 @@ class E2ePrepareDatabaseCommand extends Command
         Project::query()->where('slug', 'sports-facilities-efficiency-and-development')->firstOrFail()->update([
             'gallery' => ['truss', 'control'],
         ]);
+
+        Project::query()->where('slug', 'western-region-education-projects-study')->firstOrFail()
+            ->forceFill(['has_demo_content' => true])->save();
     }
 }
