@@ -92,6 +92,10 @@ test.describe("dashboard 5B-1 screenshots", () => {
               localStorage.setItem("oc-theme", next);
               document.documentElement.classList.toggle("dark", next === "dark");
             }, theme);
+            if (target.name === "public-detail" && locale === "ar" && theme === "light" && width === 1440) {
+              await expect(page.getByText("لاختبار")).toHaveCount(0);
+              await expect(page.getByRole("link", { name: "مشاريع أخرى للجهة نفسها" })).toBeVisible();
+            }
             await page.screenshot({ fullPage: true, path: path.join(SHOTS, `${target.name}-${locale}-${theme}-${width}.png`) });
           }
         }

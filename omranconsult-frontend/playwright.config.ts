@@ -23,7 +23,14 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: `npm run build && npm run start -- --hostname localhost --port ${port}`,
+    // The production build runs before global setup and keeps `.next/cache/fetch-cache`.
+    // Seed the E2E database and drop that cache first, or public pages render the previous run.
+    command: [
+      "rm -rf .next/cache/fetch-cache",
+      "php ../omranconsult-backend/artisan e2e:prepare-database",
+      "npm run build",
+      `npm run start -- --hostname localhost --port ${port}`,
+    ].join(" && "),
     url: `${origin}/en`,
     reuseExistingServer: false,
     timeout: 240_000,
