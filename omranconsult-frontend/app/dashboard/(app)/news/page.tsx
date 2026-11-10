@@ -36,7 +36,10 @@ export default function NewsListPage() {
   }
 
   useEffect(() => {
-    void reload().catch(() => setLoaded(true));
+    const handle = window.setTimeout(() => {
+      void reload().catch(() => setLoaded(true));
+    }, 0);
+    return () => window.clearTimeout(handle);
   }, []);
 
   const visible = useMemo(() => {

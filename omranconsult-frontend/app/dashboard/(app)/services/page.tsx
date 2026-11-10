@@ -47,7 +47,10 @@ export default function ServicesAdminPage() {
   }
 
   useEffect(() => {
-    void reload().catch(() => setLoaded(true));
+    const handle = window.setTimeout(() => {
+      void reload().catch(() => setLoaded(true));
+    }, 0);
+    return () => window.clearTimeout(handle);
   }, []);
 
   function kindLabel(kind: string): string {
@@ -173,7 +176,9 @@ export default function ServicesAdminPage() {
         ))}
       </section>
 
-      {tools ? <ToolsEditor onSaved={reload} setMessage={setMessage} tools={tools} /> : null}
+      {tools?.data[0] ? (
+        <ToolsEditor key={tools.data[0].id} onSaved={reload} setMessage={setMessage} tools={tools} />
+      ) : null}
     </div>
   );
 }
@@ -190,10 +195,6 @@ function ToolsEditor({
   const t = useTranslations("Dashboard.services");
   const first = tools.data[0];
   const [items, setItems] = useState(first?.payload.items ?? []);
-
-  useEffect(() => {
-    setItems(first?.payload.items ?? []);
-  }, [first]);
 
   if (!first) {
     return null;
