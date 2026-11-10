@@ -1,24 +1,27 @@
 import { getTranslations } from "next-intl/server";
 
 import { LinkButton } from "@/core/ui/button";
-import { Icon } from "@/core/ui/icon";
+import { ServiceBentoCta, ServiceBentoFeatured, ServiceBentoStandard } from "@/core/ui/service-bento-card";
 import { SectionHeader } from "@/core/ui/section-header";
 import type { IconName } from "@/core/ui/icon";
-import { ServiceCard } from "@/core/ui/service-card";
 import type { HomeView } from "@/features/home/services/home-view";
-import { Link } from "@/i18n/navigation";
 
 /** Concept order 01–06: assets, consulting, supervision, design, digital, enablement. */
 const SERVICE_ICONS = ["buildings", "hard-hat", "clipboard", "compass", "cpu", "graduation"] as const satisfies readonly IconName[];
 
-/** Home service highlights: six concept cards. One column on a phone, three from 1024 px. */
+/** Owner concept A (SITE_TWEAKS T3): four-column bento with featured service, white cards, and contact CTA. */
 export async function HomeServices({ view }: { readonly view: HomeView }) {
   const t = await getTranslations("Home");
-  const { services: copy } = view.copy;
+  const { services: copy, cta: homeCta } = view.copy;
 
   if (view.highlights.length === 0) {
     return null;
   }
+
+  const [featured, ...rest] = view.highlights;
+  const ctaTitle = homeCta.title ?? t("servicesCtaTitle");
+  const ctaText = homeCta.text_short ?? homeCta.text;
+  const ctaLink = homeCta.primary ?? t("servicesCtaLink");
 
   return (
     <section aria-labelledby="home-services-title" className="bg-surface py-16 lg:py-35" data-section="services">
@@ -39,25 +42,38 @@ export async function HomeServices({ view }: { readonly view: HomeView }) {
             </LinkButton>
           </div>
         </div>
-        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {view.highlights.map((item, index) => (
+        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:items-stretch">
+          <li className="h-full min-w-0 sm:col-span-2 xl:col-span-2" data-reveal="">
+            <ServiceBentoFeatured
+              description={featured.description}
+              href={featured.href}
+              icon={SERVICE_ICONS[0] ?? featured.icon}
+              image={featured.featuredImage ?? view.servicesFeaturedImage}
+              items={featured.capabilityItems ?? []}
+              linkLabel={t("discover")}
+              number={featured.number}
+              title={featured.title}
+            />
+          </li>
+          {rest.map((item, index) => (
             <li className="h-full min-w-0" data-reveal="" key={item.number} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
-              <ServiceCard
+              <ServiceBentoStandard
                 description={item.description}
-                featured={index === 0}
                 href={item.href}
-                icon={SERVICE_ICONS[index] ?? item.icon}
+                icon={SERVICE_ICONS[index + 1] ?? item.icon}
                 linkLabel={t("discover")}
                 number={item.number}
                 title={item.title}
               />
             </li>
           ))}
+          <li className="h-full min-w-0" data-reveal="">
+            <ServiceBentoCta description={ctaText} href="/contact" linkLabel={ctaLink} title={ctaTitle} />
+          </li>
         </ul>
-        <Link className="inline-flex items-center gap-3 self-start py-1.5 text-label-m text-accent md:hidden" href="/services">
-          <span>{t("allServices")}</span>
-          <Icon name="arrow" />
-        </Link>
+        <LinkButton arrow className="self-start md:hidden" href="/services" variant="secondary">
+          {t("allServices")}
+        </LinkButton>
       </div>
     </section>
   );

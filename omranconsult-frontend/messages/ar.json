@@ -210,6 +210,8 @@
   "Home": {
     "scroll": "SCROLL TO EXPLORE",
     "allServices": "جميع الخدمات",
+    "servicesCtaTitle": "مشروعك القادم يبدأ بحوار",
+    "servicesCtaLink": "اطلب استشارة",
     "discover": "اكتشف المزيد",
     "allProjects": "عرض جميع المشاريع",
     "allSectors": "الكل",

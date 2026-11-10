@@ -210,6 +210,8 @@
   "Home": {
     "scroll": "SCROLL TO EXPLORE",
     "allServices": "All services",
+    "servicesCtaTitle": "Your next project starts with a conversation",
+    "servicesCtaLink": "Request a consultation",
     "discover": "Discover more",
     "allProjects": "View all projects",
     "allSectors": "All",

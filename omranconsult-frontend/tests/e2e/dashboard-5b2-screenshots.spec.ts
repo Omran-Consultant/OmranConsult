@@ -34,9 +34,16 @@ test.describe("dashboard 5B-2 screenshots", () => {
 
     await page.goto("/dashboard/services");
     await waitReady(page);
-    await expect(page.locator('a[href^="/dashboard/services/categories/"]').first()).toBeVisible();
-    const categoryHref = await firstHref(page, 'a[href^="/dashboard/services/categories/"]', "/dashboard/services");
-    const itemHref = await firstHref(page, 'a[href^="/dashboard/services/items/"]', "/dashboard/services");
+    const categoryEdit = page.getByRole("button", { name: /^(Edit|تعديل)$/ }).first();
+    await expect(categoryEdit).toBeVisible();
+    await categoryEdit.click();
+    await page.waitForURL(/\/dashboard\/services\/categories\/\d+/);
+    const categoryHref = new URL(page.url()).pathname;
+    await page.goto("/dashboard/services");
+    await waitReady(page);
+    await page.getByRole("button", { name: /^(Edit|تعديل)$/ }).nth(1).click();
+    await page.waitForURL(/\/dashboard\/services\/items\/\d+/);
+    const itemHref = new URL(page.url()).pathname;
 
     await page.goto("/dashboard/news");
     await waitReady(page);

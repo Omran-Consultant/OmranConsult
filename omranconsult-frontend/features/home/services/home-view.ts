@@ -7,6 +7,7 @@ import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/featur
 import { formatStatisticValue } from "@/core/format/statistic";
 import { partnerCards } from "@/features/media/brand-logos";
 import { certificateScan } from "@/features/media/credential-scans";
+import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import { projectImage } from "@/features/projects/services/projects-view";
 import type {
   mapDocumentsToUiModel,
@@ -15,6 +16,7 @@ import type {
   mapProjectsIndexToUiModel,
   mapRegionsToUiModel,
   mapSectorsToUiModel,
+  mapServicesToUiModel,
   mapSettingsToUiModel,
 } from "@/features/public-content/services/public-content-mappers";
 import type { AppLocale } from "@/i18n/routing";
@@ -28,6 +30,7 @@ type HomeSources = {
   readonly regions: ReturnType<typeof mapRegionsToUiModel>;
   readonly certificates: ReturnType<typeof mapDocumentsToUiModel>;
   readonly partners: ReturnType<typeof mapPartnersToUiModel>;
+  readonly serviceCategories: ReturnType<typeof mapServicesToUiModel>;
 };
 
 export type HomeStat = { readonly key: string; readonly value: string; readonly label: string | undefined };
@@ -38,6 +41,7 @@ export type HomeProject = {
   readonly client?: string;
   readonly category?: string;
   readonly sectorSlug?: string;
+  readonly region?: string;
   readonly year?: number;
   readonly image: ImageAsset;
 };
@@ -48,6 +52,8 @@ export type HomeServiceHighlight = {
   readonly title: string;
   readonly description?: string;
   readonly href: string;
+  readonly capabilityItems?: readonly string[];
+  readonly featuredImage?: ImageAsset;
 };
 
 /** The five profile statistics in the profile order (Stats section). */
@@ -81,6 +87,7 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
         client: project.client?.name,
         category: project.sector ? (project.sector.name ?? sectorNames.get(project.sector.slug)) : undefined,
         sectorSlug: project.sector?.slug,
+        region: project.regions.find((entry) => entry.name)?.name,
         year: project.year,
         image: projectImage(project.imageKey, locale, {
           url: project.imageUrl,
@@ -94,15 +101,20 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
   const projects = sources.projects.filter((project) => project.title).map(toProject);
   const featured = sources.featured.filter((project) => project.title).map(toProject);
 
+  const assetCategory = sources.serviceCategories.find((category) => category.kind === "asset_management");
+  const capabilityItems = (assetCategory?.services.map((service) => service.title).filter((title): title is string => Boolean(title)) ?? []).slice(0, 3);
+  const servicesFeaturedImage = toImageAsset(SITE_IMAGES.building, locale);
+
   const highlights: HomeServiceHighlight[] = serviceHighlightsSchema
     .parse(sources.home.blocks.service_highlights ?? {})
     .items.filter((item) => item.title)
-    .map((item) => ({
+    .map((item, index) => ({
       number: item.number,
       icon: isIconName(item.icon) ? item.icon : "building",
       title: item.title as string,
       description: item.description,
       href: item.href,
+      ...(index === 0 ? { capabilityItems, featuredImage: servicesFeaturedImage } : {}),
     }));
 
   return {
@@ -112,6 +124,7 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
     stats: pick(PROFILE_STAT_KEYS),
     groupExperience: statsByKey.get("group_experience")?.value,
     highlights,
+    servicesFeaturedImage,
     sectors: HOME_SECTOR_SLUGS.map((slug) => sources.sectors.find((sector) => sector.slug === slug))
       .filter((sector): sector is { slug: string; name: string; projectsCount: number } => Boolean(sector?.name && sector.projectsCount > 0)),
     projects,
