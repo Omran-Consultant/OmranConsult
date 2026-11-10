@@ -1,3 +1,4 @@
+import { clientTiles } from "@/features/about/services/about-view";
 import { formatStats } from "@/core/format/statistic";
 import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import { PAGE_SIZE, type ProjectsFilters } from "@/features/projects/services/projects-filters";
@@ -65,7 +66,7 @@ export async function getProjectsPageData(locale: AppLocale, filters: ProjectsFi
     regions: mapRegionsToUiModel(regions)
       .filter((region) => region.name)
       .map((region) => ({ slug: region.slug, name: region.name as string })),
-    clientNames: clientModels.filter((client) => client.inClientList && client.name).map((client) => client.name as string),
+    clients: clientTiles(clientModels),
     desktopCards: cards.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
     mobileCards: cards,
     total,

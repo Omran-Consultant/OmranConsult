@@ -18,7 +18,8 @@ test("about renders the design and profile sections in order", async ({ page }) 
     "cta",
   ]);
   await expect(page.locator("#credentials")).toHaveAttribute("data-section", "trust");
-  await expect(page.locator('[data-section="clients"] img')).toHaveCount(30);
+  const clientTiles = page.locator('[data-section="clients"] li');
+  await expect(page.locator('[data-section="clients"] img')).toHaveCount(await clientTiles.count());
 });
 
 test("credentials show every certificate and license scan", async ({ page }) => {

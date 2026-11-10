@@ -62,9 +62,22 @@ export const aboutBlocksSchema = z.object({
 export type AboutBlocks = z.infer<typeof aboutBlocksSchema>;
 export type AboutCopy = z.infer<typeof aboutCopySchema>;
 
-export function clientLogos(clients: readonly { slug?: string; name?: string; inClientList: boolean; sortOrder: number }[]) {
+export type ClientTile = {
+  readonly key: string;
+  readonly name?: string;
+  readonly logo?: ReturnType<typeof getClientLogo>;
+};
+
+export function clientTiles(clients: readonly { slug?: string; name?: string; inClientList: boolean; sortOrder: number }[]): ClientTile[] {
   return clients
-    .filter((client) => client.inClientList)
-    .map((client) => ({ key: client.slug ?? `client-${client.sortOrder}`, name: client.name, logo: getClientLogo(client.slug, client.sortOrder) }))
-    .filter((client) => client.logo);
+    .filter((client) => client.inClientList && client.name)
+    .map((client) => ({
+      key: client.slug ?? `client-${client.sortOrder}`,
+      name: client.name,
+      logo: getClientLogo(client.slug, client.sortOrder),
+    }));
+}
+
+export function clientLogos(clients: readonly { slug?: string; name?: string; inClientList: boolean; sortOrder: number }[]) {
+  return clientTiles(clients).filter((client): client is ClientTile & { logo: NonNullable<ClientTile["logo"]> } => Boolean(client.logo));
 }
