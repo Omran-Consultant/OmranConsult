@@ -5,6 +5,8 @@ import { loginToDashboard, setDashboardSurface, waitReady } from "./dashboard-he
 const DASHBOARD_PAGES = [
   "/dashboard",
   "/dashboard/projects",
+  "/dashboard/services",
+  "/dashboard/news",
   "/dashboard/users",
   "/dashboard/activity",
   "/dashboard/media",
