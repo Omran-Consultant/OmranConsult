@@ -20,7 +20,27 @@ final class DashboardPermission
 
     public const SERVICES_VIEW = 'content.services.view';
 
+    public const SERVICES_CREATE = 'content.services.create';
+
+    public const SERVICES_UPDATE = 'content.services.update';
+
+    public const SERVICES_DELETE = 'content.services.delete';
+
+    public const SERVICES_PUBLISH = 'content.services.publish';
+
+    public const SERVICES_RESTORE = 'content.services.restore';
+
     public const NEWS_VIEW = 'content.news.view';
+
+    public const NEWS_CREATE = 'content.news.create';
+
+    public const NEWS_UPDATE = 'content.news.update';
+
+    public const NEWS_DELETE = 'content.news.delete';
+
+    public const NEWS_PUBLISH = 'content.news.publish';
+
+    public const NEWS_RESTORE = 'content.news.restore';
 
     public const PAGES_VIEW = 'content.pages.view';
 
@@ -96,7 +116,17 @@ final class DashboardPermission
             self::PROJECTS_PUBLISH,
             self::PROJECTS_RESTORE,
             self::SERVICES_VIEW,
+            self::SERVICES_CREATE,
+            self::SERVICES_UPDATE,
+            self::SERVICES_DELETE,
+            self::SERVICES_PUBLISH,
+            self::SERVICES_RESTORE,
             self::NEWS_VIEW,
+            self::NEWS_CREATE,
+            self::NEWS_UPDATE,
+            self::NEWS_DELETE,
+            self::NEWS_PUBLISH,
+            self::NEWS_RESTORE,
             self::PAGES_VIEW,
             self::PARTNERS_VIEW,
             self::CLIENTS_VIEW,

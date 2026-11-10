@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['slug', 'kind', 'title', 'sort_order', 'status', 'published_at'])]
+#[Fillable(['slug', 'kind', 'title', 'icon', 'sort_order', 'status', 'published_at'])]
 class ServiceCategory extends Model
 {
     use Publishable;

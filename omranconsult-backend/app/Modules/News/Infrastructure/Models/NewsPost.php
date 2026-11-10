@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * unpublished before launch.
  */
 #[Fillable([
-    'slug', 'news_category_id', 'title', 'excerpt', 'body', 'cover_image', 'author', 'tags',
-    'is_featured', 'is_demo', 'sort_order', 'status', 'published_at',
+    'slug', 'news_category_id', 'title', 'excerpt', 'body', 'cover_image', 'cover_media_id', 'author', 'tags',
+    'seo', 'og_image_media_id', 'is_featured', 'is_demo', 'sort_order', 'status', 'published_at',
 ])]
 class NewsPost extends Model
 {
@@ -30,6 +30,7 @@ class NewsPost extends Model
             'body' => 'array',
             'author' => 'array',
             'tags' => 'array',
+            'seo' => 'array',
             'is_featured' => 'boolean',
             'is_demo' => 'boolean',
         ];

@@ -14,11 +14,14 @@ class ServicesSeeder extends ProfileSeeder
 {
     public function run(): void
     {
+        $axisIcons = ['hard-hat', 'clipboard', 'chart'];
+        $axisIndex = 0;
         foreach ($this->categories() as $categoryIndex => [$slug, $kind, $titleAr, $titleEn, $services]) {
             $category = ServiceCategory::create([
                 'slug' => $slug,
                 'kind' => $kind,
                 'title' => self::t($titleAr, $titleEn),
+                'icon' => $kind === ServiceCategoryKind::Axis ? ($axisIcons[$axisIndex++] ?? null) : null,
                 'sort_order' => $categoryIndex + 1,
                 ...self::published(),
             ]);

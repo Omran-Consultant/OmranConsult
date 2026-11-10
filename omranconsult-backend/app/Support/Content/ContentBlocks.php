@@ -170,6 +170,7 @@ final class ContentBlocks
                 'style' => ($block['style'] ?? 'bullet') === 'number' ? 'number' : 'bullet',
                 'items' => self::coerceItems($block['items'] ?? []),
             ],
+            'image' => self::coerceImage($block),
             default => null,
         };
     }
@@ -181,7 +182,7 @@ final class ContentBlocks
     private static function validateBlock(array $block, string $field, bool $allowImages): array
     {
         $type = $block['type'] ?? null;
-        $allowed = ['type', 'children', 'level', 'style', 'items', 'media_id', 'alt'];
+        $allowed = ['type', 'children', 'level', 'style', 'items', 'media_id', 'alt', 'key', 'image', 'url'];
         if (array_diff(array_keys($block), $allowed) !== []) {
             throw ValidationException::withMessages([$field => ['invalid_blocks']]);
         }
@@ -220,26 +221,69 @@ final class ContentBlocks
 
     /**
      * @param  array<string, mixed>  $block
+     * @return array<string, mixed>|null
+     */
+    private static function coerceImage(array $block): ?array
+    {
+        $mediaId = $block['media_id'] ?? null;
+        $alt = is_array($block['alt'] ?? null) ? $block['alt'] : ['ar' => '', 'en' => ''];
+        if (is_int($mediaId) || is_numeric($mediaId)) {
+            return [
+                'type' => 'image',
+                'media_id' => (int) $mediaId,
+                'alt' => [
+                    'ar' => is_string($alt['ar'] ?? null) ? $alt['ar'] : '',
+                    'en' => is_string($alt['en'] ?? null) ? $alt['en'] : '',
+                ],
+                'key' => is_string($block['image'] ?? null) ? $block['image'] : (is_string($block['key'] ?? null) ? $block['key'] : null),
+            ];
+        }
+        if (is_string($block['image'] ?? null) && $block['image'] !== '') {
+            return [
+                'type' => 'image',
+                'media_id' => 0,
+                'alt' => [
+                    'ar' => is_string($alt['ar'] ?? null) ? $alt['ar'] : '',
+                    'en' => is_string($alt['en'] ?? null) ? $alt['en'] : '',
+                ],
+                'key' => $block['image'],
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $block
      * @return array<string, mixed>
      */
     private static function validateImage(array $block, string $field): array
     {
         $mediaId = $block['media_id'] ?? null;
-        $alt = $block['alt'] ?? null;
-        if (! is_int($mediaId) || ! is_array($alt)) {
+        $key = is_string($block['key'] ?? null) ? $block['key'] : (is_string($block['image'] ?? null) ? $block['image'] : null);
+        $alt = is_array($block['alt'] ?? null) ? $block['alt'] : ['ar' => '', 'en' => ''];
+        $resolvedId = is_int($mediaId) ? $mediaId : (is_numeric($mediaId) ? (int) $mediaId : 0);
+
+        if ($resolvedId <= 0 && ($key === null || $key === '')) {
             throw ValidationException::withMessages([$field => ['invalid_blocks']]);
         }
 
-        foreach (['ar', 'en'] as $locale) {
-            if (! is_string($alt[$locale] ?? null) || trim($alt[$locale]) === '') {
-                throw ValidationException::withMessages([$field => ['invalid_blocks']]);
+        if ($resolvedId > 0) {
+            foreach (['ar', 'en'] as $locale) {
+                if (! is_string($alt[$locale] ?? null) || trim((string) $alt[$locale]) === '') {
+                    throw ValidationException::withMessages([$field => ['invalid_blocks']]);
+                }
             }
         }
 
         return [
             'type' => 'image',
-            'media_id' => $mediaId,
-            'alt' => ['ar' => trim($alt['ar']), 'en' => trim($alt['en'])],
+            'media_id' => $resolvedId,
+            'alt' => [
+                'ar' => is_string($alt['ar'] ?? null) ? trim($alt['ar']) : '',
+                'en' => is_string($alt['en'] ?? null) ? trim($alt['en']) : '',
+            ],
+            'key' => $key,
         ];
     }
 

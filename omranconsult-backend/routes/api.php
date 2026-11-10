@@ -23,6 +23,8 @@ use App\Modules\Dashboard\Presentation\Http\Controllers\AdminSummaryController;
 use App\Modules\Documents\Presentation\Http\Controllers\DocumentsController;
 use App\Modules\Inquiries\Presentation\Http\Controllers\InquiriesController;
 use App\Modules\Media\Presentation\Http\Controllers\AdminMediaController;
+use App\Modules\News\Infrastructure\Models\NewsPost;
+use App\Modules\News\Presentation\Http\Controllers\AdminNewsController;
 use App\Modules\News\Presentation\Http\Controllers\NewsController;
 use App\Modules\Newsletter\Presentation\Http\Controllers\NewsletterController;
 use App\Modules\Partners\Presentation\Http\Controllers\PartnersController;
@@ -32,6 +34,9 @@ use App\Modules\Projects\Presentation\Http\Controllers\ClientsController;
 use App\Modules\Projects\Presentation\Http\Controllers\ProjectsController;
 use App\Modules\Projects\Presentation\Http\Controllers\RegionsController;
 use App\Modules\Projects\Presentation\Http\Controllers\SectorsController;
+use App\Modules\Services\Infrastructure\Models\Service;
+use App\Modules\Services\Infrastructure\Models\ServiceCategory;
+use App\Modules\Services\Presentation\Http\Controllers\AdminServicesController;
 use App\Modules\Services\Presentation\Http\Controllers\ServicesController;
 use App\Modules\Team\Presentation\Http\Controllers\ExpertsController;
 use App\Modules\Team\Presentation\Http\Controllers\OrgChartController;
@@ -106,6 +111,58 @@ Route::prefix('admin')->group(function (): void {
         Route::get('/audit-logs', AdminAuditLogsController::class)->middleware('permission:'.DashboardPermission::AUDIT_VIEW);
 
         Route::bind('project', fn (string $value) => Project::withTrashed()->whereKey($value)->firstOrFail());
+        Route::bind('serviceCategory', fn (string $value) => ServiceCategory::withTrashed()->whereKey($value)->firstOrFail());
+        Route::bind('service', fn (string $value) => Service::withTrashed()->whereKey($value)->firstOrFail());
+        Route::bind('newsPost', fn (string $value) => NewsPost::withTrashed()->whereKey($value)->firstOrFail());
+
+        Route::middleware('permission:'.DashboardPermission::SERVICES_VIEW)->group(function (): void {
+            Route::get('/services', [AdminServicesController::class, 'index']);
+            Route::get('/services/tools', [AdminServicesController::class, 'tools']);
+            Route::get('/services/categories/{serviceCategory}', [AdminServicesController::class, 'showCategory']);
+            Route::get('/services/items/{service}', [AdminServicesController::class, 'showService']);
+        });
+        Route::post('/services/categories', [AdminServicesController::class, 'storeCategory'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_CREATE);
+        Route::post('/services/items', [AdminServicesController::class, 'storeService'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_CREATE);
+        Route::middleware('permission:'.DashboardPermission::SERVICES_UPDATE)->group(function (): void {
+            Route::patch('/services/categories/{serviceCategory}', [AdminServicesController::class, 'updateCategory']);
+            Route::post('/services/categories/{serviceCategory}/discard-draft', [AdminServicesController::class, 'discardCategoryDraft']);
+            Route::post('/services/categories/reorder', [AdminServicesController::class, 'reorderCategories']);
+            Route::patch('/services/items/{service}', [AdminServicesController::class, 'updateService']);
+            Route::post('/services/items/{service}/discard-draft', [AdminServicesController::class, 'discardServiceDraft']);
+            Route::post('/services/items/reorder', [AdminServicesController::class, 'reorderServices']);
+            Route::patch('/services/tools', [AdminServicesController::class, 'updateTools']);
+        });
+        Route::post('/services/categories/{serviceCategory}/publish', [AdminServicesController::class, 'publishCategory'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_PUBLISH);
+        Route::post('/services/items/{service}/publish', [AdminServicesController::class, 'publishService'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_PUBLISH);
+        Route::delete('/services/categories/{serviceCategory}', [AdminServicesController::class, 'destroyCategory'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_DELETE);
+        Route::delete('/services/items/{service}', [AdminServicesController::class, 'destroyService'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_DELETE);
+        Route::post('/services/categories/{serviceCategory}/restore', [AdminServicesController::class, 'restoreCategory'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_RESTORE);
+        Route::post('/services/items/{service}/restore', [AdminServicesController::class, 'restoreService'])
+            ->middleware('permission:'.DashboardPermission::SERVICES_RESTORE);
+
+        Route::middleware('permission:'.DashboardPermission::NEWS_VIEW)->group(function (): void {
+            Route::get('/news', [AdminNewsController::class, 'index']);
+            Route::get('/news/{newsPost}', [AdminNewsController::class, 'show']);
+        });
+        Route::post('/news', [AdminNewsController::class, 'store'])
+            ->middleware('permission:'.DashboardPermission::NEWS_CREATE);
+        Route::middleware('permission:'.DashboardPermission::NEWS_UPDATE)->group(function (): void {
+            Route::patch('/news/{newsPost}', [AdminNewsController::class, 'update']);
+            Route::post('/news/{newsPost}/discard-draft', [AdminNewsController::class, 'discardDraft']);
+        });
+        Route::post('/news/{newsPost}/publish', [AdminNewsController::class, 'publish'])
+            ->middleware('permission:'.DashboardPermission::NEWS_PUBLISH);
+        Route::delete('/news/{newsPost}', [AdminNewsController::class, 'destroy'])
+            ->middleware('permission:'.DashboardPermission::NEWS_DELETE);
+        Route::post('/news/{newsPost}/restore', [AdminNewsController::class, 'restore'])
+            ->middleware('permission:'.DashboardPermission::NEWS_RESTORE);
 
         Route::middleware('permission:'.DashboardPermission::PROJECTS_VIEW)->group(function (): void {
             Route::get('/projects', [AdminProjectsController::class, 'index']);
