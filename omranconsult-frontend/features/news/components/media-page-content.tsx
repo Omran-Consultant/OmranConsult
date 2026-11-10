@@ -61,7 +61,9 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
                 excerpt={view.featured.excerpt}
                 href={view.featured.href}
                 image={view.featured.image}
-                linkLabel={t("readMore")}
+                readTime={
+                  view.featured.readingMinutes ? t("readingTime", { minutes: view.featured.readingMinutes }) : undefined
+                }
                 title={view.featured.title}
                 titleId="media-featured-title"
               />
@@ -96,10 +98,9 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
                       className="w-full"
                       date={card.year}
                       dateTime={card.dateTime}
-                      excerpt={card.excerpt}
                       href={card.href}
                       image={card.image}
-                      linkLabel={t("readMore")}
+                      readTime={card.readingMinutes ? t("readingTime", { minutes: card.readingMinutes }) : undefined}
                       title={card.title}
                     />
                   </li>

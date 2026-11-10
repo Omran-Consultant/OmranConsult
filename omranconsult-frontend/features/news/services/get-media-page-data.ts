@@ -1,6 +1,14 @@
 import { formatMonthYear, formatYear } from "@/core/format/date";
 import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
-import { articleBlocks, MAX_NEWS_PAGE, mediaCopySchema, NEWS_PAGE_SIZE, readingMinutes, type MediaFilters } from "@/features/news/services/news-view";
+import {
+  articleBlocks,
+  excerptReadingMinutes,
+  MAX_NEWS_PAGE,
+  mediaCopySchema,
+  NEWS_PAGE_SIZE,
+  readingMinutes,
+  type MediaFilters,
+} from "@/features/news/services/news-view";
 import {
   mapNewsCategoriesToUiModel,
   mapNewsDetailToUiModel,
@@ -43,8 +51,9 @@ export function toNewsCard(post: NewsPostModel, locale: AppLocale) {
     title: post.title ?? "",
     excerpt: post.excerpt,
     category: post.category?.name,
-    year: formatYear(post.date),
+    year: formatMonthYear(post.date, locale) ?? formatYear(post.date),
     dateTime: post.date,
+    readingMinutes: excerptReadingMinutes(post.excerpt),
     image: newsImage(post.imageKey, locale, {
       url: post.imageUrl,
       srcSet: post.imageSrcSet,

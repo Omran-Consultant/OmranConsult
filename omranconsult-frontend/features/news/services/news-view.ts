@@ -79,3 +79,11 @@ export function readingMinutes(blocks: readonly ArticleBlock[]): number | undefi
   const words = blocks.reduce((total, block) => (block.type === "image" ? total : total + block.text.split(/\s+/).filter(Boolean).length), 0);
   return words > 0 ? Math.max(1, Math.ceil(words / WORDS_PER_MINUTE)) : undefined;
 }
+
+export function excerptReadingMinutes(excerpt: string | undefined): number | undefined {
+  if (!excerpt?.trim()) {
+    return undefined;
+  }
+  const words = excerpt.trim().split(/\s+/).filter(Boolean).length;
+  return words > 0 ? Math.max(1, Math.ceil(words / WORDS_PER_MINUTE)) : undefined;
+}

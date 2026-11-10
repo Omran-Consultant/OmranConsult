@@ -145,7 +145,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
                 <ul className="flex flex-col gap-4">
                   {article.related.map((item) => (
                     <li key={item.slug}>
-                      <NewsCard date={item.year} dateTime={item.dateTime} href={item.href} image={item.image} linkLabel={t("readMore")} title={item.title} />
+                      <NewsCard date={item.year} dateTime={item.dateTime} href={item.href} image={item.image} title={item.title} />
                     </li>
                   ))}
                 </ul>
