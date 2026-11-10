@@ -143,9 +143,8 @@ export default function ProjectEditorPage() {
     setProject(detail);
     setTitleAr(readLocalizedFieldPreferringLive(draft.title, detail.title, "ar"));
     setTitleEn(readLocalizedFieldPreferringLive(draft.title, detail.title, "en"));
-    const overviewSource = "overview" in draft ? draft.overview : detail.overview;
-    setOverviewAr(localeBlocks(overviewSource, "ar"));
-    setOverviewEn(localeBlocks(overviewSource, "en"));
+    setOverviewAr(localeBlocks(detail.overview, "ar"));
+    setOverviewEn(localeBlocks(detail.overview, "en"));
     setSlug(typeof draft.slug === "string" ? draft.slug : detail.slug);
     setClientId(String((draft.client_id as number | null | undefined) ?? detail.client_id ?? ""));
     setSectorId(String((draft.sector_id as number | null | undefined) ?? detail.sector_id ?? ""));
