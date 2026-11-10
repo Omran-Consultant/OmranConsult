@@ -18,7 +18,7 @@ import { DashboardSelect, DashboardSwitch, DashboardTextField } from "@/features
 import { PageHeader } from "@/features/dashboard/ui/page-header";
 import { StatusPill } from "@/features/dashboard/ui/status-pill";
 import { DashboardTabs } from "@/features/dashboard/ui/tabs";
-import { DashboardCheckbox } from "@/features/dashboard/ui/checkbox";
+import { DashboardMultiSelect } from "@/features/dashboard/ui/multi-select";
 import type { AppLocale } from "@/i18n/routing";
 import {
   adminDeleteProject,
@@ -331,20 +331,18 @@ export default function ProjectEditorPage() {
               <DashboardTextField error={blockers.some((item) => item.code === "slug_required") ? t("blockerSlug") : undefined} id="slug" label={t("slug")} onChange={(event) => setSlug(event.target.value)} value={slug} />
               <DashboardTextField id="sort-order" inputMode="numeric" label={t("sortOrder")} onChange={(event) => setSortOrder(event.target.value.replace(/[^\d]/g, ""))} value={sortOrder} />
             </div>
-            <fieldset className="mt-4">
-              <legend className="mb-2 text-label-s text-secondary">{t("regions")}</legend>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {lookups?.regions.map((item) => (
-                  <DashboardCheckbox
-                    checked={regionIds.includes(item.id)}
-                    id={`region-${item.id}`}
-                    key={item.id}
-                    label={lookupLabel(item, locale)}
-                    onChange={(checked) => setRegionIds(checked ? [...regionIds, item.id] : regionIds.filter((regionId) => regionId !== item.id))}
-                  />
-                ))}
-              </div>
-            </fieldset>
+            <div className="mt-4">
+              <DashboardMultiSelect
+                emptyLabel={t("regionsEmpty")}
+                id="regions"
+                label={t("regions")}
+                onChange={setRegionIds}
+                options={(lookups?.regions ?? []).map((item) => ({ id: item.id, label: lookupLabel(item, locale) }))}
+                searchPlaceholder={t("regionsSearch")}
+                selectedLabel={(count) => t("regionsSelected", { count })}
+                values={regionIds}
+              />
+            </div>
           </section>
 
           <section className="rounded-2xl border border-line bg-elevated p-5">
