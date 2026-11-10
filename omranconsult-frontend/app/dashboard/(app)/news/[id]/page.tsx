@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { blocksFromUnknown, hasVisibleText, type ContentBlock } from "@/core/content/blocks";
 import { BlockEditor } from "@/features/dashboard/content/block-editor";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
+import { CoverField } from "@/features/dashboard/media/cover-field";
 import { MediaPicker } from "@/features/dashboard/projects/media-picker";
 import { ConfirmDialog } from "@/features/dashboard/ui/confirm-dialog";
 import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
@@ -53,6 +54,8 @@ export default function NewsEditorPage() {
   const [categoryId, setCategoryId] = useState("");
   const [coverMediaId, setCoverMediaId] = useState<number | null>(null);
   const [coverKey, setCoverKey] = useState("");
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  const [coverAlt, setCoverAlt] = useState("");
   const [publishedAt, setPublishedAt] = useState("");
   const [featured, setFeatured] = useState(false);
   const [demo, setDemo] = useState(false);
@@ -84,6 +87,8 @@ export default function NewsEditorPage() {
     setCoverMediaId(typeof mediaId === "number" ? mediaId : null);
     const coverImage = draftOrLive(draft, "cover_image", next.cover_image);
     setCoverKey(typeof coverImage === "string" ? coverImage : "");
+    setCoverUrl(next.cover_url);
+    setCoverAlt((locale === "ar" ? next.title?.ar : next.title?.en) || next.title?.ar || next.title?.en || "");
     const published = draftOrLive(draft, "published_at", next.published_at);
     setPublishedAt(typeof published === "string" ? published.slice(0, 16) : "");
     setFeatured(Boolean(draftOrLive(draft, "is_featured", next.is_featured)));
@@ -232,14 +237,22 @@ export default function NewsEditorPage() {
               <DashboardTextField id="published-at" label={t("publishedAt")} onChange={(event) => setPublishedAt(event.target.value)} type="datetime-local" value={publishedAt} />
               <DashboardSwitch checked={featured} id="featured" label={t("featured")} onChange={setFeatured} />
               <DashboardSwitch checked={demo} id="demo" label={t("demo")} onChange={setDemo} />
-              <DashboardButton onClick={() => setPicker("cover")} type="button" variant="secondary">
-                {t("pickCover")}
-              </DashboardButton>
-              {coverMediaId || coverKey ? (
-                <p className="text-caption text-muted" dir="ltr">
-                  {coverKey || `media #${coverMediaId}`}
-                </p>
-              ) : null}
+              <CoverField
+                alt={coverAlt}
+                changeLabel={t("changeCover")}
+                emptyLabel={t("pickCover")}
+                fallbackAlt={t("coverFallbackAlt")}
+                mediaKey={coverKey}
+                onChange={() => setPicker("cover")}
+                onRemove={() => {
+                  setCoverMediaId(null);
+                  setCoverKey("");
+                  setCoverUrl(null);
+                  setCoverAlt("");
+                }}
+                removeLabel={t("removeCover")}
+                url={coverUrl}
+              />
               <DashboardButton onClick={() => void save()} type="button" variant="secondary">
                 {t("save")}
               </DashboardButton>
@@ -290,6 +303,8 @@ export default function NewsEditorPage() {
           if (picker === "cover") {
             setCoverMediaId(media.id);
             setCoverKey("");
+            setCoverUrl(media.url);
+            setCoverAlt(media.original_filename || coverAlt);
             return;
           }
           if (picker === "body-ar") {
