@@ -183,7 +183,8 @@ class AdminProjectsDraftTest extends TestCase
 
         $this->actingAs($admin)->getJson('/api/admin/projects/'.$project->id)
             ->assertOk()
-            ->assertJsonPath('overview.ar', 'نبذة')
+            ->assertJsonPath('overview.ar.0.type', 'paragraph')
+            ->assertJsonPath('overview.ar.0.children.0.text', 'نبذة')
             ->assertJsonStructure(['publish_blockers', 'published_at', 'client_name', 'sector_name', 'location', 'scope']);
     }
 

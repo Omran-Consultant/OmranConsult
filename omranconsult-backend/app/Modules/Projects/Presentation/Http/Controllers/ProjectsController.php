@@ -5,6 +5,7 @@ namespace App\Modules\Projects\Presentation\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Content\Infrastructure\Models\PreviewToken;
 use App\Modules\Projects\Infrastructure\Models\Project;
+use App\Modules\Projects\Infrastructure\Models\Region;
 use App\Modules\Projects\Presentation\Http\Requests\ProjectIndexRequest;
 use App\Modules\Projects\Presentation\Http\Resources\ProjectDetailResource;
 use App\Modules\Projects\Presentation\Http\Resources\ProjectResource;
@@ -80,6 +81,13 @@ class ProjectsController extends Controller
             if ($draft !== null) {
                 $fillable = array_intersect_key($draft->payload, array_flip($project->getFillable()));
                 $project->fill($fillable);
+                $regionIds = $draft->payload['region_ids'] ?? null;
+                if (is_array($regionIds)) {
+                    $project->setRelation('regions', Region::query()
+                        ->whereIn('id', array_values(array_filter($regionIds, 'is_numeric')))
+                        ->orderBy('sort_order')
+                        ->get());
+                }
             }
         }
 

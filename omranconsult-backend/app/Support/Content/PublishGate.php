@@ -3,6 +3,7 @@
 namespace App\Support\Content;
 
 use App\Modules\Content\Infrastructure\Models\ContentDispute;
+use App\Modules\Projects\Application\ProjectGallery;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
@@ -11,7 +12,7 @@ final class PublishGate
 {
     /**
      * @param  array<string, mixed>  $payload
-     * @return list<string>
+     * @return list<array{field: string, code: string}>
      */
     public function blockers(Model $subject, array $payload): array
     {
@@ -35,16 +36,15 @@ final class PublishGate
         }
 
         $errors = [];
-        foreach ($blockers as $code) {
-            $field = str_replace(['_required', '_blocks_publish'], '', $code);
-            $errors[$field][] = $code;
+        foreach ($blockers as $blocker) {
+            $errors[$blocker['field']][] = $blocker['code'];
         }
 
         throw ValidationException::withMessages($errors);
     }
 
     /**
-     * @return list<string>
+     * @return list<array{field: string, code: string}>
      */
     private function disputeBlockers(Model $subject): array
     {
@@ -55,51 +55,43 @@ final class PublishGate
             ->whereIn('status', ['pending', 'rejected'])
             ->exists();
 
-        return $blocked ? ['dispute_blocks_publish'] : [];
+        return $blocked ? [['field' => 'dispute', 'code' => 'dispute_blocks_publish']] : [];
     }
 
     /**
      * @param  array<string, mixed>  $payload
-     * @return list<string>
+     * @return list<array{field: string, code: string}>
      */
     private function projectBlockers(array $payload): array
     {
         $blockers = [];
-        if (! $this->localeFilled($payload['title'] ?? null)) {
-            $blockers[] = 'title_required';
-        }
-        if (! filled($payload['slug'] ?? null)) {
-            $blockers[] = 'slug_required';
-        }
-        if (! filled($payload['client_id'] ?? null)) {
-            $blockers[] = 'client_required';
-        }
-        if (! filled($payload['sector_id'] ?? null)) {
-            $blockers[] = 'sector_required';
-        }
-        if (! $this->localeFilled($payload['overview'] ?? null)) {
-            $blockers[] = 'overview_required';
-        }
-        $gallery = $payload['gallery'] ?? [];
-        if (! is_array($gallery) || $gallery === []) {
-            $blockers[] = 'cover_required';
-        }
-
-        return $blockers;
-    }
-
-    private function localeFilled(mixed $value): bool
-    {
-        if (! is_array($value)) {
-            return false;
-        }
-
         foreach (PublicLocale::SUPPORTED as $locale) {
-            if (! filled($value[$locale] ?? null)) {
-                return false;
+            $title = is_array($payload['title'] ?? null) ? ($payload['title'][$locale] ?? null) : null;
+            if (! is_string($title) || trim($title) === '') {
+                $blockers[] = ['field' => 'title.'.$locale, 'code' => 'title_'.$locale.'_required'];
+            }
+
+            $overview = is_array($payload['overview'] ?? null) ? ($payload['overview'][$locale] ?? null) : null;
+            $blocks = ContentBlocks::coerce($overview);
+            if (! ContentBlocks::hasVisibleText($blocks)) {
+                $blockers[] = ['field' => 'overview.'.$locale, 'code' => 'overview_'.$locale.'_required'];
             }
         }
 
-        return true;
+        if (! filled($payload['slug'] ?? null)) {
+            $blockers[] = ['field' => 'slug', 'code' => 'slug_required'];
+        }
+        if (! filled($payload['client_id'] ?? null)) {
+            $blockers[] = ['field' => 'client_id', 'code' => 'client_required'];
+        }
+        if (! filled($payload['sector_id'] ?? null)) {
+            $blockers[] = ['field' => 'sector_id', 'code' => 'sector_required'];
+        }
+
+        foreach (ProjectGallery::coverBlockers(ProjectGallery::stored($payload['gallery'] ?? [])) as $code) {
+            $blockers[] = ['field' => 'gallery', 'code' => $code];
+        }
+
+        return $blockers;
     }
 }

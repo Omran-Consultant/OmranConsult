@@ -33,7 +33,8 @@ class ProjectOptionalFieldsTest extends TestCase
         $this->assertNull($data['delivery_status']);
         $this->assertNull($data['overview']);
         $this->assertSame([], $data['scope']);
-        $this->assertSame(['wave'], $data['gallery']);
+        $this->assertSame('wave', $data['gallery'][0]['key']);
+        $this->assertNull($data['gallery'][0]['media_id']);
     }
 
     public function test_image_is_the_first_gallery_image(): void
@@ -75,7 +76,10 @@ class ProjectOptionalFieldsTest extends TestCase
         $this->assertSame('completed', $en['delivery_status']);
         $this->assertSame(['بند'], $ar['scope']);
         $this->assertSame(['Item'], $en['scope']);
-        $this->assertSame(['wave', 'night'], $en['gallery']);
+        $this->assertSame('نظرة', $ar['overview'][0]['children'][0]['text']);
+        $this->assertSame('Overview', $en['overview'][0]['children'][0]['text']);
+        $this->assertSame('wave', $en['gallery'][0]['key']);
+        $this->assertSame('night', $en['gallery'][1]['key']);
         $this->assertSame('wave', $en['image']);
     }
 

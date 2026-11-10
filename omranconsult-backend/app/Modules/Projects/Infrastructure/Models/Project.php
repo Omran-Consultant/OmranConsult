@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable([
     'slug', 'client_id', 'sector_id', 'title', 'year', 'location', 'service_type', 'delivery_status',
-    'overview', 'scope', 'gallery', 'is_featured', 'featured_order', 'sort_order', 'status', 'published_at',
+    'overview', 'scope', 'gallery', 'is_featured', 'featured_order', 'sort_order', 'seo', 'og_image_media_id',
+    'status', 'published_at',
 ])]
 class Project extends Model
 {
@@ -33,17 +34,34 @@ class Project extends Model
             'gallery' => 'array',
             'is_featured' => 'boolean',
             'featured_order' => 'integer',
+            'seo' => 'array',
+            'og_image_media_id' => 'integer',
         ];
     }
 
     /**
      * Cover image key: the first gallery image, else the sector's default (SDD P18).
+     * A media-only cover has no legacy key; callers then use the media URL.
      */
     public function imageKey(): ?string
     {
         $first = $this->gallery[0] ?? null;
+        if (is_string($first) && $first !== '') {
+            return $first;
+        }
 
-        return is_string($first) && $first !== '' ? $first : $this->sector?->default_image;
+        if (is_array($first)) {
+            $key = $first['key'] ?? null;
+            if (is_string($key) && $key !== '') {
+                return $key;
+            }
+
+            if (($first['media_id'] ?? null) !== null) {
+                return null;
+            }
+        }
+
+        return $this->sector?->default_image;
     }
 
     /**

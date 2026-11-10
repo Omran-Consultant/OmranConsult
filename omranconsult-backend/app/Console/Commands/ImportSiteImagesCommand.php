@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Modules\Media\Infrastructure\Models\Media;
+use App\Modules\Projects\Application\ProjectGallery;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use RecursiveDirectoryIterator;
@@ -73,7 +74,8 @@ class ImportSiteImagesCommand extends Command
             $created++;
         }
 
-        $this->components->info("Imported {$created} files, skipped {$skipped} existing keys.");
+        $linked = ProjectGallery::linkAll();
+        $this->components->info("Imported {$created} files, skipped {$skipped} existing keys. Linked {$linked} project galleries.");
 
         return self::SUCCESS;
     }

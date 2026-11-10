@@ -2,6 +2,7 @@
 
 namespace App\Modules\Projects\Presentation\Http\Resources;
 
+use App\Modules\Projects\Application\ProjectGallery;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Support\Content\PublicLocale;
 use Illuminate\Http\Request;
@@ -12,6 +13,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class ProjectResource extends JsonResource
 {
+    /** @var array<string, mixed>|null */
+    private ?array $coverCache = null;
+
     /**
      * @return array<string, mixed>
      */
@@ -30,7 +34,27 @@ class ProjectResource extends JsonResource
             ] : null,
             'year' => $this->year,
             'image' => $this->imageKey(),
+            'image_url' => $this->coverMedia()['url'] ?? null,
+            'image_srcset' => $this->coverMedia()['srcset'] ?? null,
+            'image_width' => $this->coverMedia()['width'] ?? null,
+            'image_height' => $this->coverMedia()['height'] ?? null,
+            'image_alt' => $this->coverMedia()['alt'] ?? null,
             'regions' => RegionResource::collection($this->whenLoaded('regions')),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    private function coverMedia(): array
+    {
+        if ($this->coverCache === null) {
+            $this->coverCache = ProjectGallery::cover(ProjectGallery::stored($this->gallery)) ?? [];
+        }
+
+        return $this->coverCache;
     }
 }

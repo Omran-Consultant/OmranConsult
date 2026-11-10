@@ -26,6 +26,7 @@ use App\Modules\Media\Presentation\Http\Controllers\AdminMediaController;
 use App\Modules\News\Presentation\Http\Controllers\NewsController;
 use App\Modules\Newsletter\Presentation\Http\Controllers\NewsletterController;
 use App\Modules\Partners\Presentation\Http\Controllers\PartnersController;
+use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Modules\Projects\Presentation\Http\Controllers\AdminProjectsController;
 use App\Modules\Projects\Presentation\Http\Controllers\ClientsController;
 use App\Modules\Projects\Presentation\Http\Controllers\ProjectsController;
@@ -104,16 +105,24 @@ Route::prefix('admin')->group(function (): void {
 
         Route::get('/audit-logs', AdminAuditLogsController::class)->middleware('permission:'.DashboardPermission::AUDIT_VIEW);
 
+        Route::bind('project', fn (string $value) => Project::withTrashed()->whereKey($value)->firstOrFail());
+
         Route::middleware('permission:'.DashboardPermission::PROJECTS_VIEW)->group(function (): void {
             Route::get('/projects', [AdminProjectsController::class, 'index']);
             Route::get('/projects/{project}', [AdminProjectsController::class, 'show']);
         });
+        Route::post('/projects', [AdminProjectsController::class, 'store'])
+            ->middleware('permission:'.DashboardPermission::PROJECTS_CREATE);
         Route::middleware('permission:'.DashboardPermission::PROJECTS_UPDATE)->group(function (): void {
             Route::patch('/projects/{project}', [AdminProjectsController::class, 'update']);
             Route::post('/projects/{project}/discard-draft', [AdminProjectsController::class, 'discardDraft']);
         });
         Route::post('/projects/{project}/publish', [AdminProjectsController::class, 'publish'])
             ->middleware('permission:'.DashboardPermission::PROJECTS_PUBLISH);
+        Route::delete('/projects/{project}', [AdminProjectsController::class, 'destroy'])
+            ->middleware('permission:'.DashboardPermission::PROJECTS_DELETE);
+        Route::post('/projects/{project}/restore', [AdminProjectsController::class, 'restore'])
+            ->middleware('permission:'.DashboardPermission::PROJECTS_RESTORE);
         Route::post('/projects/{project}/preview-token', [AdminProjectsController::class, 'previewToken'])
             ->middleware('permission:'.DashboardPermission::PREVIEW);
 
