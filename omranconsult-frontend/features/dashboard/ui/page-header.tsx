@@ -16,10 +16,10 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={classNames("flex flex-col gap-2", className)}>
+    <header className={classNames("flex min-w-0 flex-col gap-2", className)}>
       {breadcrumbs ? <div className="text-caption text-muted">{breadcrumbs}</div> : null}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-display text-h3 text-primary">{title}</h1>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="min-w-0 break-words font-display text-h3 text-primary">{title}</h1>
         {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
       {subtitle ? <p className="text-body-s text-secondary">{subtitle}</p> : null}

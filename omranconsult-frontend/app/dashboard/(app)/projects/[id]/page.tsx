@@ -276,9 +276,9 @@ export default function ProjectEditorPage() {
       {message ? <p className="text-accent">{message}</p> : null}
       {error ? <p className="text-danger">{error}</p> : null}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="space-y-6">
-          <section className="rounded-2xl border border-line bg-elevated p-5">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="min-w-0 space-y-6">
+          <section className="min-w-0 rounded-2xl border border-line bg-elevated p-5">
             <h2 className="mb-4 text-h5">{t("basics")}</h2>
             <DashboardTabs
               active={langTab}

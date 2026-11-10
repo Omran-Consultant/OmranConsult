@@ -16,14 +16,14 @@ export function ToolbarSearch({
 }) {
   return (
     <button
-      className={`${controlMdClass} w-full max-w-[22.5rem] justify-start text-muted ${className ?? ""}`}
+      className={`${controlMdClass} w-full min-w-0 max-w-[22.5rem] justify-start overflow-hidden px-2.5 text-muted sm:px-3 ${className ?? ""}`}
       data-dashboard-search
       onClick={onActivate}
       type="button"
     >
-      <Icon name="search" />
-      <span className="truncate">{label}</span>
-      {hint ? <kbd className="ms-auto rounded border border-line px-1.5 py-0.5 text-caption">{hint}</kbd> : null}
+      <Icon className="shrink-0" name="search" />
+      <span className="min-w-0 truncate">{label}</span>
+      {hint ? <kbd className="ms-auto hidden shrink-0 rounded border border-line px-1.5 py-0.5 text-caption sm:inline">{hint}</kbd> : null}
     </button>
   );
 }

@@ -158,22 +158,24 @@ export function DashboardShell({
           </div>
         </aside>
         <div className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-elevated/90 px-4 py-3 backdrop-blur" data-dashboard-toolbar>
-            <button aria-label={t("openMenu")} className={`${controlMdClass} lg:hidden`} onClick={() => setDrawer(true)} type="button">
+          <header className="sticky top-0 z-20 flex items-center gap-2 overflow-x-clip border-b border-line bg-elevated/90 px-3 py-3 backdrop-blur sm:gap-3 sm:px-4" data-dashboard-toolbar>
+            <button aria-label={t("openMenu")} className={`${controlMdClass} shrink-0 px-2.5 lg:hidden`} onClick={() => setDrawer(true)} type="button">
               <Icon name="menu" />
             </button>
-            <ToolbarSearch hint="⌘K" label={t("search.placeholder")} onActivate={() => setPalette(true)} />
-            <button className={controlMdClass} onClick={switchLocale} type="button">
+            <div className="min-w-0 flex-1">
+              <ToolbarSearch className="w-full max-w-none" hint="⌘K" label={t("search.placeholder")} onActivate={() => setPalette(true)} />
+            </div>
+            <button className={`${controlMdClass} shrink-0 px-2.5 sm:px-3`} onClick={switchLocale} type="button">
               {locale === "ar" ? "EN" : "ع"}
             </button>
-            <button aria-label={t("theme")} className={controlMdClass} onClick={toggleTheme} type="button">
+            <button aria-label={t("theme")} className={`${controlMdClass} shrink-0 px-2.5 sm:px-3`} onClick={toggleTheme} type="button">
               <Icon name={theme === "dark" ? "sun" : "moon"} />
             </button>
-            <span className={controlMdClass}>
+            <span className={`${controlMdClass} shrink-0 px-2.5 sm:px-3`}>
               <Icon label={t("notifications")} name="bell" />
             </span>
           </header>
-          <main className="px-4 py-6 lg:px-8">
+          <main className="min-w-0 overflow-x-clip px-4 py-6 lg:px-8">
             <DashboardPermissionGate>{children}</DashboardPermissionGate>
           </main>
         </div>

@@ -1,8 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+import { DASHBOARD_NAV } from "@/features/dashboard/shell/nav";
 import { loginToDashboard, setDashboardSurface, SURFACE_WIDTHS, waitReady } from "./dashboard-helpers";
 
 const SCREENS = ["/dashboard", "/dashboard/projects", "/dashboard/users"] as const;
+const OVERFLOW_SCREENS = [
+  ...new Set(DASHBOARD_NAV.flatMap((group) => group.items.map((item) => item.href))),
+  "/dashboard/ui-gallery",
+] as const;
+const OVERFLOW_WIDTHS = [768, 390] as const;
 
 test.describe("dashboard UI quality", () => {
   test.beforeEach(async ({ page }) => {
@@ -44,4 +50,21 @@ test.describe("dashboard UI quality", () => {
     const iconHeight = await iconButton.evaluate((node) => Math.round(node.getBoundingClientRect().height));
     expect(Math.abs(searchHeight - iconHeight)).toBeLessThanOrEqual(1);
   });
+
+  for (const width of OVERFLOW_WIDTHS) {
+    test(`no horizontal page overflow at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: width <= 390 ? 844 : 900 });
+      await page.goto("/dashboard/projects");
+      await waitReady(page);
+      const editorHref = (await page.locator("a[data-project-id]").first().getAttribute("href")) ?? "/dashboard/projects";
+      for (const href of [...OVERFLOW_SCREENS, editorHref]) {
+        await page.goto(href);
+        await waitReady(page);
+        const overflow = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+        expect(overflow, `overflow on ${href} at ${width}px`).toBeLessThanOrEqual(0);
+      }
+    });
+  }
 });
