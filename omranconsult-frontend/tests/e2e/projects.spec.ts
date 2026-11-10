@@ -11,6 +11,16 @@ test("projects renders the design sections in order", async ({ page }) => {
   await expect(page.locator('[data-section="grid"] ul').first().locator("li")).toHaveCount(9);
 });
 
+test("every client tile on Projects shows a logo or a name", async ({ page }) => {
+  await page.goto("/ar/projects");
+  const tiles = page.locator('[data-section="clients"] li');
+  await expect(tiles).toHaveCount(28);
+  const blank = await tiles.evaluateAll((items) =>
+    items.filter((item) => !item.textContent?.trim() && !item.querySelector("img[alt]:not([alt=''])")).length,
+  );
+  expect(blank).toBe(0);
+});
+
 test("a sector chip filters through the URL", async ({ page }) => {
   await page.goto("/ar/projects");
   await page.locator('[data-section="filter-bar"]').getByRole("link", { name: "الصحة" }).click();
