@@ -328,7 +328,7 @@ export default function ProjectEditorPage() {
                 <option value="completed">{t("deliveryCompleted")}</option>
                 <option value="ongoing">{t("deliveryOngoing")}</option>
               </DashboardSelect>
-              <DashboardTextField error={blockers.some((item) => item.code === "slug_required") ? t("blockerSlug") : undefined} id="slug" label={t("slug")} onChange={(event) => setSlug(event.target.value)} value={slug} />
+              <DashboardTextField dir="ltr" error={blockers.some((item) => item.code === "slug_required") ? t("blockerSlug") : undefined} id="slug" label={t("slug")} onChange={(event) => setSlug(event.target.value)} spellCheck={false} value={slug} />
               <DashboardTextField id="sort-order" inputMode="numeric" label={t("sortOrder")} onChange={(event) => setSortOrder(event.target.value.replace(/[^\d]/g, ""))} value={sortOrder} />
             </div>
             <div className="mt-4">
@@ -393,7 +393,7 @@ export default function ProjectEditorPage() {
               {ogImageId ? <p className="text-caption text-muted">{t("ogSelected")}</p> : null}
               <div className="rounded-xl border border-line bg-base p-3">
                 <p className="text-label-s text-accent">{seoTitle || t("seoTitleFallback")}</p>
-                <p className="text-caption text-muted" dir="ltr">{`/${langTab}/projects/${slug}`}</p>
+                <p className="truncate text-start text-caption text-muted" dir="ltr">{`/${langTab}/projects/${slug}`}</p>
                 <p className="text-caption text-secondary">{seoDescription || t("seoDescriptionFallback")}</p>
               </div>
             </div>

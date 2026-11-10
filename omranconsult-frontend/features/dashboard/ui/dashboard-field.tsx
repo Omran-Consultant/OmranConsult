@@ -37,7 +37,12 @@ export function DashboardTextField(props: InputHTMLAttributes<HTMLInputElement> 
       <input
         aria-describedby={helper || error ? `${id}-message` : undefined}
         aria-invalid={error ? true : undefined}
-        className={classNames(controlLgClass, error ? "border-danger" : undefined, className)}
+        className={classNames(
+          controlLgClass,
+          error ? "border-danger" : undefined,
+          rest.dir === "ltr" ? "text-start" : undefined,
+          className,
+        )}
         id={id}
         required={required}
         {...rest}
