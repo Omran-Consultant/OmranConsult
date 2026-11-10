@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
@@ -15,6 +15,14 @@ import {
 
 const SHOTS = path.join(process.cwd(), "..", "review-shots", "dashboard", "5B-2");
 
+async function firstHref(page: Page, selector: string, fallback: string): Promise<string> {
+  const locator = page.locator(selector).first();
+  if ((await locator.count()) === 0) {
+    return fallback;
+  }
+  return (await locator.getAttribute("href")) ?? fallback;
+}
+
 test.describe("dashboard 5B-2 screenshots", () => {
   test.describe.configure({ timeout: 1_200_000 });
 
@@ -26,18 +34,17 @@ test.describe("dashboard 5B-2 screenshots", () => {
 
     await page.goto("/dashboard/services");
     await waitReady(page);
-    const categoryHref =
-      (await page.locator('a[href^="/dashboard/services/categories/"]').first().getAttribute("href")) ??
-      "/dashboard/services";
-    const itemHref =
-      (await page.locator('a[href^="/dashboard/services/items/"]').first().getAttribute("href")) ?? "/dashboard/services";
+    await expect(page.locator('a[href^="/dashboard/services/categories/"]').first()).toBeVisible();
+    const categoryHref = await firstHref(page, 'a[href^="/dashboard/services/categories/"]', "/dashboard/services");
+    const itemHref = await firstHref(page, 'a[href^="/dashboard/services/items/"]', "/dashboard/services");
 
     await page.goto("/dashboard/news");
     await waitReady(page);
-    const newsHref = (await page.locator("a[data-news-id]").first().getAttribute("href")) ?? "/dashboard/news";
+    await expect(page.locator("a[data-news-id]").first()).toBeVisible();
+    const newsHref = await firstHref(page, "a[data-news-id]", "/dashboard/news");
 
     await page.goto("/ar/media");
-    const articleHref = (await page.locator('a[href*="/media/"]').first().getAttribute("href")) ?? "/ar/media";
+    const articleHref = await firstHref(page, 'a[href*="/media/"]', "/ar/media");
 
     for (const locale of SURFACE_LOCALES) {
       for (const theme of SURFACE_THEMES) {
@@ -98,4 +105,3 @@ test.describe("dashboard 5B-2 screenshots", () => {
     }
   });
 });
-

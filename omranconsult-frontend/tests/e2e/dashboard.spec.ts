@@ -281,6 +281,8 @@ test.describe("dashboard authenticated", () => {
     const hrefs = [
       "/dashboard",
       "/dashboard/projects",
+      "/dashboard/services",
+      "/dashboard/news",
       "/dashboard/users",
       "/dashboard/profile",
       "/dashboard/activity",

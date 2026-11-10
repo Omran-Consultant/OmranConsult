@@ -5,6 +5,8 @@ namespace Tests\Feature\Admin;
 use App\Models\User;
 use App\Modules\Content\Infrastructure\Models\ContentBlock;
 use App\Modules\Services\Domain\ServiceCategoryKind;
+use App\Modules\Services\Infrastructure\Models\Service;
+use App\Modules\Services\Infrastructure\Models\ServiceCategory;
 use App\Support\Content\PublicationStatus;
 use App\Support\DashboardPermission;
 use App\Support\EditorRole;
@@ -29,6 +31,33 @@ class AdminServicesWriteTest extends TestCase
     public function test_guest_cannot_list_services(): void
     {
         $this->getJson('/api/admin/services')->assertUnauthorized();
+    }
+
+    public function test_admin_can_list_service_categories_with_items(): void
+    {
+        $admin = $this->admin();
+        $category = ServiceCategory::query()->create([
+            'slug' => 'list-axis',
+            'kind' => ServiceCategoryKind::Axis,
+            'title' => ['ar' => 'محور', 'en' => 'Axis'],
+            'icon' => 'layers',
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+            'sort_order' => 1,
+        ]);
+        Service::query()->create([
+            'category_id' => $category->id,
+            'slug' => 'list-item',
+            'title' => ['ar' => 'خدمة', 'en' => 'Service'],
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+            'sort_order' => 1,
+        ]);
+
+        $this->actingAs($admin)->getJson('/api/admin/services')
+            ->assertOk()
+            ->assertJsonPath('data.0.slug', 'list-axis')
+            ->assertJsonPath('data.0.services.0.slug', 'list-item');
     }
 
     public function test_editor_without_create_cannot_store_category(): void

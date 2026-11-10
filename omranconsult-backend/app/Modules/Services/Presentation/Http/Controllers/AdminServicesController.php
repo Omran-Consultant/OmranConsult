@@ -45,7 +45,7 @@ class AdminServicesController extends Controller
 
         $serviceDraftIds = ContentDraft::query()
             ->where('subject_type', (new Service)->getMorphClass())
-            ->whereIn('subject_id', $categories->flatMap->services->modelKeys())
+            ->whereIn('subject_id', $categories->flatMap(fn (ServiceCategory $category) => $category->services->modelKeys())->all())
             ->pluck('subject_id')
             ->all();
 
