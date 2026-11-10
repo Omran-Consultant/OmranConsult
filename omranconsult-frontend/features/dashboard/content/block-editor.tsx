@@ -294,9 +294,11 @@ function ToolbarIcon({
   italic?: boolean;
   children?: ReactNode;
 }) {
+  const accessibleName = symbol ? `${symbol} ${label}` : label;
+
   return (
     <button
-      aria-label={label}
+      aria-label={accessibleName}
       className={TOOL_BUTTON}
       data-active={active ? "true" : "false"}
       onClick={onClick}
