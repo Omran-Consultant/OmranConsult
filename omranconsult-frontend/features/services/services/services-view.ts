@@ -31,7 +31,10 @@ export const servicesBlocksSchema = z.object({
   core_offerings: titledList,
   flexible_model: titledList,
   tools: z
-    .object({ section_title: text, items: z.array(z.object({ title: text, body: text })).catch([]).default([]) })
+    .object({
+      section_title: text,
+      items: z.array(z.object({ title: text, body: text, icon: text })).catch([]).default([]),
+    })
     .catch({ items: [] })
     .default({ items: [] }),
 });

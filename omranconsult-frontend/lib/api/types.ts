@@ -128,3 +128,106 @@ export type AdminProjectDetail = {
   updated_at: string | null;
   lookups?: { clients: AdminLookup[]; sectors: AdminLookup[]; regions: AdminLookup[] };
 };
+
+export type AdminServiceItem = {
+  id: number;
+  slug: string;
+  title: { ar?: string | null; en?: string | null };
+  sort_order: number;
+  status: string;
+};
+
+export type AdminServiceCategory = {
+  id: number;
+  slug: string;
+  kind: string;
+  title: { ar?: string | null; en?: string | null };
+  icon: string | null;
+  sort_order: number;
+  status: string;
+  services: AdminServiceItem[];
+  updated_at: string | null;
+};
+
+export type AdminServiceCategoryDetail = {
+  id: number;
+  slug: string;
+  kind: string;
+  title: { ar?: string | null; en?: string | null };
+  icon: string | null;
+  sort_order: number;
+  status: string;
+  has_unpublished_changes: boolean;
+  draft: Record<string, unknown> | null;
+  publish_blockers: AdminPublishBlocker[];
+  published_at: string | null;
+  updated_at: string | null;
+  icons: string[];
+};
+
+export type AdminServiceItemDetail = {
+  id: number;
+  category_id: number;
+  slug: string;
+  title: { ar?: string | null; en?: string | null };
+  sort_order: number;
+  status: string;
+  has_unpublished_changes: boolean;
+  draft: Record<string, unknown> | null;
+  publish_blockers: AdminPublishBlocker[];
+  published_at: string | null;
+  updated_at: string | null;
+};
+
+export type AdminServiceToolsResponse = {
+  icons: string[];
+  data: {
+    id: number;
+    page: string;
+    payload: {
+      section_title: { ar?: string; en?: string };
+      items: { title: { ar: string; en: string }; body: { ar: string; en: string }; icon: string }[];
+    };
+    status: string;
+  }[];
+};
+
+export type AdminNewsListItem = {
+  id: number;
+  slug: string;
+  title: { ar?: string | null; en?: string | null };
+  status: string;
+  is_demo: boolean;
+  is_featured: boolean;
+  category: { id: number; slug: string; name: { ar?: string | null; en?: string | null } } | null;
+  cover_image: string | null;
+  cover_url: string | null;
+  published_at: string | null;
+  updated_at: string | null;
+};
+
+export type AdminNewsDetail = {
+  id: number;
+  slug: string;
+  title: { ar?: string | null; en?: string | null };
+  excerpt: { ar?: string | null; en?: string | null };
+  body: { ar?: unknown; en?: unknown };
+  news_category_id: number | null;
+  cover_image: string | null;
+  cover_media_id: number | null;
+  cover_url: string | null;
+  author: { ar?: string | null; en?: string | null } | null;
+  tags: unknown;
+  is_featured: boolean;
+  is_demo: boolean;
+  sort_order: number;
+  seo: { title?: { ar?: string | null; en?: string | null }; description?: { ar?: string | null; en?: string | null } } | null;
+  og_image_media_id: number | null;
+  status: string;
+  has_unpublished_changes: boolean;
+  draft: Record<string, unknown> | null;
+  publish_blockers: AdminPublishBlocker[];
+  published_at: string | null;
+  updated_at: string | null;
+  lookups?: { categories: AdminLookup[] };
+};

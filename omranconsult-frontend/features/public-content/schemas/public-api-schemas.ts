@@ -125,6 +125,7 @@ export const servicesResponseSchema = z.object({
     z.object({
       slug: z.string(),
       kind: z.enum(["axis", "asset_management", "engineering_design"]),
+      icon: z.string().nullable().optional(),
       title: nullableStringSchema,
       services: z.array(
         z.object({
@@ -289,6 +290,11 @@ const newsPostSchema = z.object({
   title: nullableStringSchema,
   excerpt: nullableStringSchema,
   cover_image: nullableStringSchema,
+  cover_url: nullableStringSchema.optional(),
+  cover_srcset: nullableStringSchema.optional(),
+  cover_width: z.number().nullable().optional(),
+  cover_height: z.number().nullable().optional(),
+  cover_alt: nullableStringSchema.optional(),
   category: z.object({ slug: z.string(), name: nullableStringSchema }).nullable(),
   date: nullableStringSchema,
   is_featured: z.boolean(),
@@ -312,7 +318,34 @@ export const newsDetailResponseSchema = z.object({
   data: newsPostSchema.extend({
     author: nullableStringSchema.optional(),
     tags: z.array(z.string()).optional(),
-    body: z.array(z.object({ type: z.string(), text: nullableStringSchema.optional(), image: nullableStringSchema.optional() })).optional(),
+    body: z
+      .array(
+        z.object({
+          type: z.string(),
+          text: nullableStringSchema.optional(),
+          image: nullableStringSchema.optional(),
+          media_id: z.number().nullable().optional(),
+          alt: nullableStringSchema.optional(),
+        }),
+      )
+      .optional(),
+    seo: z
+      .object({
+        title: nullableStringSchema.optional(),
+        description: nullableStringSchema.optional(),
+      })
+      .optional(),
+    og_image: z
+      .object({
+        media_id: z.number().optional(),
+        url: nullableStringSchema.optional(),
+        srcset: nullableStringSchema.optional(),
+        width: z.number().nullable().optional(),
+        height: z.number().nullable().optional(),
+        alt: nullableStringSchema.optional(),
+      })
+      .nullable()
+      .optional(),
     related: z.array(newsPostSchema).optional(),
   }),
 });

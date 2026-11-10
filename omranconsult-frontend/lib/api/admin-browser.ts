@@ -5,9 +5,16 @@ import {
 import type {
   AdminLoginRequest,
   AdminLogoutResponse,
+  AdminLookup,
   AdminMfaPendingResponse,
+  AdminNewsDetail,
+  AdminNewsListItem,
   AdminProjectDetail,
   AdminProjectListItem,
+  AdminServiceCategory,
+  AdminServiceCategoryDetail,
+  AdminServiceItemDetail,
+  AdminServiceToolsResponse,
   AdminSummaryResponse,
   AdminUser,
   AdminUserResponse,
@@ -262,4 +269,88 @@ export async function adminForceDeleteMedia(id: number): Promise<{ message: stri
     method: "DELETE",
     json: { confirmation: "DELETE" },
   });
+}
+
+export async function adminServices(): Promise<{ data: AdminServiceCategory[] }> {
+  return browserApiRequest("/api/admin/services", { method: "GET", csrf: false });
+}
+
+export async function adminServiceCategory(id: number): Promise<AdminServiceCategoryDetail> {
+  return browserApiRequest(`/api/admin/services/categories/${id}`, { method: "GET", csrf: false });
+}
+
+export async function adminCreateServiceCategory(body: Record<string, unknown> = {}): Promise<AdminServiceCategoryDetail> {
+  return browserApiRequest("/api/admin/services/categories", { method: "POST", json: body });
+}
+
+export async function adminPatchServiceCategory(id: number, body: Record<string, unknown>): Promise<AdminServiceCategoryDetail> {
+  return browserApiRequest(`/api/admin/services/categories/${id}`, { method: "PATCH", json: body });
+}
+
+export async function adminPublishServiceCategory(id: number): Promise<AdminServiceCategoryDetail> {
+  return browserApiRequest(`/api/admin/services/categories/${id}/publish`, { method: "POST" });
+}
+
+export async function adminReorderServiceCategories(order: number[]): Promise<{ data: AdminServiceCategory[] }> {
+  return browserApiRequest("/api/admin/services/categories/reorder", { method: "POST", json: { order } });
+}
+
+export async function adminServiceItem(id: number): Promise<AdminServiceItemDetail> {
+  return browserApiRequest(`/api/admin/services/items/${id}`, { method: "GET", csrf: false });
+}
+
+export async function adminCreateServiceItem(body: Record<string, unknown>): Promise<AdminServiceItemDetail> {
+  return browserApiRequest("/api/admin/services/items", { method: "POST", json: body });
+}
+
+export async function adminPatchServiceItem(id: number, body: Record<string, unknown>): Promise<AdminServiceItemDetail> {
+  return browserApiRequest(`/api/admin/services/items/${id}`, { method: "PATCH", json: body });
+}
+
+export async function adminPublishServiceItem(id: number): Promise<AdminServiceItemDetail> {
+  return browserApiRequest(`/api/admin/services/items/${id}/publish`, { method: "POST" });
+}
+
+export async function adminReorderServiceItems(categoryId: number, order: number[]): Promise<{ data: AdminServiceCategory[] }> {
+  return browserApiRequest("/api/admin/services/items/reorder", { method: "POST", json: { category_id: categoryId, order } });
+}
+
+export async function adminServiceTools(): Promise<AdminServiceToolsResponse> {
+  return browserApiRequest("/api/admin/services/tools", { method: "GET", csrf: false });
+}
+
+export async function adminPatchServiceTools(items: Record<string, unknown>[]): Promise<AdminServiceToolsResponse> {
+  return browserApiRequest("/api/admin/services/tools", { method: "PATCH", json: { items } });
+}
+
+export async function adminNews(query = ""): Promise<{ data: AdminNewsListItem[]; meta: { total: number }; lookups: { categories: AdminLookup[] } }> {
+  return browserApiRequest(`/api/admin/news${query}`, { method: "GET", csrf: false });
+}
+
+export async function adminNewsPost(id: number): Promise<AdminNewsDetail> {
+  return browserApiRequest(`/api/admin/news/${id}`, { method: "GET", csrf: false });
+}
+
+export async function adminCreateNews(body: Record<string, unknown> = {}): Promise<AdminNewsDetail> {
+  return browserApiRequest("/api/admin/news", { method: "POST", json: body });
+}
+
+export async function adminPatchNews(id: number, body: Record<string, unknown>): Promise<AdminNewsDetail> {
+  return browserApiRequest(`/api/admin/news/${id}`, { method: "PATCH", json: body });
+}
+
+export async function adminPublishNews(id: number): Promise<AdminNewsDetail> {
+  return browserApiRequest(`/api/admin/news/${id}/publish`, { method: "POST" });
+}
+
+export async function adminDeleteNews(id: number): Promise<AdminNewsDetail> {
+  return browserApiRequest(`/api/admin/news/${id}`, { method: "DELETE" });
+}
+
+export async function adminRestoreNews(id: number): Promise<AdminNewsDetail> {
+  return browserApiRequest(`/api/admin/news/${id}/restore`, { method: "POST" });
+}
+
+export async function adminDiscardNewsDraft(id: number): Promise<AdminNewsDetail> {
+  return browserApiRequest(`/api/admin/news/${id}/discard-draft`, { method: "POST" });
 }

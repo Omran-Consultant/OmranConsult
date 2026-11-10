@@ -12,8 +12,28 @@ import { fetchPublicNews, fetchPublicNewsCategories, fetchPublicNewsPost, fetchP
 
 type NewsPostModel = ReturnType<typeof mapNewsIndexToUiModel>["posts"][number];
 
-export function newsImage(key: string | undefined, locale: AppLocale) {
-  return toImageAsset(getSiteImage(key) ?? SITE_IMAGES.building, locale);
+export function newsImage(
+  key: string | undefined,
+  locale: AppLocale,
+  media?: {
+    readonly url?: string | null;
+    readonly srcSet?: string | null;
+    readonly width?: number | null;
+    readonly height?: number | null;
+    readonly alt?: string | null;
+  },
+) {
+  const mapped = getSiteImage(key);
+  if (media?.url) {
+    return {
+      src: media.url,
+      width: media.width ?? mapped?.width ?? 1672,
+      height: media.height ?? mapped?.height ?? 941,
+      alt: media.alt || (mapped ? mapped.alt[locale] : ""),
+      ...(media.srcSet ? { srcSet: media.srcSet } : {}),
+    };
+  }
+  return toImageAsset(mapped ?? SITE_IMAGES.building, locale);
 }
 
 export function toNewsCard(post: NewsPostModel, locale: AppLocale) {
@@ -25,7 +45,13 @@ export function toNewsCard(post: NewsPostModel, locale: AppLocale) {
     category: post.category?.name,
     year: formatYear(post.date),
     dateTime: post.date,
-    image: newsImage(post.imageKey, locale),
+    image: newsImage(post.imageKey, locale, {
+      url: post.imageUrl,
+      srcSet: post.imageSrcSet,
+      width: post.imageWidth,
+      height: post.imageHeight,
+      alt: post.imageAlt,
+    }),
   };
 }
 

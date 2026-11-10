@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { isIconName } from "@/core/ui/icon";
 import { AxisCard } from "@/core/ui/service-card";
 import { SectionHeader } from "@/core/ui/section-header";
 import type { ServicesView } from "@/features/services/services/get-services-page-data";
@@ -34,7 +35,7 @@ export async function ServicesPillars({ view }: { readonly view: ServicesView })
                 <AxisCard
                   countLabel={t("itemCount", { count: items.length })}
                   featured={index === 0}
-                  icon={PILLAR_ICONS[index] ?? "layers"}
+                  icon={pillar.icon && isIconName(pillar.icon) ? pillar.icon : (PILLAR_ICONS[index] ?? "layers")}
                   items={items}
                   number={String(index + 1).padStart(2, "0")}
                   title={pillar.title ?? ""}

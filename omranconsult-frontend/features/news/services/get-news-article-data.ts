@@ -30,11 +30,39 @@ export async function getNewsArticleData(locale: AppLocale, slug: string) {
     readingMinutes: readingMinutes(blocks),
     author: post.author,
     tags: post.tags,
-    cover: newsImage(post.imageKey, locale),
-    body: blocks.map((block) => (block.type === "image" ? { type: "image" as const, image: newsImage(block.image, locale) } : block)),
+    cover: newsImage(post.imageKey, locale, {
+      url: post.imageUrl,
+      srcSet: post.imageSrcSet,
+      width: post.imageWidth,
+      height: post.imageHeight,
+      alt: post.imageAlt,
+    }),
+    body: blocks.map((block) => {
+      if (block.type !== "image") {
+        return block;
+      }
+      const isUrl = block.image.startsWith("/") || block.image.startsWith("http");
+      return {
+        type: "image" as const,
+        image: newsImage(isUrl ? undefined : block.image, locale, isUrl ? { url: block.image } : undefined),
+      };
+    }),
     related: post.related
       .filter((item) => item.title)
-      .map((item) => ({ slug: item.slug, href: `/media/${item.slug}`, title: item.title ?? "", year: formatYear(item.date), dateTime: item.date, image: newsImage(item.imageKey, locale) })),
+      .map((item) => ({
+        slug: item.slug,
+        href: `/media/${item.slug}`,
+        title: item.title ?? "",
+        year: formatYear(item.date),
+        dateTime: item.date,
+        image: newsImage(item.imageKey, locale, {
+          url: item.imageUrl,
+          srcSet: item.imageSrcSet,
+          width: item.imageWidth,
+          height: item.imageHeight,
+          alt: item.imageAlt,
+        }),
+      })),
     cta: mediaCopySchema.parse(mapPageToBlocks(page).design_copy ?? {}).article_cta,
     ctaImage: toImageAsset(SITE_IMAGES.night, locale),
     shareUrl: origin ? `${origin}/${locale}/media/${post.slug}` : undefined,
