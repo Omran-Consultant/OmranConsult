@@ -91,6 +91,41 @@ final class ContentBlocks
     }
 
     /**
+     * Reject replacing a non-empty locale body with an empty one unless the client confirms.
+     *
+     * @param  array{ar?: mixed, en?: mixed}  $previous
+     * @param  array{ar?: mixed, en?: mixed}  $next
+     */
+    public static function assertNotClearingLocaleMap(array $previous, array $next, string $field, bool $confirmClear): void
+    {
+        if ($confirmClear) {
+            return;
+        }
+
+        foreach (PublicLocale::SUPPORTED as $locale) {
+            $before = self::coerce($previous[$locale] ?? null);
+            $after = self::coerce($next[$locale] ?? null);
+            if (self::hasVisibleText($before) && ! self::hasVisibleText($after)) {
+                throw ValidationException::withMessages([
+                    $field.'.'.$locale => [$field.'_clear_requires_confirm'],
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Prefer draft blocks when they have visible text; otherwise keep the live blocks.
+     *
+     * @param  list<array<string, mixed>>  $draft
+     * @param  list<array<string, mixed>>  $live
+     * @return list<array<string, mixed>>
+     */
+    public static function preferVisible(array $draft, array $live): array
+    {
+        return self::hasVisibleText($draft) ? $draft : $live;
+    }
+
+    /**
      * @param  list<array<string, mixed>>  $blocks
      */
     public static function plainText(array $blocks): string

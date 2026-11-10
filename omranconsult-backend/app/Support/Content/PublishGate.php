@@ -31,7 +31,12 @@ final class PublishGate
             $blockers = array_merge($blockers, $this->newsBlockers($payload));
         }
 
-        return $blockers;
+        $unique = [];
+        foreach ($blockers as $blocker) {
+            $unique[$blocker['field'].'|'.$blocker['code']] = $blocker;
+        }
+
+        return array_values($unique);
     }
 
     /**

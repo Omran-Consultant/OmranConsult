@@ -133,6 +133,7 @@ export default function ProjectEditorPage() {
   const [ogImageId, setOgImageId] = useState<number | null>(null);
   const [picker, setPicker] = useState<"gallery" | "og" | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -228,15 +229,28 @@ export default function ProjectEditorPage() {
     };
   }
 
-  async function save() {
+  async function save(options: { confirmClear?: boolean } = {}) {
     setError(null);
     try {
-      const next = await adminPatchProject(id, payload());
+      const next = await adminPatchProject(id, {
+        ...payload(),
+        ...(options.confirmClear ? { confirm_clear: true } : {}),
+      });
       applyDetail(next);
       setMessage(t("saved"));
+      setConfirmClear(false);
       return next;
     } catch (caught) {
-      setError(caught instanceof ApiError ? t("saveError") : t("saveError"));
+      if (caught instanceof ApiError && caught.status === 422) {
+        const clearRequired = Object.values(caught.errors ?? {}).some((messages) =>
+          messages.some((message) => message.includes("clear_requires_confirm")),
+        );
+        if (clearRequired) {
+          setConfirmClear(true);
+          return null;
+        }
+      }
+      setError(t("saveError"));
       return null;
     }
   }
@@ -468,6 +482,16 @@ export default function ProjectEditorPage() {
         }}
         open={confirmDelete}
         title={t("delete")}
+      />
+      <ConfirmDialog
+        cancelLabel={t("cancel")}
+        confirmLabel={t("clearConfirm")}
+        destructive
+        message={t("clearOverviewMessage")}
+        onCancel={() => setConfirmClear(false)}
+        onConfirm={() => void save({ confirmClear: true })}
+        open={confirmClear}
+        title={t("clearOverviewTitle")}
       />
     </div>
   );

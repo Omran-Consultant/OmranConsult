@@ -105,6 +105,14 @@ class AdminProjectsController extends Controller
         $project->load(['client', 'sector', 'regions']);
         $payload = $this->validatedPayload($request, $project);
         $merged = $this->canonicalize(array_merge($this->livePayload($project), $payload));
+        if (array_key_exists('overview', $payload)) {
+            ContentBlocks::assertNotClearingLocaleMap(
+                $this->overviewMap($project->overview),
+                $merged['overview'],
+                'overview',
+                $request->boolean('confirm_clear'),
+            );
+        }
 
         if ($project->status === PublicationStatus::Published && ! $project->trashed()) {
             $draft = $this->drafts->put($project, $merged, $request->user());
@@ -238,11 +246,13 @@ class AdminProjectsController extends Controller
             'seo.description.ar' => ['sometimes', 'nullable', 'string', 'max:320'],
             'seo.description.en' => ['sometimes', 'nullable', 'string', 'max:320'],
             'og_image_media_id' => ['sometimes', 'nullable', 'integer', Rule::exists('media', 'id')],
+            'confirm_clear' => ['sometimes', 'boolean'],
         ]);
 
         if (array_key_exists('overview', $validated)) {
             $validated['overview'] = ContentBlocks::validateLocaleMap($validated['overview'], 'overview');
         }
+        unset($validated['confirm_clear']);
 
         if (array_key_exists('gallery', $validated)) {
             $validated['gallery'] = ProjectGallery::normalize($validated['gallery']);
@@ -391,12 +401,15 @@ class AdminProjectsController extends Controller
     private function detail(Project $project, ?ContentDraft $draft): array
     {
         $payload = $draft?->payload;
+        $overview = $this->overviewForEditor($project, $draft);
+        $gatePayload = is_array($payload) ? $this->canonicalize($payload) : $this->livePayload($project);
+        $gatePayload['overview'] = $overview;
 
         return [
             'id' => $project->id,
             'slug' => $project->slug,
             'title' => $project->title,
-            'overview' => $this->overviewMap($project->overview),
+            'overview' => $overview,
             'client_id' => $project->client_id,
             'sector_id' => $project->sector_id,
             'year' => $project->year,
@@ -415,11 +428,28 @@ class AdminProjectsController extends Controller
             'has_unpublished_changes' => $draft !== null,
             'draft' => is_array($payload) ? $this->presentDraft($payload) : null,
             'published_at' => $project->published_at?->toIso8601String(),
-            'publish_blockers' => $this->gate->blockers($project, $draft?->payload ?? $this->livePayload($project)),
+            'publish_blockers' => $this->gate->blockers($project, $gatePayload),
             'client_name' => $project->client?->name,
             'sector_name' => $project->sector?->name,
             'updated_at' => $project->updated_at?->toIso8601String(),
             'lookups' => $this->lookups(),
+        ];
+    }
+
+    /**
+     * @return array{ar: list<array<string, mixed>>, en: list<array<string, mixed>>}
+     */
+    private function overviewForEditor(Project $project, ?ContentDraft $draft): array
+    {
+        $live = $this->overviewMap($project->overview);
+        if ($draft === null || ! is_array($draft->payload['overview'] ?? null)) {
+            return $live;
+        }
+        $draftOverview = $this->overviewMap($draft->payload['overview']);
+
+        return [
+            'ar' => ContentBlocks::preferVisible($draftOverview['ar'], $live['ar']),
+            'en' => ContentBlocks::preferVisible($draftOverview['en'], $live['en']),
         ];
     }
 

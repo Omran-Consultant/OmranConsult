@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Models\User;
 use App\Modules\News\Infrastructure\Models\NewsCategory;
 use App\Modules\News\Infrastructure\Models\NewsPost;
+use App\Support\Content\ContentBlocks;
 use App\Support\Content\PublicationStatus;
 use App\Support\DashboardPermission;
 use App\Support\EditorRole;
@@ -110,6 +111,141 @@ class AdminNewsWriteTest extends TestCase
         $this->actingAs($admin)->postJson("/api/admin/news/{$post->id}/publish")
             ->assertStatus(422)
             ->assertJsonValidationErrors(['cover']);
+    }
+
+    public function test_show_surfaces_excerpt_as_body_when_body_is_empty(): void
+    {
+        $admin = $this->admin();
+        $category = NewsCategory::query()->create([
+            'slug' => 'company-news',
+            'name' => ['ar' => 'أخبار', 'en' => 'News'],
+            'sort_order' => 1,
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+        ]);
+        $post = NewsPost::query()->create([
+            'slug' => 'excerpt-only',
+            'title' => ['ar' => 'عنوان', 'en' => 'Title'],
+            'excerpt' => ['ar' => 'ملخص ظاهر للجمهور', 'en' => 'Public summary'],
+            'body' => null,
+            'news_category_id' => $category->id,
+            'cover_image' => 'digital',
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+            'is_demo' => true,
+            'is_featured' => false,
+            'sort_order' => 1,
+        ]);
+
+        $this->actingAs($admin)->getJson("/api/admin/news/{$post->id}")
+            ->assertOk()
+            ->assertJsonPath('body.ar.0.children.0.text', 'ملخص ظاهر للجمهور')
+            ->assertJsonPath('body.en.0.children.0.text', 'Public summary');
+    }
+
+    public function test_save_unchanged_keeps_legacy_body_byte_identical_after_coerce(): void
+    {
+        Bus::fake();
+        $admin = $this->admin();
+        $category = NewsCategory::query()->create([
+            'slug' => 'projects',
+            'name' => ['ar' => 'مشاريع', 'en' => 'Projects'],
+            'sort_order' => 1,
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+        ]);
+        $body = [
+            'ar' => [
+                ['type' => 'paragraph', 'text' => 'فقرة أولى'],
+                ['type' => 'heading', 'text' => 'عنوان'],
+                ['type' => 'paragraph', 'text' => 'فقرة ثانية'],
+            ],
+            'en' => [
+                ['type' => 'paragraph', 'text' => 'First paragraph'],
+                ['type' => 'heading', 'text' => 'Heading'],
+                ['type' => 'paragraph', 'text' => 'Second paragraph'],
+            ],
+        ];
+        $post = NewsPost::query()->create([
+            'slug' => 'legacy-body',
+            'title' => ['ar' => 'عنوان', 'en' => 'Title'],
+            'excerpt' => ['ar' => 'ملخص', 'en' => 'Summary'],
+            'body' => $body,
+            'news_category_id' => $category->id,
+            'cover_image' => 'wave',
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+            'is_demo' => false,
+            'is_featured' => false,
+            'sort_order' => 2,
+        ]);
+
+        $show = $this->actingAs($admin)->getJson("/api/admin/news/{$post->id}")->assertOk();
+        $editorBody = $show->json('body');
+
+        $this->actingAs($admin)->patchJson("/api/admin/news/{$post->id}", [
+            'title' => $post->title,
+            'excerpt' => $post->excerpt,
+            'body' => $editorBody,
+            'slug' => $post->slug,
+            'news_category_id' => $category->id,
+            'cover_image' => 'wave',
+            'published_at' => $post->published_at?->toIso8601String(),
+        ])->assertOk();
+
+        $draftBody = $this->actingAs($admin)->getJson("/api/admin/news/{$post->id}")->json('body');
+        $this->assertSame(
+            ContentBlocks::plainText($editorBody['ar']),
+            ContentBlocks::plainText($draftBody['ar']),
+        );
+        $this->assertSame(
+            ContentBlocks::plainText($editorBody['en']),
+            ContentBlocks::plainText($draftBody['en']),
+        );
+    }
+
+    public function test_empty_body_overwrite_is_rejected_without_confirm_clear(): void
+    {
+        Bus::fake();
+        $admin = $this->admin();
+        $category = NewsCategory::query()->create([
+            'slug' => 'articles',
+            'name' => ['ar' => 'مقالات', 'en' => 'Articles'],
+            'sort_order' => 1,
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+        ]);
+        $post = NewsPost::query()->create([
+            'slug' => 'has-body',
+            'title' => ['ar' => 'عنوان', 'en' => 'Title'],
+            'excerpt' => ['ar' => 'ملخص', 'en' => 'Summary'],
+            'body' => [
+                'ar' => [['type' => 'paragraph', 'children' => [['text' => 'نص محفوظ']]]],
+                'en' => [['type' => 'paragraph', 'children' => [['text' => 'Stored text']]]],
+            ],
+            'news_category_id' => $category->id,
+            'cover_image' => 'wave',
+            'status' => PublicationStatus::Published,
+            'published_at' => now(),
+            'is_demo' => false,
+            'is_featured' => false,
+            'sort_order' => 3,
+        ]);
+
+        $this->actingAs($admin)->patchJson("/api/admin/news/{$post->id}", [
+            'body' => [
+                'ar' => [['type' => 'paragraph', 'children' => [['text' => '']]]],
+                'en' => [['type' => 'paragraph', 'children' => [['text' => '']]]],
+            ],
+        ])->assertStatus(422)->assertJsonValidationErrors(['body.en']);
+
+        $this->actingAs($admin)->patchJson("/api/admin/news/{$post->id}", [
+            'body' => [
+                'ar' => [['type' => 'paragraph', 'children' => [['text' => '']]]],
+                'en' => [['type' => 'paragraph', 'children' => [['text' => '']]]],
+            ],
+            'confirm_clear' => true,
+        ])->assertOk();
     }
 
     private function admin(): User

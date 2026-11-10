@@ -8,6 +8,7 @@ import { blocksFromUnknown, hasVisibleText, type ContentBlock } from "@/core/con
 import { BlockEditor } from "@/features/dashboard/content/block-editor";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
 import { MediaPicker } from "@/features/dashboard/projects/media-picker";
+import { ConfirmDialog } from "@/features/dashboard/ui/confirm-dialog";
 import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { DashboardSelect, DashboardSwitch, DashboardTextField } from "@/features/dashboard/ui/dashboard-field";
 import { PageHeader } from "@/features/dashboard/ui/page-header";
@@ -15,6 +16,7 @@ import { StatusPill } from "@/features/dashboard/ui/status-pill";
 import { DashboardTabs } from "@/features/dashboard/ui/tabs";
 import type { AppLocale } from "@/i18n/routing";
 import { adminDiscardNewsDraft, adminNewsPost, adminPatchNews, adminPublishNews } from "@/lib/api/admin-browser";
+import { ApiError } from "@/lib/api/errors";
 import type { AdminNewsDetail } from "@/lib/api/types";
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -61,6 +63,7 @@ export default function NewsEditorPage() {
   const [picker, setPicker] = useState<"cover" | "body-ar" | "body-en" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
 
   function applyDetail(next: AdminNewsDetail) {
     setDetail(next);
@@ -71,9 +74,9 @@ export default function NewsEditorPage() {
     const excerpt = asRecord(draftOrLive(draft, "excerpt", next.excerpt));
     setExcerptAr(typeof excerpt?.ar === "string" ? excerpt.ar : "");
     setExcerptEn(typeof excerpt?.en === "string" ? excerpt.en : "");
-    const body = draftOrLive(draft, "body", next.body);
-    setBodyAr(localeBlocks(body, "ar"));
-    setBodyEn(localeBlocks(body, "en"));
+    // Server already merges draft/live/excerpt so empty drafts cannot hide a stored body.
+    setBodyAr(localeBlocks(next.body, "ar"));
+    setBodyEn(localeBlocks(next.body, "en"));
     setSlug(String(draftOrLive(draft, "slug", next.slug) ?? ""));
     const category = draftOrLive(draft, "news_category_id", next.news_category_id);
     setCategoryId(category ? String(category) : "");
@@ -98,27 +101,25 @@ export default function NewsEditorPage() {
     void adminNewsPost(id).then(applyDetail).catch(() => setError(t("loadError")));
   }, [id, t]);
 
-  const localBlockers = useMemo(() => {
-    const codes: string[] = [];
-    if (!titleAr.trim()) codes.push("title_ar");
-    if (!titleEn.trim()) codes.push("title_en");
-    if (!excerptAr.trim()) codes.push("excerpt_ar");
-    if (!excerptEn.trim()) codes.push("excerpt_en");
-    if (!hasVisibleText(bodyAr)) codes.push("body_ar");
-    if (!hasVisibleText(bodyEn)) codes.push("body_en");
-    if (!slug.trim()) codes.push("slug");
-    if (!categoryId) codes.push("category");
-    if (!coverMediaId && !coverKey) codes.push("cover");
-    if (!publishedAt) codes.push("published_at");
-    return codes;
-  }, [titleAr, titleEn, excerptAr, excerptEn, bodyAr, bodyEn, slug, categoryId, coverMediaId, coverKey, publishedAt]);
-
   const blockerCodes = useMemo(() => {
-    const fromServer = (detail?.publish_blockers ?? []).map((item) => item.code);
-    return [...new Set([...localBlockers, ...fromServer])];
-  }, [detail?.publish_blockers, localBlockers]);
+    const codes: string[] = [];
+    if (!titleAr.trim()) codes.push("title_ar_required");
+    if (!titleEn.trim()) codes.push("title_en_required");
+    if (!excerptAr.trim()) codes.push("excerpt_ar_required");
+    if (!excerptEn.trim()) codes.push("excerpt_en_required");
+    if (!hasVisibleText(bodyAr)) codes.push("body_ar_required");
+    if (!hasVisibleText(bodyEn)) codes.push("body_en_required");
+    if (!slug.trim()) codes.push("slug_required");
+    if (!categoryId) codes.push("category_required");
+    if (!coverMediaId && !coverKey) codes.push("cover_required");
+    if (!publishedAt) codes.push("published_at_required");
+    for (const item of detail?.publish_blockers ?? []) {
+      codes.push(item.code);
+    }
+    return [...new Set(codes)];
+  }, [titleAr, titleEn, excerptAr, excerptEn, bodyAr, bodyEn, slug, categoryId, coverMediaId, coverKey, publishedAt, detail?.publish_blockers]);
 
-  async function save() {
+  async function save(options: { confirmClear?: boolean } = {}) {
     try {
       const next = await adminPatchNews(id, {
         title: { ar: titleAr, en: titleEn },
@@ -135,12 +136,24 @@ export default function NewsEditorPage() {
           title: { ar: seoTitleAr, en: seoTitleEn },
           description: { ar: seoDescriptionAr, en: seoDescriptionEn },
         },
+        ...(options.confirmClear ? { confirm_clear: true } : {}),
       });
       applyDetail(next);
       setMessage(t("saved"));
       setError(null);
+      setConfirmClear(false);
       return next;
-    } catch {
+    } catch (caught) {
+      if (caught instanceof ApiError && caught.status === 422) {
+        const clearRequired = Object.values(caught.errors ?? {}).some((messages) =>
+          messages.some((message) => message.includes("clear_requires_confirm")),
+        );
+        if (clearRequired) {
+          setConfirmClear(true);
+          setError(null);
+          return null;
+        }
+      }
       setError(t("saveError"));
       return null;
     }
@@ -288,6 +301,16 @@ export default function NewsEditorPage() {
           }
         }}
         open={picker !== null}
+      />
+      <ConfirmDialog
+        cancelLabel={t("cancel")}
+        confirmLabel={t("clearConfirm")}
+        destructive
+        message={t("clearBodyMessage")}
+        onCancel={() => setConfirmClear(false)}
+        onConfirm={() => void save({ confirmClear: true })}
+        open={confirmClear}
+        title={t("clearBodyTitle")}
       />
     </div>
   );

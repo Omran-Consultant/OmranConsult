@@ -73,4 +73,38 @@ class ContentBlocksTest extends TestCase
             ['type' => 'image', 'media_id' => 1, 'alt' => ['ar' => 'صورة', 'en' => 'Photo']],
         ], 'overview');
     }
+
+    public function test_clearing_non_empty_locale_map_requires_confirm(): void
+    {
+        $this->expectException(ValidationException::class);
+        ContentBlocks::assertNotClearingLocaleMap(
+            [
+                'ar' => [['type' => 'paragraph', 'children' => [['text' => 'نص']]]],
+                'en' => [['type' => 'paragraph', 'children' => [['text' => 'Text']]]],
+            ],
+            [
+                'ar' => [['type' => 'paragraph', 'children' => [['text' => '']]]],
+                'en' => [['type' => 'paragraph', 'children' => [['text' => 'Text']]]],
+            ],
+            'body',
+            false,
+        );
+    }
+
+    public function test_confirm_clear_allows_emptying_locale_map(): void
+    {
+        ContentBlocks::assertNotClearingLocaleMap(
+            [
+                'ar' => [['type' => 'paragraph', 'children' => [['text' => 'نص']]]],
+                'en' => [['type' => 'paragraph', 'children' => [['text' => 'Text']]]],
+            ],
+            [
+                'ar' => [],
+                'en' => [],
+            ],
+            'overview',
+            true,
+        );
+        $this->assertTrue(true);
+    }
 }

@@ -135,6 +135,14 @@ class AdminNewsController extends Controller
     {
         $payload = $this->validatedPayload($request, $newsPost);
         $merged = $this->canonicalize(array_merge($this->livePayload($newsPost), $payload));
+        if (array_key_exists('body', $payload)) {
+            ContentBlocks::assertNotClearingLocaleMap(
+                $this->storedBodyMap($newsPost),
+                $merged['body'],
+                'body',
+                $request->boolean('confirm_clear'),
+            );
+        }
 
         if ($newsPost->status === PublicationStatus::Published && ! $newsPost->trashed()) {
             $draft = $this->drafts->put($newsPost, $merged, $request->user());
@@ -241,11 +249,13 @@ class AdminNewsController extends Controller
             'seo.description.ar' => ['sometimes', 'nullable', 'string', 'max:320'],
             'seo.description.en' => ['sometimes', 'nullable', 'string', 'max:320'],
             'og_image_media_id' => ['sometimes', 'nullable', 'integer', Rule::exists('media', 'id')],
+            'confirm_clear' => ['sometimes', 'boolean'],
         ]);
 
         if (array_key_exists('body', $validated)) {
             $validated['body'] = ContentBlocks::validateLocaleMap($validated['body'], 'body', true);
         }
+        unset($validated['confirm_clear']);
 
         return $validated;
     }
@@ -314,10 +324,7 @@ class AdminNewsController extends Controller
         return [
             'title' => $post->title,
             'excerpt' => $post->excerpt,
-            'body' => [
-                'ar' => ContentBlocks::coerce(is_array($post->body) ? ($post->body['ar'] ?? null) : null),
-                'en' => ContentBlocks::coerce(is_array($post->body) ? ($post->body['en'] ?? null) : null),
-            ],
+            'body' => $this->storedBodyMap($post),
             'slug' => $post->slug,
             'news_category_id' => $post->news_category_id,
             'cover_image' => $post->cover_image,
@@ -334,19 +341,64 @@ class AdminNewsController extends Controller
     }
 
     /**
+     * Stored body only (no excerpt fallback). Used for empty-overwrite checks.
+     *
+     * @return array{ar: list<array<string, mixed>>, en: list<array<string, mixed>>}
+     */
+    private function storedBodyMap(NewsPost $post): array
+    {
+        return [
+            'ar' => ContentBlocks::coerce(is_array($post->body) ? ($post->body['ar'] ?? null) : null),
+            'en' => ContentBlocks::coerce(is_array($post->body) ? ($post->body['en'] ?? null) : null),
+        ];
+    }
+
+    /**
+     * Editor body: stored blocks, or the excerpt as a paragraph when the public page shows the excerpt as body.
+     *
+     * @return array{ar: list<array<string, mixed>>, en: list<array<string, mixed>>}
+     */
+    private function bodyMapForEditor(NewsPost $post, ?ContentDraft $draft): array
+    {
+        $live = [];
+        foreach (['ar', 'en'] as $locale) {
+            $blocks = ContentBlocks::coerce(is_array($post->body) ? ($post->body[$locale] ?? null) : null);
+            if (! ContentBlocks::hasVisibleText($blocks)) {
+                $excerpt = is_array($post->excerpt) ? ($post->excerpt[$locale] ?? null) : null;
+                if (is_string($excerpt) && trim($excerpt) !== '') {
+                    $blocks = [ContentBlocks::paragraph(trim($excerpt))];
+                }
+            }
+            $live[$locale] = $blocks;
+        }
+
+        if ($draft === null || ! is_array($draft->payload['body'] ?? null)) {
+            return $live;
+        }
+
+        $draftBody = $draft->payload['body'];
+
+        return [
+            'ar' => ContentBlocks::preferVisible(ContentBlocks::coerce($draftBody['ar'] ?? null), $live['ar']),
+            'en' => ContentBlocks::preferVisible(ContentBlocks::coerce($draftBody['en'] ?? null), $live['en']),
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function detail(NewsPost $post, ?ContentDraft $draft): array
     {
+        $body = $this->bodyMapForEditor($post, $draft);
+        $gatePayload = $draft?->payload ?? $this->livePayload($post);
+        $gatePayload['body'] = $body;
+
         return [
             'id' => $post->id,
             'slug' => $post->slug,
             'title' => $post->title,
             'excerpt' => $post->excerpt,
-            'body' => [
-                'ar' => ContentBlocks::coerce(is_array($post->body) ? ($post->body['ar'] ?? null) : null),
-                'en' => ContentBlocks::coerce(is_array($post->body) ? ($post->body['en'] ?? null) : null),
-            ],
+            'body' => $body,
             'news_category_id' => $post->news_category_id,
             'cover_image' => $post->cover_image,
             'cover_media_id' => $post->cover_media_id,
@@ -361,7 +413,7 @@ class AdminNewsController extends Controller
             'status' => $post->trashed() ? 'trashed' : ($post->status?->value ?? $post->status),
             'has_unpublished_changes' => $draft !== null,
             'draft' => $draft?->payload,
-            'publish_blockers' => $this->gate->blockers($post, $draft?->payload ?? $this->livePayload($post)),
+            'publish_blockers' => $this->gate->blockers($post, $gatePayload),
             'published_at' => $post->published_at?->toIso8601String(),
             'updated_at' => $post->updated_at?->toIso8601String(),
             'lookups' => [
