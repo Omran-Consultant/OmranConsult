@@ -42,7 +42,7 @@ export async function HomeServices({ view }: { readonly view: HomeView }) {
             </LinkButton>
           </div>
         </div>
-        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:items-stretch">
+        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:auto-rows-fr xl:grid-cols-4 xl:items-stretch">
           <li className="h-full min-w-0 sm:col-span-2 xl:col-span-2" data-reveal="">
             <ServiceBentoFeatured
               description={featured.description}

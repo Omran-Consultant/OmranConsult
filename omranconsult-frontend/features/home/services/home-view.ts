@@ -1,6 +1,7 @@
 import type { IconName } from "@/core/ui/icon";
 import { isIconName } from "@/core/ui/icon";
 import type { ImageAsset } from "@/core/ui/image-asset";
+import { capabilityChips } from "@/features/home/services/capability-chips";
 import { groupRegions } from "@/features/home/lib/coverage-groups";
 import { shortStandardCode } from "@/core/format/standard-code";
 import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/public-content/services/home-copy";
@@ -102,7 +103,7 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
   const featured = sources.featured.filter((project) => project.title).map(toProject);
 
   const assetCategory = sources.serviceCategories.find((category) => category.kind === "asset_management");
-  const capabilityItems = (assetCategory?.services.map((service) => service.title).filter((title): title is string => Boolean(title)) ?? []).slice(0, 3);
+  const capabilityItems = capabilityChips(assetCategory?.services.map((service) => service.title) ?? []);
   const servicesFeaturedImage = toImageAsset(SITE_IMAGES.building, locale);
 
   const highlights: HomeServiceHighlight[] = serviceHighlightsSchema
