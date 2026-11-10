@@ -297,6 +297,16 @@ test.describe("dashboard authenticated", () => {
         await assertDashboardTheme(page, theme);
         await axeClean(page);
       }
+      await page.goto("/dashboard/projects");
+      await waitReady(page);
+      const editorHref = await page.locator("a[data-project-id]").first().getAttribute("href");
+      expect(editorHref).toBeTruthy();
+      if (editorHref) {
+        await page.goto(editorHref);
+        await waitReady(page);
+        await assertDashboardTheme(page, theme);
+        await axeClean(page);
+      }
     }
   });
 
@@ -377,7 +387,7 @@ test.describe("dashboard authenticated", () => {
     await loginToDashboard(page);
     await page.goto("/dashboard/projects");
     await waitReady(page);
-    const project = page.locator("a[data-status='published'], a[data-status='published_with_draft']").first();
+    const project = page.locator("a[data-has-cover='true'][data-status='published'], a[data-has-cover='true'][data-status='published_with_draft']").first();
     await expect(project).toBeVisible();
     const slug = (await project.getAttribute("data-slug")) ?? "";
     const projectId = (await project.getAttribute("data-project-id")) ?? "";
