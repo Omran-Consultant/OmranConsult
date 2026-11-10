@@ -24,14 +24,17 @@ type ProjectsShowcaseProps = {
 function card(project: HomeProject, sizes: string, emphasis: "standard" | "tall" = "standard") {
   return (
     <ProjectCard
+      className={emphasis === "tall" ? "h-full" : undefined}
       category={project.category}
       client={project.client}
       emphasis={emphasis}
       href={`/projects/${project.slug}`}
       image={project.image}
       key={project.slug}
+      region={project.region}
       sizes={sizes}
       title={project.title}
+      year={project.year}
     />
   );
 }
@@ -123,7 +126,7 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
           {/* Laptop and desktop: bento. */}
           <div className="container-page hidden flex-col gap-6 lg:flex">
             <div className="grid grid-cols-[740fr_516fr] items-stretch gap-6">
-              {first ? <div className="row-span-2 h-full">{card(first, "(min-width: 1440px) 740px, 58vw", "tall")}</div> : null}
+              {first ? <div className="row-span-2 flex h-full min-h-0">{card(first, "(min-width: 1440px) 740px, 58vw", "tall")}</div> : null}
               {second ? card(second, "(min-width: 1440px) 516px, 40vw") : null}
               {third ? card(third, "(min-width: 1440px) 516px, 40vw") : null}
             </div>

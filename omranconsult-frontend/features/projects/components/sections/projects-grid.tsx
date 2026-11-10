@@ -22,8 +22,10 @@ function card(project: ProjectCardModel, className: string, sizes: string) {
         client={project.client}
         href={`/projects/${project.slug}`}
         image={project.image}
+        region={project.region}
         sizes={sizes}
         title={project.title}
+        year={project.year}
       />
     </li>
   );

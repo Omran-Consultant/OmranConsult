@@ -39,6 +39,8 @@ export type ProjectCardModel = {
   readonly title: string;
   readonly client?: string;
   readonly category?: string;
+  readonly region?: string;
+  readonly year?: number;
   readonly image: ImageAsset;
 };
 
@@ -51,6 +53,8 @@ export function toProjectCard(project: ProjectSummary, locale: AppLocale): Proje
     title: project.title ?? project.slug,
     client: project.client?.name,
     category: project.sector?.name,
+    region: project.regions.find((entry) => entry.name)?.name,
+    year: project.year,
     image: projectImage(project.imageKey, locale, {
       url: project.imageUrl,
       srcSet: project.imageSrcSet,
