@@ -54,6 +54,9 @@ export function ProjectOverview({ blocks }: { readonly blocks: readonly ContentB
             </List>
           );
         }
+        if (block.type === "image") {
+          return null;
+        }
         return (
           <p className="text-body-l text-secondary" key={index}>
             <InlineRuns nodes={block.children} />

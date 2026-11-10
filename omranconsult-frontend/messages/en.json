@@ -489,10 +489,13 @@
       "downloadCodes": "Download recovery codes"
     },
     "blocks": {
+      "toolbar": "Overview formatting toolbar",
       "paragraph": "Paragraph",
       "heading": "Heading",
       "list": "List",
       "quote": "Quote",
+      "image": "Image",
+      "imageHint": "Pick the image from the library and add Arabic and English alt text.",
       "bold": "Bold",
       "italic": "Italic",
       "link": "Link",

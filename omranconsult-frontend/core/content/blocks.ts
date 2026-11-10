@@ -9,7 +9,8 @@ export type ContentBlock =
   | { readonly type: "paragraph"; readonly children: readonly InlineNode[] }
   | { readonly type: "heading"; readonly level: "h2" | "h3"; readonly children: readonly InlineNode[] }
   | { readonly type: "list"; readonly style: "bullet" | "number"; readonly items: readonly (readonly InlineNode[])[] }
-  | { readonly type: "quote"; readonly children: readonly InlineNode[] };
+  | { readonly type: "quote"; readonly children: readonly InlineNode[] }
+  | { readonly type: "image"; readonly media_id: number; readonly alt: { readonly ar: string; readonly en: string }; readonly url?: string | null };
 
 export function emptyParagraph(): ContentBlock {
   return { type: "paragraph", children: [{ text: "" }] };
@@ -23,6 +24,9 @@ export function hasVisibleText(blocks: readonly ContentBlock[]): boolean {
   return blocks.some((block) => {
     if (block.type === "list") {
       return block.items.some((item) => plainText(item).trim() !== "");
+    }
+    if (block.type === "image") {
+      return block.media_id > 0 && block.alt.ar.trim() !== "" && block.alt.en.trim() !== "";
     }
     return plainText(block.children).trim() !== "";
   });
@@ -117,10 +121,32 @@ function blockFromUnknown(value: unknown): ContentBlock | null {
   if (!value || typeof value !== "object") {
     return null;
   }
-  const block = value as { type?: unknown; children?: unknown; items?: unknown; level?: unknown; style?: unknown; text?: unknown };
+  const block = value as {
+    type?: unknown;
+    children?: unknown;
+    items?: unknown;
+    level?: unknown;
+    style?: unknown;
+    text?: unknown;
+    media_id?: unknown;
+    alt?: unknown;
+    url?: unknown;
+  };
   if (block.type === "list") {
     const items = Array.isArray(block.items) ? block.items.map((item) => childrenFromUnknown(item)) : [];
     return { type: "list", style: block.style === "number" ? "number" : "bullet", items: items.length > 0 ? items : [[{ text: "" }]] };
+  }
+  if (block.type === "image") {
+    const alt = block.alt && typeof block.alt === "object" ? (block.alt as { ar?: unknown; en?: unknown }) : {};
+    return {
+      type: "image",
+      media_id: typeof block.media_id === "number" ? block.media_id : 0,
+      alt: {
+        ar: typeof alt.ar === "string" ? alt.ar : "",
+        en: typeof alt.en === "string" ? alt.en : "",
+      },
+      url: typeof block.url === "string" ? block.url : null,
+    };
   }
   if (block.type !== "paragraph" && block.type !== "heading" && block.type !== "quote") {
     return null;
