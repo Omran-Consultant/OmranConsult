@@ -114,6 +114,9 @@ class AdminProjectsController extends Controller
             );
         }
 
+        // The first dashboard save, draft or live, means an editor has taken over this record.
+        $project->forceFill(['has_demo_content' => false])->save();
+
         if ($project->status === PublicationStatus::Published && ! $project->trashed()) {
             $draft = $this->drafts->put($project, $merged, $request->user());
             $this->syncMedia($project, $merged);
@@ -391,6 +394,7 @@ class AdminProjectsController extends Controller
             'cover_path' => $project->imageKey(),
             'cover_url' => $cover['url'] ?? null,
             'year' => $project->year,
+            'has_demo_content' => $project->has_demo_content,
             'updated_at' => $project->updated_at?->toIso8601String(),
         ];
     }
@@ -429,6 +433,7 @@ class AdminProjectsController extends Controller
             'draft' => is_array($payload) ? $this->presentDraft($payload) : null,
             'published_at' => $project->published_at?->toIso8601String(),
             'publish_blockers' => $this->gate->blockers($project, $gatePayload),
+            'has_demo_content' => $project->has_demo_content,
             'client_name' => $project->client?->name,
             'sector_name' => $project->sector?->name,
             'updated_at' => $project->updated_at?->toIso8601String(),

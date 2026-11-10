@@ -36,6 +36,7 @@ class Project extends Model
             'featured_order' => 'integer',
             'seo' => 'array',
             'og_image_media_id' => 'integer',
+            'has_demo_content' => 'boolean',
         ];
     }
 
