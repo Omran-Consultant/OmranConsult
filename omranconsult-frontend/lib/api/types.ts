@@ -78,6 +78,7 @@ export type AdminProjectListItem = {
   cover_path?: string | null;
   cover_url?: string | null;
   year?: number | null;
+  has_demo_content: boolean;
   updated_at: string | null;
 };
 
@@ -120,6 +121,7 @@ export type AdminProjectDetail = {
   og_image_media_id: number | null;
   status: string;
   has_unpublished_changes: boolean;
+  has_demo_content: boolean;
   draft: Record<string, unknown> | null;
   published_at: string | null;
   publish_blockers: AdminPublishBlocker[];

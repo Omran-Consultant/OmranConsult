@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { blocksFromUnknown, hasVisibleText, type ContentBlock } from "@/core/content/blocks";
 import { Icon } from "@/core/ui/icon";
+import { DemoContentBadge } from "@/features/dashboard/projects/demo-content-badge";
 import { BlockEditor } from "@/features/dashboard/content/block-editor";
 import { formatFullDateTime } from "@/features/dashboard/format/relative-time";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
@@ -315,6 +316,7 @@ export default function ProjectEditorPage() {
         title={titleAr || titleEn || t("edit")}
       />
       {project.has_unpublished_changes ? <p className="text-body-s text-accent" data-draft-badge="true">{t("unpublished")}</p> : null}
+      {project.has_demo_content ? <DemoContentBadge /> : null}
       {message ? <p className="text-accent">{message}</p> : null}
       {error ? <p className="text-danger">{error}</p> : null}
 

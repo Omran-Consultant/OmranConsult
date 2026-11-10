@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/core/ui/icon";
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
 import { dashboardCoverSrc } from "@/features/dashboard/projects/cover-image";
+import { DemoContentBadge } from "@/features/dashboard/projects/demo-content-badge";
 import { DataTable } from "@/features/dashboard/ui/data-table";
 import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { DashboardPagination } from "@/features/dashboard/ui/pagination";
@@ -152,6 +153,7 @@ export default function ProjectsListPage() {
           <span className="min-w-0">
             <span className="line-clamp-2 block leading-5 font-medium">{localizedName(row.title, locale)}</span>
             <span className="block truncate text-caption leading-4 text-muted">{row.slug}</span>
+            {row.has_demo_content ? <span className="mt-1 block"><DemoContentBadge /></span> : null}
           </span>
         </Link>
       ),
@@ -337,6 +339,7 @@ export default function ProjectsListPage() {
               </div>
               <p className="line-clamp-2 font-medium">{localizedName(row.title, locale)}</p>
               <p className="text-caption text-muted">{row.slug}</p>
+              {row.has_demo_content ? <p className="mt-2"><DemoContentBadge /></p> : null}
               <div className="mt-3 flex items-center justify-between gap-2">
                 <StatusPill locale={locale} status={row.status} />
                 <RelativeTime locale={locale} value={row.updated_at} />

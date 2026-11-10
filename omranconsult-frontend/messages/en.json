@@ -568,6 +568,7 @@
       "saved": "Saved.",
       "published": "Published.",
       "unpublished": "This published record has unpublished edits.",
+      "demoContent": "Contains demo content",
       "publishBlocked": "Publishing is blocked until required fields and disputes are resolved.",
       "titleAr": "Title (Arabic)",
       "titleEn": "Title (English)",
