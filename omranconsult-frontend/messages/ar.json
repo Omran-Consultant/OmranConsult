@@ -614,6 +614,7 @@
       "blockerCover": "صورة الغلاف مطلوبة.",
       "blockerCoverAlt": "الغلاف يحتاج نصًا بديلًا بالعربية والإنجليزية.",
       "blockerDispute": "نزاع محتوى يمنع النشر.",
+      "blockerGo": "انتقل",
       "status": {
         "draft": "مسودة",
         "published": "منشور",

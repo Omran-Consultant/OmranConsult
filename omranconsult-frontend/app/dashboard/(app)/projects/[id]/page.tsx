@@ -45,6 +45,18 @@ const BLOCKER_KEYS: Record<string, string> = {
   dispute_blocks_publish: "blockerDispute",
 };
 
+const BLOCKER_FOCUS: Record<string, { id: string; lang?: "ar" | "en" }> = {
+  title_ar_required: { id: "title-ar", lang: "ar" },
+  title_en_required: { id: "title-en", lang: "en" },
+  overview_ar_required: { id: "overview-ar", lang: "ar" },
+  overview_en_required: { id: "overview-en", lang: "en" },
+  slug_required: { id: "slug" },
+  client_required: { id: "client" },
+  sector_required: { id: "sector" },
+  cover_required: { id: "gallery" },
+  cover_alt_required: { id: "gallery" },
+};
+
 let gallerySequence = 0;
 
 function nextGalleryId(): string {
@@ -249,6 +261,23 @@ export default function ProjectEditorPage() {
     window.open(`/cms/preview?token=${encodeURIComponent(issued.token)}&path=${encodeURIComponent(issued.path)}`, "_blank", "noopener");
   }
 
+  function focusBlocker(code: string) {
+    const target = BLOCKER_FOCUS[code];
+    if (!target) {
+      return;
+    }
+    if (target.lang) {
+      setLangTab(target.lang);
+    }
+    window.requestAnimationFrame(() => {
+      const node = document.getElementById(target.id);
+      node?.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (node instanceof HTMLElement) {
+        node.focus();
+      }
+    });
+  }
+
   if (loadError) {
     return <p className="text-danger" data-ready="true">{t("loadError")}</p>;
   }
@@ -345,7 +374,7 @@ export default function ProjectEditorPage() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-line bg-elevated p-5">
+          <section className="rounded-2xl border border-line bg-elevated p-5" data-blocked={blockers.some((item) => item.field === "gallery") ? "true" : undefined} id="gallery">
             <h2 className="mb-4 text-h5">{t("gallery")}</h2>
             {blockers.some((item) => item.field === "gallery") ? <p className="mb-3 text-caption text-danger">{t(blockers.some((item) => item.code === "cover_alt_required") ? "blockerCoverAlt" : "blockerCover")}</p> : null}
             <GalleryEditor items={gallery} onChange={setGallery} onPick={() => setPicker("gallery")} />
@@ -363,9 +392,16 @@ export default function ProjectEditorPage() {
                 <DashboardTextField id="featured-order" inputMode="numeric" label={t("featuredOrder")} onChange={(event) => setFeaturedOrder(event.target.value.replace(/[^\d]/g, ""))} value={featuredOrder} />
               ) : null}
               {blockers.length > 0 ? (
-                <ul className="space-y-1 text-caption text-danger">
+                <ul className="space-y-2 rounded-xl border border-danger/30 bg-danger/5 p-3" data-publish-blockers>
                   {blockers.map((item) => (
-                    <li key={item.code}>{t(BLOCKER_KEYS[item.code] ?? "publishBlocked")}</li>
+                    <li className="flex items-start justify-between gap-2 text-caption text-danger" key={item.code}>
+                      <span>{t(BLOCKER_KEYS[item.code] ?? "publishBlocked")}</span>
+                      {BLOCKER_FOCUS[item.code] ? (
+                        <button className="shrink-0 text-accent underline" onClick={() => focusBlocker(item.code)} type="button">
+                          {t("blockerGo")}
+                        </button>
+                      ) : null}
+                    </li>
                   ))}
                 </ul>
               ) : null}
@@ -378,7 +414,16 @@ export default function ProjectEditorPage() {
                 {project.status === "trashed" ? (
                   <DashboardButton onClick={() => void adminRestoreProject(id).then(applyDetail)} type="button">{t("restore")}</DashboardButton>
                 ) : (
-                  <DashboardButton disabled={publishDisabled} disabledReason={publishDisabled ? t("publishBlocked") : undefined} onClick={() => void publish()} type="button">{t("publish")}</DashboardButton>
+                  <DashboardButton
+                    aria-disabled={publishDisabled || undefined}
+                    className={publishDisabled ? "opacity-50 grayscale" : undefined}
+                    disabled={publishDisabled}
+                    disabledReason={publishDisabled ? t("publishBlocked") : undefined}
+                    onClick={() => void publish()}
+                    type="button"
+                  >
+                    {t("publish")}
+                  </DashboardButton>
                 )}
                 <DashboardButton onClick={() => setConfirmDelete(true)} type="button" variant="ghost">{t("delete")}</DashboardButton>
               </div>

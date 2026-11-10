@@ -614,6 +614,7 @@
       "blockerCover": "A cover image is required.",
       "blockerCoverAlt": "The cover needs Arabic and English alt text.",
       "blockerDispute": "A content dispute blocks publishing.",
+      "blockerGo": "Go",
       "status": {
         "draft": "Draft",
         "published": "Published",
