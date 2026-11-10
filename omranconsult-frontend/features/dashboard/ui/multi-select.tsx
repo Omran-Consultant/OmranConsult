@@ -130,7 +130,7 @@ export function DashboardMultiSelect({
                   >
                     <input
                       checked={checked}
-                      className="size-4 shrink-0 appearance-none rounded border border-line bg-elevated checked:border-accent checked:bg-accent focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/20"
+                      className="size-4 shrink-0 appearance-none rounded border border-line bg-elevated checked:border-accent checked:bg-accent dark:bg-transparent focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/20"
                       onChange={() => toggle(option.id)}
                       type="checkbox"
                     />

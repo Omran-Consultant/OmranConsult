@@ -25,9 +25,10 @@ export function DashboardCheckbox({
       </span>
       <input
         checked={checked}
-        className="size-5 accent-accent"
+        className="size-5 shrink-0 appearance-none rounded border border-line bg-elevated checked:border-accent checked:bg-accent checked:bg-[length:100%_100%] checked:bg-center checked:bg-no-repeat focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/20 dark:border-line dark:bg-transparent"
         id={id}
         onChange={(event) => onChange(event.target.checked)}
+        style={checked ? { backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")" } : undefined}
         type="checkbox"
       />
     </label>

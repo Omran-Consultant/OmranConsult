@@ -122,9 +122,10 @@ export function DashboardSwitch({
         aria-checked={checked}
         aria-disabled={disabled || undefined}
         className={classNames(
-          "relative h-6 w-11 shrink-0 rounded-full transition-colors",
-          checked ? "bg-accent-strong" : "bg-highlight",
+          "relative h-6 w-11 shrink-0 rounded-full border transition-colors",
+          checked ? "border-accent-strong bg-accent-strong" : "border-line bg-elevated dark:bg-transparent",
           disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer",
+          "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/20",
         )}
         disabled={disabled}
         id={id}
@@ -135,8 +136,8 @@ export function DashboardSwitch({
       >
         <span
           className={classNames(
-            "absolute top-0.5 size-5 rounded-full bg-white transition-[inset-inline-start]",
-            checked ? "start-5" : "start-0.5",
+            "absolute top-0.5 size-5 rounded-full border border-line bg-white transition-[inset-inline-start]",
+            checked ? "start-5 border-white" : "start-0.5",
           )}
         />
       </button>
