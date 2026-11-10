@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const DETAIL = "/ar/projects/king-saud-university-operation-and-maintenance-efficiency";
 
@@ -141,4 +141,56 @@ for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900
 test("unknown project slug renders the not-found page", async ({ page }) => {
   await page.goto("/en/projects/not-a-real-project");
   await expect(page.getByRole("link", { name: "Back to home" })).toBeVisible();
+});
+
+async function cardSizes(page: Page, selector: string) {
+  await expect(page.locator(selector).first()).toBeVisible();
+  return page.locator(selector).evaluateAll((cards) =>
+    cards.map((card) => {
+      const { width, height } = card.getBoundingClientRect();
+      return [Math.round(width), Math.round(height)];
+    }),
+  );
+}
+
+function expectCards(sizes: number[][], expected: readonly (readonly [number, number])[]) {
+  expect(sizes.length).toBeGreaterThanOrEqual(expected.length);
+  expected.forEach(([width, height], index) => {
+    expect(Math.abs((sizes[index]?.[0] ?? 0) - width), `card ${index} width`).toBeLessThanOrEqual(4);
+    expect(Math.abs((sizes[index]?.[1] ?? 0) - height), `card ${index} height`).toBeLessThanOrEqual(4);
+  });
+}
+
+test.describe("Figma card sizes at 1440", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("home bento", async ({ page }) => {
+    await page.goto("/ar");
+    expectCards(await cardSizes(page, '[data-section="projects"] .lg\\:flex a[href*="/projects/"]'), [
+      [740, 640],
+      [516, 308],
+      [516, 308],
+      [411, 460],
+      [411, 460],
+      [411, 460],
+    ]);
+  });
+
+  test("projects grid and related", async ({ page }) => {
+    await page.goto("/ar/projects");
+    expectCards(await cardSizes(page, '[data-section="grid"] ul:first-of-type a[href*="/projects/"]'), [[411, 480]]);
+    await page.goto(DETAIL);
+    expectCards(await cardSizes(page, '[data-section="related"] li a'), [[411, 440]]);
+  });
+});
+
+test.describe("Figma card sizes at 390", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("home carousel and projects list", async ({ page }) => {
+    await page.goto("/ar");
+    expectCards(await cardSizes(page, '[data-section="projects"] [aria-roledescription="slide"] a'), [[300, 420]]);
+    await page.goto("/ar/projects");
+    expectCards(await cardSizes(page, '[data-section="grid"] ul:nth-of-type(2) a[href*="/projects/"]'), [[350, 400]]);
+  });
 });

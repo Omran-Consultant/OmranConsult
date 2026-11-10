@@ -38,11 +38,11 @@ export function NewsCard({
     <div className={classNames("flex h-full min-w-0 flex-col", className)}>
       <ImageOverlayCard
         category={category}
-        className="flex-1"
-        emphasis={emphasis === "featured" ? "featured" : "standard"}
+        className={classNames("h-full flex-1", emphasis === "featured" ? "min-h-[360px] lg:min-h-[420px]" : "min-h-[400px] aspect-[420/540] max-lg:aspect-[350/480]")}
+        largeTitle={emphasis === "featured"}
         footer={
           meta.length > 0 ? (
-            <p className="flex flex-wrap items-center justify-end gap-2 text-caption text-[var(--navy-200)]">
+            <p className="flex flex-wrap items-center gap-2 text-caption text-[var(--navy-200)]">
               {date ? (
                 <time className="num-isolate" dateTime={dateTime}>
                   {date}

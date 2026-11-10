@@ -22,6 +22,7 @@ function card(project: ProjectCardModel, className: string, sizes: string) {
         client={project.client}
         href={`/projects/${project.slug}`}
         image={project.image}
+        layout="list"
         region={project.region}
         sizes={sizes}
         title={project.title}
@@ -41,7 +42,7 @@ export async function ProjectsGrid({ view }: { readonly view: ProjectsView }) {
   const href = (page: number) => `/projects${projectsQuery(filters, { page })}`;
 
   return (
-    <section aria-labelledby="projects-list-title" className="py-10 lg:pt-16 lg:pb-20" data-section="grid">
+    <section aria-labelledby="projects-list-title" className="pt-5 pb-10 md:pt-10 lg:pt-16 lg:pb-20" data-section="grid">
       <Container>
         <h2 className="sr-only" id="projects-list-title">
           {t("projectsHeading")}

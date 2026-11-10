@@ -21,6 +21,7 @@ export function ProjectRelated({ project }: { readonly project: ProjectDetailVie
                 client={related.client}
                 href={`/projects/${related.slug}`}
                 image={related.image}
+                layout="related"
                 region={related.region}
                 sizes="(min-width: 1024px) 411px, (min-width: 768px) 50vw, 100vw"
                 title={related.title}

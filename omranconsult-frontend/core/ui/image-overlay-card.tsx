@@ -20,13 +20,14 @@ type ImageOverlayCardProps = {
   readonly chips?: readonly OverlayChip[];
   readonly category?: string;
   readonly footer?: ReactNode;
-  readonly emphasis?: "standard" | "tall" | "featured";
+  readonly largeTitle?: boolean;
   readonly titleId?: string;
   readonly titleAs?: "h2" | "h3";
 };
 
 /**
  * Figma project / image card: full-bleed photo, bottom scrim, optional glass chips, round arrow.
+ * The caller sets the size through className, because each screen has its own Figma card size.
  */
 export function ImageOverlayCard({
   href,
@@ -38,7 +39,7 @@ export function ImageOverlayCard({
   chips = [],
   category,
   footer,
-  emphasis = "standard",
+  largeTitle = false,
   titleId,
   titleAs = "h3",
 }: ImageOverlayCardProps) {
@@ -47,13 +48,8 @@ export function ImageOverlayCard({
   return (
     <Link
       className={classNames(
-        "group relative isolate flex h-full min-h-[400px] w-full flex-col overflow-hidden rounded-[20px] border border-line-strong/40 bg-[var(--navy-900)] text-white shadow-card [&_img]:absolute [&_img]:inset-0 [&_img]:size-full",
+        "group relative isolate flex w-full flex-col overflow-hidden rounded-[20px] border border-line-strong/40 bg-[var(--navy-900)] text-white shadow-card [&_img]:absolute [&_img]:inset-0 [&_img]:size-full",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-        emphasis === "tall"
-          ? "h-full min-h-[400px]"
-          : emphasis === "featured"
-            ? "min-h-[360px] lg:min-h-[420px]"
-            : "aspect-[420/540] max-lg:aspect-[350/480]",
         className,
       )}
       href={href}
@@ -81,24 +77,24 @@ export function ImageOverlayCard({
         </ul>
       ) : null}
       <div className="relative z-10 mt-auto flex flex-col gap-2.5 p-6 scheme-dark">
-        {category ? <span className="self-end text-end text-label-s text-green-300">{category}</span> : null}
+        {category ? <span className="text-label-s text-green-300">{category}</span> : null}
         <Title
           className={classNames(
             "line-clamp-2 text-pretty font-display font-bold text-white",
-            emphasis === "featured" ? "text-h2" : "text-h3",
+            largeTitle ? "text-h2" : "text-h3",
           )}
           id={titleId}
         >
           {title}
         </Title>
         <div className="flex items-center justify-between gap-3 pt-1" data-card-footer="">
+          {footer ? <div className="min-w-0 flex-1">{footer}</div> : null}
           <span
             aria-hidden="true"
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-[var(--navy-950)] transition-colors duration-[250ms] ease-out motion-safe:md:group-hover:bg-green-300 motion-safe:group-focus-visible:bg-green-300"
+            className="ms-auto inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-[var(--navy-950)] transition-colors duration-[250ms] ease-out motion-safe:md:group-hover:bg-green-300 motion-safe:group-focus-visible:bg-green-300"
           >
             <Icon className="size-4.5" name="arrow" />
           </span>
-          {footer ? <div className="min-w-0 flex-1 text-end">{footer}</div> : null}
         </div>
       </div>
     </Link>

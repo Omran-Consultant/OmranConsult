@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react";
 
 import { classNames } from "@/core/ui/class-names";
 import { filterChipClassName } from "@/core/ui/filter-chip";
@@ -21,16 +21,15 @@ type ProjectsShowcaseProps = {
   readonly header: ReactNode;
 };
 
-function card(project: HomeProject, sizes: string, emphasis: "standard" | "tall" = "standard") {
+function card(project: HomeProject, sizes: string, layout: ComponentProps<typeof ProjectCard>["layout"]) {
   return (
     <ProjectCard
-      className={emphasis === "tall" ? "h-full" : undefined}
       category={project.category}
       client={project.client}
-      emphasis={emphasis}
       href={`/projects/${project.slug}`}
       image={project.image}
       key={project.slug}
+      layout={layout}
       region={project.region}
       sizes={sizes}
       title={project.title}
@@ -125,19 +124,19 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
         <>
           {/* Laptop and desktop: bento. */}
           <div className="container-page hidden flex-col gap-6 lg:flex">
-            <div className="grid grid-cols-[740fr_516fr] items-stretch gap-6">
-              {first ? <div className="row-span-2 flex h-full min-h-0">{card(first, "(min-width: 1440px) 740px, 58vw", "tall")}</div> : null}
-              {second ? card(second, "(min-width: 1440px) 516px, 40vw") : null}
-              {third ? card(third, "(min-width: 1440px) 516px, 40vw") : null}
+            <div className="grid grid-cols-[740fr_516fr] gap-6">
+              {first ? <div className="row-span-2 flex h-full min-h-0">{card(first, "(min-width: 1440px) 740px, 58vw", "lead")}</div> : null}
+              {second ? card(second, "(min-width: 1440px) 516px, 40vw", "side") : null}
+              {third ? card(third, "(min-width: 1440px) 516px, 40vw", "side") : null}
             </div>
             {rest.length > 0 ? (
-              <div className="grid grid-cols-3 gap-6">{rest.map((project) => card(project, "(min-width: 1440px) 411px, 32vw"))}</div>
+              <div className="grid grid-cols-3 gap-6">{rest.map((project) => card(project, "(min-width: 1440px) 411px, 32vw", "row"))}</div>
             ) : null}
           </div>
 
           {/* Tablet: two columns. */}
           <div className="container-page hidden grid-cols-2 gap-5 md:grid lg:hidden">
-            {visible.map((project) => card(project, "50vw"))}
+            {visible.map((project) => card(project, "50vw", "row"))}
           </div>
 
           {/* Mobile: horizontal carousel with scroll-snap and dots. */}
@@ -159,7 +158,7 @@ export function ProjectsShowcase({ featured, projects, sectors, titleId, header 
                   className="w-75 shrink-0 snap-start"
                   key={project.slug}
                 >
-                  {card(project, "300px")}
+                  {card(project, "300px", "carousel")}
                 </li>
               ))}
             </ul>
