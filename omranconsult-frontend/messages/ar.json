@@ -60,7 +60,13 @@
     "statusOngoing": "قيد التنفيذ",
     "ownerLabel": "الجهة المالكة",
     "regionsLabel": "المناطق",
-    "clientProjectsLink": "مشاريع أخرى للجهة نفسها"
+    "clientProjectsLink": "مشاريع أخرى للجهة نفسها",
+    "galleryLabel": "صور المشروع",
+    "galleryOpen": "عرض الصورة {index}",
+    "galleryClose": "إغلاق معرض الصور",
+    "galleryPrevious": "الصورة السابقة",
+    "galleryNext": "الصورة التالية",
+    "galleryCounter": "{index} / {total}"
   },
   "ContactPage": {
     "channelsLabel": "قنوات التواصل",

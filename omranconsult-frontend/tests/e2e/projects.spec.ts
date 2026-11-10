@@ -1,6 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const DETAIL = "/ar/projects/king-saud-university-operation-and-maintenance-efficiency";
+/** Full and single-gallery fixtures exist only in the E2E database (`e2e:prepare-database`). */
+const RICH_DETAIL = "/ar/projects/courts-of-appeal-design-and-supervision-phase-two";
+const ONE_IMAGE_DETAIL = "/ar/projects/sports-facilities-efficiency-and-development";
+const POOR_DETAIL = "/ar/projects/dams-operation-and-maintenance-efficiency-consulting";
 
 test("projects renders the design sections in order", async ({ page }) => {
   await page.goto("/ar/projects");
@@ -193,4 +197,85 @@ test.describe("Figma card sizes at 390", () => {
     await page.goto("/ar/projects");
     expectCards(await cardSizes(page, '[data-section="grid"] ul:nth-of-type(2) a[href*="/projects/"]'), [[350, 400]]);
   });
+});
+
+test.describe("project detail layout", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  async function factWidths(page: Page) {
+    return page.locator('[data-section="facts-bar"] dl > div').evaluateAll((cells) => cells.map((cell) => Math.round(cell.getBoundingClientRect().width)));
+  }
+
+  test("a full project shows all sections, and facts share the bar evenly", async ({ page }) => {
+    await page.goto(RICH_DETAIL);
+    await expect(page.locator('[data-section="facts-bar"] dt')).toHaveText(["العميل", "الموقع", "نوع الخدمة", "القطاع", "الحالة"]);
+    const widths = await factWidths(page);
+    expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(2);
+
+    const body = page.locator('[data-section="body"]');
+    await expect(body.getByRole("heading", { name: "أهداف المشروع" })).toBeVisible();
+    await expect(body.locator("ul:not([data-section-part]) li")).toHaveCount(2);
+    await expect(body.locator("blockquote")).toHaveText("اقتباس تجريبي");
+    await expect(body.locator('[data-section-part="scope"] li span:first-child')).toHaveText(["01", "02", "03", "04"]);
+    await expect(body.locator('[data-section-part="gallery"] button')).toHaveCount(3);
+    await expect(body.getByRole("link", { name: "مشاريع أخرى للجهة نفسها" })).toBeVisible();
+    await expect(body.locator('[data-section-part="owner"]')).toHaveCount(0);
+  });
+
+  test("the inquiry card stays in view while the content scrolls", async ({ page }) => {
+    await page.goto(RICH_DETAIL);
+    const aside = page.locator('[data-section="body"] aside');
+    await expect(aside).toHaveCSS("position", "sticky");
+    await page.locator('[data-section-part="gallery"]').scrollIntoViewIfNeeded();
+    const top = await aside.evaluate((node) => node.getBoundingClientRect().top);
+    expect(top).toBeGreaterThanOrEqual(116);
+    expect(top).toBeLessThan(200);
+  });
+
+  test("the gallery lightbox opens, follows RTL arrows, closes and returns focus", async ({ page }) => {
+    await page.goto(RICH_DETAIL);
+    const first = page.locator('[data-section-part="gallery"] button').first();
+    await first.click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText("1 / 3")).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "إغلاق معرض الصور" })).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
+    await expect(dialog.getByText("2 / 3")).toBeVisible();
+    await page.keyboard.press("ArrowRight");
+    await expect(dialog.getByText("1 / 3")).toBeVisible();
+    await dialog.getByRole("button", { name: "الصورة التالية" }).click();
+    await expect(dialog.getByText("2 / 3")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(first).toBeFocused();
+  });
+
+  test("one gallery image fills the column", async ({ page }) => {
+    await page.goto(ONE_IMAGE_DETAIL);
+    const images = page.locator('[data-section-part="gallery"] button');
+    await expect(images).toHaveCount(1);
+    expect(Math.round((await images.boundingBox())?.width ?? 0)).toBeGreaterThanOrEqual(796);
+  });
+
+  test("a project with no optional data has no empty frames", async ({ page }) => {
+    await page.goto(POOR_DETAIL);
+    await expect(page.locator('[data-section="facts-bar"] dt')).toHaveText(["العميل", "القطاع"]);
+    const widths = await factWidths(page);
+    expect(Math.abs((widths[0] ?? 0) - (widths[1] ?? 0))).toBeLessThanOrEqual(2);
+    await expect(page.locator('[data-section-part="scope"]')).toHaveCount(0);
+    await expect(page.locator('[data-section-part="gallery"]')).toHaveCount(0);
+    const owner = page.locator('[data-section-part="owner"]');
+    await expect(owner.getByRole("link", { name: "مشاريع أخرى للجهة نفسها" })).toBeVisible();
+    await expect(page.locator('[data-section="related"] li').first()).toBeVisible();
+  });
+});
+
+test("on mobile the inquiry form follows the project content", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(RICH_DETAIL);
+  const galleryBottom = await page.locator('[data-section-part="gallery"]').evaluate((node) => node.getBoundingClientRect().bottom);
+  const asideTop = await page.locator('[data-section="body"] aside').evaluate((node) => node.getBoundingClientRect().top);
+  expect(asideTop).toBeGreaterThanOrEqual(galleryBottom);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

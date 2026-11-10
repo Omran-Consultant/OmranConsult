@@ -4,7 +4,7 @@ import { Container } from "@/core/ui/container";
 import type { ProjectDetailView } from "@/features/projects/services/get-project-detail-data";
 
 /**
- * Figma "Facts Bar": five equal facts (caption label, H4 value) with start borders; the 390 frame
+ * Figma "Facts Bar": up to five facts sharing the bar evenly (caption label, H4 value) with start borders; the 390 frame
  * stacks them as label/value rows. Each fact is hidden when the API has no value (§6.5).
  */
 export async function ProjectFacts({ project }: { readonly project: ProjectDetailView }) {
@@ -25,10 +25,10 @@ export async function ProjectFacts({ project }: { readonly project: ProjectDetai
   return (
     <section aria-label={t("factsLabel")} className="bg-surface" data-section="facts-bar">
       <Container>
-        <dl className="grid py-2 md:grid-cols-3 md:py-0 lg:grid-cols-5">
+        <dl className="py-2 md:flex md:py-0">
           {facts.map((fact) => (
             <div
-              className="flex items-center justify-between gap-4 border-b border-line py-3.5 md:flex-col md:items-start md:justify-start md:gap-2 md:border-b-0 md:px-6 md:py-8 md:not-first:border-s"
+              className="flex items-center justify-between gap-4 border-b border-line py-3.5 md:min-w-0 md:flex-1 md:flex-col md:items-start md:justify-start md:gap-2 md:border-b-0 md:px-4 md:py-8 md:not-first:border-s lg:px-6"
               key={fact.key}
             >
               <dt className="shrink-0 text-body-s text-muted md:text-caption">{fact.label}</dt>

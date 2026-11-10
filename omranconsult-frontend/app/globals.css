@@ -308,6 +308,11 @@ html[lang="ar"] {
 }
 
 /* Page container: 1280 px max, side margins 20 / 32 / 48 / 64 / 80 (DESIGN_BASELINE §4). */
+/* The open project lightbox owns the viewport; the page behind must not scroll. */
+html:has(dialog[data-lightbox][open]) {
+  overflow: hidden;
+}
+
 @utility container-page {
   width: 100%;
   max-width: calc(var(--container-page) + 2 * var(--page-margin));

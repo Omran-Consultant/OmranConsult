@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Modules\Projects\Domain\DeliveryStatus;
+use App\Modules\Projects\Infrastructure\Models\Project;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -55,9 +57,44 @@ class E2ePrepareDatabaseCommand extends Command
         $this->output->write(Artisan::output());
 
         $this->call(DatabaseSeeder::class);
+        $this->enrichProjectDetailFixtures();
         Artisan::call('media:import-site-images');
         $this->output->write(Artisan::output());
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Seeded profile projects have no optional facts, so the E2E database alone gets one full and
+     * one single-gallery project for the project detail layout tests. Never run on real content.
+     */
+    private function enrichProjectDetailFixtures(): void
+    {
+        $paragraph = fn (string $text): array => ['type' => 'paragraph', 'children' => [['text' => $text]]];
+        $overview = fn (string $intro, string $heading, array $items, string $quote): array => [
+            $paragraph($intro),
+            ['type' => 'heading', 'level' => 'h3', 'children' => [['text' => $heading]]],
+            ['type' => 'list', 'style' => 'bullet', 'items' => array_map(fn (string $item): array => [['text' => $item]], $items)],
+            ['type' => 'quote', 'children' => [['text' => $quote]]],
+        ];
+
+        Project::query()->where('slug', 'courts-of-appeal-design-and-supervision-phase-two')->firstOrFail()->update([
+            'location' => ['ar' => 'الرياض', 'en' => 'Riyadh'],
+            'service_type' => ['ar' => 'خدمات استشارية', 'en' => 'Consulting services'],
+            'delivery_status' => DeliveryStatus::Completed,
+            'overview' => [
+                'ar' => $overview('نص تجريبي لنظرة عامة على المشروع في بيئة الاختبار.', 'أهداف المشروع', ['الهدف الأول', 'الهدف الثاني'], 'اقتباس تجريبي'),
+                'en' => $overview('Sample project overview text for the test environment.', 'Project goals', ['First goal', 'Second goal'], 'Sample quote'),
+            ],
+            'scope' => [
+                'ar' => ['حصر وتوثيق الأصول', 'تطوير خطط الصيانة', 'تطبيق نظام CAFM', 'تأهيل الكوادر'],
+                'en' => ['Asset inventory', 'Maintenance plans', 'CAFM rollout', 'Staff training'],
+            ],
+            'gallery' => ['night', 'control', 'team', 'cad'],
+        ]);
+
+        Project::query()->where('slug', 'sports-facilities-efficiency-and-development')->firstOrFail()->update([
+            'gallery' => ['truss', 'control'],
+        ]);
     }
 }

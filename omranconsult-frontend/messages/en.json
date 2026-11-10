@@ -60,7 +60,13 @@
     "statusOngoing": "Ongoing",
     "ownerLabel": "Owning entity",
     "regionsLabel": "Regions",
-    "clientProjectsLink": "Other projects by the same entity"
+    "clientProjectsLink": "Other projects by the same entity",
+    "galleryLabel": "Project photos",
+    "galleryOpen": "View photo {index}",
+    "galleryClose": "Close photo viewer",
+    "galleryPrevious": "Previous photo",
+    "galleryNext": "Next photo",
+    "galleryCounter": "{index} / {total}"
   },
   "ContactPage": {
     "channelsLabel": "Contact channels",

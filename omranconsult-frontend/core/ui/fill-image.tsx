@@ -9,20 +9,23 @@ type FillImageProps = {
   readonly className?: string;
   readonly priority?: boolean;
   readonly quality?: number;
+  readonly fit?: "cover" | "contain";
 };
 
 /**
  * Uses the media library srcset when the API generated WebP sizes.
  * next/image stays on the path that has no derivative set, so existing photos keep their current optimizer output.
  */
-export function FillImage({ image, sizes, className, priority = false, quality }: FillImageProps) {
+export function FillImage({ image, sizes, className, priority = false, quality, fit = "cover" }: FillImageProps) {
+  const fitClass = fit === "contain" ? "object-contain" : "object-cover";
+
   if (image.srcSet) {
     return (
       // The srcset is the sized WebP set from the API. next/image would build a second set from one URL.
       // eslint-disable-next-line @next/next/no-img-element
-      <img alt={image.alt} className={classNames("absolute inset-0 size-full object-cover", className)} sizes={sizes} src={image.src} srcSet={image.srcSet} />
+      <img alt={image.alt} className={classNames("absolute inset-0 size-full", fitClass, className)} sizes={sizes} src={image.src} srcSet={image.srcSet} />
     );
   }
 
-  return <Image alt={image.alt} className={classNames("object-cover", className)} fill priority={priority} quality={quality} sizes={sizes} src={image.src} />;
+  return <Image alt={image.alt} className={classNames(fitClass, className)} fill priority={priority} quality={quality} sizes={sizes} src={image.src} />;
 }

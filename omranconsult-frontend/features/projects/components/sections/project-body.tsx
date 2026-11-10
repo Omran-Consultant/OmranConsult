@@ -2,63 +2,67 @@ import { getTranslations } from "next-intl/server";
 
 import { buttonClassName } from "@/core/ui/button";
 import { Container } from "@/core/ui/container";
-import { FillImage } from "@/core/ui/fill-image";
 import { Icon } from "@/core/ui/icon";
 import { SectionHeader } from "@/core/ui/section-header";
-import { ProjectOverview } from "@/features/projects/components/project-overview";
+import { ProjectGallery } from "@/features/projects/components/project-gallery";
 import { ProjectInquiryCard } from "@/features/projects/components/project-inquiry-card";
+import { ProjectOverview } from "@/features/projects/components/project-overview";
 import type { ProjectDetailView } from "@/features/projects/services/get-project-detail-data";
 import { Link } from "@/i18n/navigation";
 
+function ClientProjectsLink({ slug, label }: { readonly slug: string; readonly label: string }) {
+  return (
+    <Link className={buttonClassName("ghost")} href={`/projects?client=${encodeURIComponent(slug)}`}>
+      <span>{label}</span>
+      <Icon className="text-accent" name="arrow" />
+    </Link>
+  );
+}
+
 /**
  * Figma "Body": overview, scope and gallery (800 wide) beside the sticky 400-px inquiry card;
- * below 1024 px the card follows the content. Without an overview (every profile project today)
- * the area shows the owner, the regions and a link to the owner's other projects (§6.5 edge case).
+ * below 1024 px the card follows the content. Every part appears only with its data; without an
+ * overview the owner block takes its place (§6.5 edge case).
  */
 export async function ProjectBody({ project, title }: { readonly project: ProjectDetailView; readonly title: string }) {
   const t = await getTranslations("ProjectsPage");
-  const { copy } = project;
-  const [mainImage, ...sideImages] = project.gallery;
+  const { copy, client } = project;
+  const hasOverview = Boolean(project.overview) || project.overviewBlocks.length > 0;
 
   return (
     <section className="py-10 lg:py-30" data-section="body">
       <Container className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_25rem] lg:items-start lg:gap-20">
         <div className="flex min-w-0 flex-col gap-10 lg:gap-12">
-          <SectionHeader overline={copy.overview_overline} subtitle={project.overview ?? undefined} title={copy.overview_title ?? title}>
-            {project.overview || project.overviewBlocks.length > 0 ? null : (
-              <div className="flex flex-col items-start gap-5">
+          <div className="flex flex-col gap-5">
+            <SectionHeader className="lg:max-w-none" overline={copy.overview_overline} subtitle={project.overview ?? undefined} title={copy.overview_title ?? title} />
+            {!project.overview && project.overviewBlocks.length > 0 ? <ProjectOverview blocks={project.overviewBlocks} /> : null}
+            {hasOverview ? null : (
+              <div className="flex flex-col items-start gap-5 rounded-[20px] border border-line bg-surface p-6 lg:p-8" data-section-part="owner">
                 <dl className="flex flex-col gap-3 text-body-l">
-                  {project.client ? (
-                    <div className="flex flex-wrap gap-x-2">
-                      <dt className="text-muted">{t("ownerLabel")}:</dt>
-                      <dd className="text-primary">{project.client.name}</dd>
+                  {client ? (
+                    <div className="flex flex-col gap-1">
+                      <dt className="text-body-s text-muted">{t("ownerLabel")}</dt>
+                      <dd className="font-display text-h3 text-primary">{client.name}</dd>
                     </div>
                   ) : null}
                   {project.regions.length > 0 ? (
-                    <div className="flex flex-wrap gap-x-2">
-                      <dt className="text-muted">{t("regionsLabel")}:</dt>
+                    <div className="flex flex-col gap-1">
+                      <dt className="text-body-s text-muted">{t("regionsLabel")}</dt>
                       <dd className="text-primary">{project.regions.join(project.locale === "ar" ? "، " : ", ")}</dd>
                     </div>
                   ) : null}
                 </dl>
-                {project.client?.slug ? (
-                  <Link className={buttonClassName("ghost")} href={`/projects?client=${encodeURIComponent(project.client.slug)}`}>
-                    <span>{t("clientProjectsLink")}</span>
-                    <Icon className="text-accent" name="arrow" />
-                  </Link>
-                ) : null}
+                {client?.slug ? <ClientProjectsLink label={t("clientProjectsLink")} slug={client.slug} /> : null}
               </div>
             )}
-          </SectionHeader>
-
-          {!project.overview && project.overviewBlocks.length > 0 ? <ProjectOverview blocks={project.overviewBlocks} /> : null}
+          </div>
 
           {project.scope.length > 0 ? (
-            <div className="flex flex-col gap-4 lg:gap-6">
+            <div className="flex flex-col gap-5 lg:gap-0" data-section-part="scope">
               <h3 className="font-display text-h3 text-primary">{copy.scope_title}</h3>
               <ol>
                 {project.scope.map((item, index) => (
-                  <li className="flex items-baseline gap-3.5 border-b border-line py-3.5 lg:gap-4 lg:py-5.5" key={item}>
+                  <li className="flex items-baseline gap-3.5 border-b border-line py-3.5 lg:gap-6 lg:py-5.5" key={item}>
                     <span className="font-latin text-overline text-accent">{String(index + 1).padStart(2, "0")}</span>
                     <span className="text-body-l text-primary">{item}</span>
                   </li>
@@ -67,21 +71,16 @@ export async function ProjectBody({ project, title }: { readonly project: Projec
             </div>
           ) : null}
 
-          {mainImage ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="relative h-55 overflow-hidden rounded-lg md:col-span-2 md:h-110">
-                <FillImage image={mainImage} sizes="(min-width: 1024px) 800px, 100vw" />
-              </div>
-              {sideImages.slice(0, 2).map((image) => (
-                <div className="relative h-55 overflow-hidden rounded-lg md:h-70" key={image.src}>
-                  <FillImage image={image} sizes="(min-width: 1024px) 392px, (min-width: 768px) 50vw, 100vw" />
-                </div>
-              ))}
+          <ProjectGallery images={project.gallery} />
+
+          {hasOverview && client?.slug ? (
+            <div>
+              <ClientProjectsLink label={t("clientProjectsLink")} slug={client.slug} />
             </div>
           ) : null}
         </div>
 
-        <aside className="lg:sticky lg:top-28">
+        <aside className="lg:sticky lg:top-32">
           <ProjectInquiryCard projectSlug={project.slug} text={copy.inquiry_text} title={copy.inquiry_title} />
         </aside>
       </Container>
