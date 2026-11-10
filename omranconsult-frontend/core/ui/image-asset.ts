@@ -4,4 +4,5 @@ export type ImageAsset = {
   readonly width: number;
   readonly height: number;
   readonly alt: string;
+  readonly srcSet?: string;
 };

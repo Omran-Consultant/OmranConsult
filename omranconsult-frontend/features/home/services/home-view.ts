@@ -7,7 +7,7 @@ import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/featur
 import { formatStatisticValue } from "@/core/format/statistic";
 import { partnerCards } from "@/features/media/brand-logos";
 import { certificateScan } from "@/features/media/credential-scans";
-import { getSiteImage, SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
+import { projectImage } from "@/features/projects/services/projects-view";
 import type {
   mapDocumentsToUiModel,
   mapHomeToUiModel,
@@ -74,10 +74,7 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
   const pick = (keys: readonly string[]) => keys.map((key) => statsByKey.get(key)).filter((stat): stat is HomeStat => Boolean(stat));
 
   const sectorNames = new Map(sources.sectors.map((sector) => [sector.slug, sector.name]));
-  const fallbackImage = toImageAsset(SITE_IMAGES.building, locale);
-
   const toProject = (project: HomeSources["projects"][number]): HomeProject => {
-      const image = getSiteImage(project.imageKey);
       return {
         slug: project.slug,
         title: project.title as string,
@@ -85,9 +82,15 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
         category: project.sector ? (project.sector.name ?? sectorNames.get(project.sector.slug)) : undefined,
         sectorSlug: project.sector?.slug,
         year: project.year,
-        image: image ? toImageAsset(image, locale) : fallbackImage,
+        image: projectImage(project.imageKey, locale, {
+          url: project.imageUrl,
+          srcSet: project.imageSrcSet,
+          width: project.imageWidth,
+          height: project.imageHeight,
+          alt: project.imageAlt,
+        }),
       };
-  };
+    };
   const projects = sources.projects.filter((project) => project.title).map(toProject);
   const featured = sources.featured.filter((project) => project.title).map(toProject);
 

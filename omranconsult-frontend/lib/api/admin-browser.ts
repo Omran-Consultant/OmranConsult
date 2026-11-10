@@ -176,6 +176,18 @@ export async function adminProjectPreviewToken(id: number, locale: "ar" | "en"):
   });
 }
 
+export async function adminCreateProject(body: Record<string, unknown> = {}): Promise<AdminProjectDetail> {
+  return browserApiRequest("/api/admin/projects", { method: "POST", json: body });
+}
+
+export async function adminDeleteProject(id: number): Promise<AdminProjectDetail> {
+  return browserApiRequest(`/api/admin/projects/${id}`, { method: "DELETE" });
+}
+
+export async function adminRestoreProject(id: number): Promise<AdminProjectDetail> {
+  return browserApiRequest(`/api/admin/projects/${id}/restore`, { method: "POST" });
+}
+
 export async function adminMedia(query = ""): Promise<{
   data: {
     id: number;
@@ -192,7 +204,7 @@ export async function adminMedia(query = ""): Promise<{
   return browserApiRequest(`/api/admin/media${query}`, { method: "GET", csrf: false });
 }
 
-export async function adminUploadMedia(file: File): Promise<{ data: { id: number } }> {
+export async function adminUploadMedia(file: File): Promise<{ data: { id: number; url: string } }> {
   await ensureSanctumCsrfCookie();
   const body = new FormData();
   body.append("file", file);

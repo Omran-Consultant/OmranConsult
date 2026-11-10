@@ -1,6 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
+
+import { BlockEditor } from "@/features/dashboard/content/block-editor";
+import type { ContentBlock } from "@/core/content/blocks";
 
 import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
 import { Icon } from "@/core/ui/icon";
@@ -72,6 +76,7 @@ export default function DashboardUiGalleryPage() {
         <DashboardTextField id="gallery-field" label={t("field")} readOnly value={t("sample")} />
         <DashboardCheckbox checked description={t("checkboxHint")} id="gallery-check" label={t("checkbox")} onChange={() => undefined} />
         <FileDrop hint={t("fileHint")} label={t("fileDrop")} />
+        <BlockSample />
       </section>
       <section className="space-y-4">
         <h2 className="text-h5">{t("metadata")}</h2>
@@ -118,4 +123,9 @@ export default function DashboardUiGalleryPage() {
       />
     </div>
   );
+}
+
+function BlockSample() {
+  const [blocks, setBlocks] = useState<ContentBlock[]>([{ type: "paragraph", children: [{ text: "" }] }]);
+  return <BlockEditor blocks={blocks} onChange={setBlocks} />;
 }

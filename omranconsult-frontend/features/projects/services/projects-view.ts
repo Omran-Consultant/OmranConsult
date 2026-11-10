@@ -51,12 +51,36 @@ export function toProjectCard(project: ProjectSummary, locale: AppLocale): Proje
     title: project.title ?? project.slug,
     client: project.client?.name,
     category: project.sector?.name,
-    image: projectImage(project.imageKey, locale),
+    image: projectImage(project.imageKey, locale, {
+      url: project.imageUrl,
+      srcSet: project.imageSrcSet,
+      width: project.imageWidth,
+      height: project.imageHeight,
+      alt: project.imageAlt,
+    }),
   };
 }
 
-export function projectImage(key: string | undefined, locale: AppLocale): ImageAsset {
-  return toImageAsset(getSiteImage(key) ?? SITE_IMAGES.building, locale);
+type ProjectMedia = {
+  readonly url?: string | null;
+  readonly srcSet?: string | null;
+  readonly width?: number | null;
+  readonly height?: number | null;
+  readonly alt?: string | null;
+};
+
+export function projectImage(key: string | undefined, locale: AppLocale, media?: ProjectMedia): ImageAsset {
+  const mapped = getSiteImage(key);
+  if (media?.url) {
+    return {
+      src: media.url,
+      width: media.width ?? mapped?.width ?? 1672,
+      height: media.height ?? mapped?.height ?? 941,
+      alt: media.alt || (mapped ? mapped.alt[locale] : ""),
+      ...(media.srcSet ? { srcSet: media.srcSet } : {}),
+    };
+  }
+  return toImageAsset(mapped ?? SITE_IMAGES.building, locale);
 }
 
 export function toProjectCards(projects: readonly ProjectSummary[], locale: AppLocale): ProjectCardModel[] {

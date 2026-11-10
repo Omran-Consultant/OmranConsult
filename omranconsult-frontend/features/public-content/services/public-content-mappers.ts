@@ -91,6 +91,11 @@ function mapProjectSummary(project: ProjectsIndexResponse["data"][number]) {
     sector: project.sector ? { slug: project.sector.slug, name: mapOptionalText(project.sector.name) } : undefined,
     year: project.year ?? undefined,
     imageKey: mapOptionalText(project.image ?? null),
+    imageUrl: project.image_url ?? null,
+    imageSrcSet: project.image_srcset ?? null,
+    imageWidth: project.image_width ?? null,
+    imageHeight: project.image_height ?? null,
+    imageAlt: project.image_alt ?? null,
     regions: project.regions.map((region) => ({
       slug: region.slug,
       code: mapOptionalText(region.code),
@@ -109,6 +114,22 @@ export function mapProjectsIndexToUiModel(payload: ProjectsIndexResponse) {
   };
 }
 
+function overviewBlocks(overview: ProjectDetailResponse["data"]["overview"]) {
+  if (typeof overview === "string") {
+    const text = overview.trim();
+    return text.length > 0 ? [{ type: "paragraph" as const, children: [{ text }] }] : [];
+  }
+  return overview ?? [];
+}
+
+function galleryItems(gallery: ProjectDetailResponse["data"]["gallery"]) {
+  return (gallery ?? []).map((item) =>
+    typeof item === "string"
+      ? { key: item, media_id: null, url: null, srcset: null, width: null, height: null, alt: null }
+      : item,
+  );
+}
+
 export function mapProjectDetailToUiModel(payload: ProjectDetailResponse) {
   const project = payload.data;
   return {
@@ -117,9 +138,20 @@ export function mapProjectDetailToUiModel(payload: ProjectDetailResponse) {
     location: mapOptionalText(project.location ?? null),
     serviceType: mapOptionalText(project.service_type ?? null),
     deliveryStatus: project.delivery_status ?? undefined,
-    overview: mapOptionalText(project.overview ?? null),
+    overviewBlocks: overviewBlocks(project.overview),
     scope: (project.scope ?? []).map((item) => item.trim()).filter(Boolean),
-    gallery: project.gallery ?? [],
+    gallery: galleryItems(project.gallery),
+    seoTitle: mapOptionalText(project.seo?.title ?? null),
+    seoDescription: mapOptionalText(project.seo?.description ?? null),
+    ogImage: project.og_image?.url
+      ? {
+          src: project.og_image.url,
+          width: project.og_image.width ?? 1200,
+          height: project.og_image.height ?? 630,
+          alt: project.og_image.alt ?? "",
+          srcSet: project.og_image.srcset ?? undefined,
+        }
+      : undefined,
     related: (project.related ?? []).map(mapProjectSummary),
   };
 }

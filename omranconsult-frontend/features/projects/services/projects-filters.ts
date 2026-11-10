@@ -82,3 +82,25 @@ export function pageWindow(current: number, last: number): (number | "gap")[] {
 export function galleryImages(gallery: readonly string[], heroKey: string | undefined): string[] {
   return [...new Set(gallery)].filter((key) => key !== heroKey);
 }
+
+export function visibleGallery<T extends { readonly key: string | null; readonly url: string | null }>(
+  gallery: readonly T[],
+  heroKey: string | undefined,
+  heroUrl: string | null | undefined,
+): T[] {
+  const seen = new Set<string>();
+  return gallery.filter((item) => {
+    const id = item.url || item.key || "";
+    if (!id || seen.has(id)) {
+      return false;
+    }
+    seen.add(id);
+    if (heroKey && item.key === heroKey) {
+      return false;
+    }
+    if (!item.key && heroUrl && item.url === heroUrl) {
+      return false;
+    }
+    return true;
+  });
+}

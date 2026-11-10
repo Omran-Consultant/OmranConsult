@@ -76,29 +76,55 @@ export type AdminProjectListItem = {
   sector_name?: { ar?: string | null; en?: string | null } | null;
   region_names?: { ar?: string | null; en?: string | null }[];
   cover_path?: string | null;
+  cover_url?: string | null;
   year?: number | null;
   updated_at: string | null;
+};
+
+export type AdminPublishBlocker = { field: string; code: string };
+
+export type AdminGalleryItem = {
+  key: string | null;
+  media_id: number | null;
+  url: string | null;
+  srcset: string | null;
+  width: number | null;
+  height: number | null;
+  alt: { ar?: string | null; en?: string | null };
+};
+
+export type AdminLookup = {
+  id: number;
+  slug: string;
+  name: { ar?: string | null; en?: string | null };
 };
 
 export type AdminProjectDetail = {
   id: number;
   slug: string;
   title: { ar?: string | null; en?: string | null };
-  overview: { ar?: string | null; en?: string | null } | null;
+  overview: { ar?: unknown; en?: unknown } | null;
   client_id: number | null;
   sector_id: number | null;
   year: number | null;
   location: { ar?: string | null; en?: string | null } | null;
+  service_type: { ar?: string | null; en?: string | null } | null;
+  delivery_status: string | null;
   scope: { ar?: string[] | null; en?: string[] | null } | null;
-  gallery: string[] | null;
+  gallery: AdminGalleryItem[] | null;
   region_ids: number[];
   is_featured: boolean;
+  featured_order: number | null;
+  sort_order: number | null;
+  seo: { title?: { ar?: string | null; en?: string | null }; description?: { ar?: string | null; en?: string | null } } | null;
+  og_image_media_id: number | null;
   status: string;
   has_unpublished_changes: boolean;
   draft: Record<string, unknown> | null;
   published_at: string | null;
-  publish_blockers: string[];
+  publish_blockers: AdminPublishBlocker[];
   client_name?: { ar?: string | null; en?: string | null } | null;
   sector_name?: { ar?: string | null; en?: string | null } | null;
   updated_at: string | null;
+  lookups?: { clients: AdminLookup[]; sectors: AdminLookup[]; regions: AdminLookup[] };
 };

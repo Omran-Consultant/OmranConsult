@@ -22,6 +22,11 @@ const projectSchema = z.object({
   sector: z.object({ slug: z.string(), name: nullableStringSchema }).nullable().optional(),
   year: z.number().int().nullable().optional(),
   image: nullableStringSchema.optional(),
+  image_url: z.string().nullable().optional(),
+  image_srcset: z.string().nullable().optional(),
+  image_width: z.number().nullable().optional(),
+  image_height: z.number().nullable().optional(),
+  image_alt: z.string().nullable().optional(),
   regions: z.array(regionSchema),
 });
 
@@ -143,15 +148,59 @@ export const projectsIndexResponseSchema = z.object({
   meta: projectsMetaSchema,
 });
 
+const inlineNodeSchema = z.object({
+  text: z.string(),
+  bold: z.boolean().optional(),
+  italic: z.boolean().optional(),
+  href: z.string().optional(),
+});
+
+const overviewBlockSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("paragraph"), children: z.array(inlineNodeSchema) }),
+  z.object({ type: z.literal("heading"), level: z.enum(["h2", "h3"]), children: z.array(inlineNodeSchema) }),
+  z.object({ type: z.literal("list"), style: z.enum(["bullet", "number"]), items: z.array(z.array(inlineNodeSchema)) }),
+  z.object({ type: z.literal("quote"), children: z.array(inlineNodeSchema) }),
+]);
+
+const projectGalleryItemSchema = z.object({
+  key: z.string().nullable(),
+  media_id: z.number().nullable(),
+  url: z.string().nullable(),
+  srcset: z.string().nullable(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
+  alt: z.string().nullable(),
+});
+
+const projectGallerySchema = z.array(z.union([z.string(), projectGalleryItemSchema]));
+
 export const projectDetailResponseSchema = z.object({
   locale: localeSchema,
   data: projectSchema.extend({
     location: nullableStringSchema.optional(),
     service_type: nullableStringSchema.optional(),
     delivery_status: z.enum(["completed", "ongoing"]).nullable().optional(),
-    overview: nullableStringSchema.optional(),
+    overview: z.union([z.string(), z.array(overviewBlockSchema)]).nullable().optional(),
     scope: z.array(z.string()).optional(),
-    gallery: z.array(z.string()).optional(),
+    gallery: projectGallerySchema.optional(),
+    seo: z
+      .object({
+        title: nullableStringSchema,
+        description: nullableStringSchema,
+      })
+      .nullable()
+      .optional(),
+    og_image: z
+      .object({
+        media_id: z.number(),
+        url: z.string(),
+        srcset: z.string().nullable(),
+        width: z.number().nullable(),
+        height: z.number().nullable(),
+        alt: z.string().nullable(),
+      })
+      .nullable()
+      .optional(),
     related: z.array(projectSchema).optional(),
   }),
 });

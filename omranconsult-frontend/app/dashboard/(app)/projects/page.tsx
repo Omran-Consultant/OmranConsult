@@ -21,8 +21,9 @@ import { StatusPill } from "@/features/dashboard/ui/status-pill";
 import { DashboardTabs } from "@/features/dashboard/ui/tabs";
 import { ViewToggle } from "@/features/dashboard/ui/view-toggle";
 import type { AppLocale } from "@/i18n/routing";
-import { adminProjects } from "@/lib/api/admin-browser";
+import { adminCreateProject, adminDeleteProject, adminProjects, adminRestoreProject } from "@/lib/api/admin-browser";
 import type { AdminProjectListItem } from "@/lib/api/types";
+import { ConfirmDialog } from "@/features/dashboard/ui/confirm-dialog";
 
 type StatusFilter = "all" | "published" | "draft" | "trashed" | "published_with_draft";
 
@@ -33,8 +34,8 @@ function localizedName(value: { ar?: string | null; en?: string | null } | null 
   return (locale === "ar" ? value.ar : value.en) ?? value.en ?? value.ar ?? "—";
 }
 
-function CoverThumb({ coverPath }: { coverPath?: string | null }) {
-  const src = dashboardCoverSrc(coverPath);
+function CoverThumb({ coverPath, coverUrl }: { coverPath?: string | null; coverUrl?: string | null }) {
+  const src = coverUrl || dashboardCoverSrc(coverPath);
   if (src) {
     return <Image alt="" className="size-11 shrink-0 rounded-lg object-cover" height={44} src={src} width={44} />;
   }
@@ -58,6 +59,7 @@ export default function ProjectsListPage() {
   const [year, setYear] = useState("");
   const [view, setView] = useState<"table" | "grid">("table");
   const [loaded, setLoaded] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<AdminProjectListItem | null>(null);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
@@ -143,9 +145,10 @@ export default function ProjectsListPage() {
           data-project-id={String(row.id)}
           data-slug={row.slug}
           data-status={row.status}
+          data-has-cover={row.cover_path || row.cover_url ? "true" : "false"}
           href={`/dashboard/projects/${row.id}`}
         >
-          <CoverThumb coverPath={row.cover_path} />
+          <CoverThumb coverPath={row.cover_path} coverUrl={row.cover_url} />
           <span className="min-w-0">
             <span className="line-clamp-2 block leading-5 font-medium">{localizedName(row.title, locale)}</span>
             <span className="block truncate text-caption leading-4 text-muted">{row.slug}</span>
@@ -210,7 +213,13 @@ export default function ProjectsListPage() {
     <div className="space-y-6" data-ready="true" data-dashboard-toolbar>
       <PageHeader
         actions={
-          <DashboardButton disabled disabledReason={t("addDisabled")} icon={<Icon name="plus" />} type="button">
+          <DashboardButton
+            icon={<Icon name="plus" />}
+            onClick={() => {
+              void adminCreateProject().then((created) => router.push(`/dashboard/projects/${created.id}`));
+            }}
+            type="button"
+          >
             {t("add")}
           </DashboardButton>
         }
@@ -292,9 +301,15 @@ export default function ProjectsListPage() {
               <RowActionButton label={t("edit")} onClick={() => router.push(`/dashboard/projects/${row.id}`)}>
                 <Icon name="edit" />
               </RowActionButton>
-              <RowActionButton disabled label={t("deleteDisabled")}>
-                <Icon name="trash" />
-              </RowActionButton>
+              {row.status === "trashed" ? (
+                <RowActionButton label={t("restore")} onClick={() => void adminRestoreProject(row.id).then((detail) => setItems((current) => current.map((item) => item.id === row.id ? { ...item, status: detail.has_unpublished_changes && detail.status === "published" ? "published_with_draft" : detail.status } : item)))}>
+                  <Icon name="check" />
+                </RowActionButton>
+              ) : (
+                <RowActionButton label={t("delete")} onClick={() => setPendingDelete(row)}>
+                  <Icon name="trash" />
+                </RowActionButton>
+              )}
             </>
           )}
           rows={filtered.map((row) => ({ ...row, id: row.id }))}
@@ -307,12 +322,13 @@ export default function ProjectsListPage() {
               data-project-id={String(row.id)}
               data-slug={row.slug}
               data-status={row.status}
+              data-has-cover={row.cover_path || row.cover_url ? "true" : "false"}
               href={`/dashboard/projects/${row.id}`}
               key={row.id}
             >
               <div className="mb-3 overflow-hidden rounded-xl bg-highlight">
-                {dashboardCoverSrc(row.cover_path) ? (
-                  <Image alt="" className="aspect-video w-full object-cover" height={180} src={dashboardCoverSrc(row.cover_path) ?? ""} width={320} />
+                {row.cover_url || dashboardCoverSrc(row.cover_path) ? (
+                  <Image alt="" className="aspect-video w-full object-cover" height={180} src={row.cover_url || dashboardCoverSrc(row.cover_path) || ""} width={320} />
                 ) : (
                   <div className="grid aspect-video place-items-center text-muted">
                     <Icon name="image" />
@@ -338,6 +354,25 @@ export default function ProjectsListPage() {
         onPrev={() => undefined}
         to={filtered.length}
         total={total || filtered.length}
+      />
+      <ConfirmDialog
+        cancelLabel={t("cancel")}
+        confirmLabel={t("delete")}
+        destructive
+        message={t("deleteConfirm", { name: pendingDelete ? localizedName(pendingDelete.title, locale) : "" })}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (!pendingDelete) {
+            return;
+          }
+          const target = pendingDelete;
+          setPendingDelete(null);
+          void adminDeleteProject(target.id).then(() => {
+            setItems((current) => current.map((item) => (item.id === target.id ? { ...item, status: "trashed" } : item)));
+          });
+        }}
+        open={pendingDelete !== null}
+        title={t("delete")}
       />
     </div>
   );

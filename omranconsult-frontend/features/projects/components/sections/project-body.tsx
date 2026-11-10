@@ -1,10 +1,11 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { buttonClassName } from "@/core/ui/button";
 import { Container } from "@/core/ui/container";
+import { FillImage } from "@/core/ui/fill-image";
 import { Icon } from "@/core/ui/icon";
 import { SectionHeader } from "@/core/ui/section-header";
+import { ProjectOverview } from "@/features/projects/components/project-overview";
 import { ProjectInquiryCard } from "@/features/projects/components/project-inquiry-card";
 import type { ProjectDetailView } from "@/features/projects/services/get-project-detail-data";
 import { Link } from "@/i18n/navigation";
@@ -23,8 +24,8 @@ export async function ProjectBody({ project, title }: { readonly project: Projec
     <section className="py-10 lg:py-30" data-section="body">
       <Container className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_25rem] lg:items-start lg:gap-20">
         <div className="flex min-w-0 flex-col gap-10 lg:gap-12">
-          <SectionHeader overline={copy.overview_overline} subtitle={project.overview} title={copy.overview_title ?? title}>
-            {project.overview ? null : (
+          <SectionHeader overline={copy.overview_overline} subtitle={project.overview ?? undefined} title={copy.overview_title ?? title}>
+            {project.overview || project.overviewBlocks.length > 0 ? null : (
               <div className="flex flex-col items-start gap-5">
                 <dl className="flex flex-col gap-3 text-body-l">
                   {project.client ? (
@@ -50,6 +51,8 @@ export async function ProjectBody({ project, title }: { readonly project: Projec
             )}
           </SectionHeader>
 
+          {!project.overview && project.overviewBlocks.length > 0 ? <ProjectOverview blocks={project.overviewBlocks} /> : null}
+
           {project.scope.length > 0 ? (
             <div className="flex flex-col gap-4 lg:gap-6">
               <h3 className="font-display text-h3 text-primary">{copy.scope_title}</h3>
@@ -67,11 +70,11 @@ export async function ProjectBody({ project, title }: { readonly project: Projec
           {mainImage ? (
             <div className="grid gap-4 md:grid-cols-2">
               <div className="relative h-55 overflow-hidden rounded-lg md:col-span-2 md:h-110">
-                <Image alt={mainImage.alt} className="object-cover" fill sizes="(min-width: 1024px) 800px, 100vw" src={mainImage.src} />
+                <FillImage image={mainImage} sizes="(min-width: 1024px) 800px, 100vw" />
               </div>
               {sideImages.slice(0, 2).map((image) => (
                 <div className="relative h-55 overflow-hidden rounded-lg md:h-70" key={image.src}>
-                  <Image alt={image.alt} className="object-cover" fill sizes="(min-width: 1024px) 392px, (min-width: 768px) 50vw, 100vw" src={image.src} />
+                  <FillImage image={image} sizes="(min-width: 1024px) 392px, (min-width: 768px) 50vw, 100vw" />
                 </div>
               ))}
             </div>

@@ -1,4 +1,5 @@
-import { galleryImages } from "@/features/projects/services/projects-filters";
+import { plainParagraph } from "@/core/content/blocks";
+import { visibleGallery } from "@/features/projects/services/projects-filters";
 import { projectImage, projectsCopySchema, toProjectCards } from "@/features/projects/services/projects-view";
 import { mapPageToBlocks, mapProjectDetailToUiModel } from "@/features/public-content/services/public-content-mappers";
 import type { AppLocale } from "@/i18n/routing";
@@ -25,10 +26,28 @@ export async function getProjectDetailData(locale: AppLocale, slug: string, prev
     regions: project.regions.map((region) => region.name).filter((name): name is string => Boolean(name)),
     serviceType: project.serviceType,
     deliveryStatus: project.deliveryStatus,
-    overview: project.overview,
+    overview: plainParagraph(project.overviewBlocks),
+    overviewBlocks: project.overviewBlocks,
     scope: project.scope,
-    heroImage: projectImage(project.imageKey, locale),
-    gallery: galleryImages(project.gallery, project.imageKey).map((key) => projectImage(key, locale)),
+    heroImage: projectImage(project.imageKey, locale, {
+      url: project.imageUrl,
+      srcSet: project.imageSrcSet,
+      width: project.imageWidth,
+      height: project.imageHeight,
+      alt: project.imageAlt,
+    }),
+    gallery: visibleGallery(project.gallery, project.imageKey, project.imageUrl).map((item) =>
+      projectImage(item.key ?? undefined, locale, {
+        url: item.url,
+        srcSet: item.srcset,
+        width: item.width,
+        height: item.height,
+        alt: item.alt,
+      }),
+    ),
+    seoTitle: project.seoTitle,
+    seoDescription: project.seoDescription,
+    ogImage: project.ogImage,
     related: toProjectCards(project.related, locale),
   };
 }

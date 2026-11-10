@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { Breadcrumb } from "@/core/ui/breadcrumb";
 import { Container } from "@/core/ui/container";
+import { FillImage } from "@/core/ui/fill-image";
 import type { ProjectDetailView } from "@/features/projects/services/get-project-detail-data";
 
 /**
@@ -21,7 +21,7 @@ export async function ProjectDetailHero({ project, title }: { readonly project: 
       className="scheme-dark relative isolate flex min-h-130 items-end overflow-hidden bg-canvas pt-36 pb-10 text-primary lg:min-h-[min(820px,100svh)] lg:pb-20"
       data-section="hero"
     >
-      <Image alt={project.heroImage.alt} className="-z-20 object-cover" fill priority quality={60} sizes="100vw" src={project.heroImage.src} />
+      <FillImage className="-z-20" image={project.heroImage} priority quality={60} sizes="100vw" />
       <span aria-hidden="true" className="absolute inset-0 -z-10 scrim-detail" />
       <Container>
         <div className="flex max-w-225 flex-col items-start gap-3 lg:gap-5">
