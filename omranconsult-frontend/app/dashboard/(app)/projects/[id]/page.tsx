@@ -359,7 +359,9 @@ export default function ProjectEditorPage() {
               <StatusPill locale={locale} status={project.has_unpublished_changes ? "published_with_draft" : project.status} />
               <p className="text-caption text-muted">{t("lastPublished")}: {formatFullDateTime(project.published_at, locale)}</p>
               <DashboardSwitch checked={featured} id="featured" label={t("featured")} onChange={setFeatured} />
-              <DashboardTextField id="featured-order" inputMode="numeric" label={t("featuredOrder")} onChange={(event) => setFeaturedOrder(event.target.value.replace(/[^\d]/g, ""))} value={featuredOrder} />
+              {featured ? (
+                <DashboardTextField id="featured-order" inputMode="numeric" label={t("featuredOrder")} onChange={(event) => setFeaturedOrder(event.target.value.replace(/[^\d]/g, ""))} value={featuredOrder} />
+              ) : null}
               {blockers.length > 0 ? (
                 <ul className="space-y-1 text-caption text-danger">
                   {blockers.map((item) => (
@@ -429,19 +431,58 @@ export default function ProjectEditorPage() {
 function ScopeList({ items, label, onChange }: { items: string[]; label: string; onChange: (next: string[]) => void }) {
   const t = useTranslations("Dashboard.projects");
   const rows = items.length > 0 ? items : [""];
+
+  function move(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= rows.length) {
+      return;
+    }
+    const next = [...rows];
+    const current = next[index];
+    const other = next[target];
+    if (current === undefined || other === undefined) {
+      return;
+    }
+    next[index] = other;
+    next[target] = current;
+    onChange(next);
+  }
+
   return (
     <div className="space-y-2">
       <p className="text-label-s text-secondary">{label}</p>
-      {rows.map((item, index) => (
-        <DashboardTextField
-          id={`scope-${index}-${label}`}
-          key={`${label}-${index}`}
-          label={`${label} ${index + 1}`}
-          onChange={(event) => onChange(rows.map((row, rowIndex) => (rowIndex === index ? event.target.value : row)))}
-          value={item}
-        />
-      ))}
-      <DashboardButton onClick={() => onChange([...rows, ""])} type="button" variant="ghost">{t("addScope")}</DashboardButton>
+      {rows.map((item, index) => {
+        const rowLabel = item.trim() || t("scopeEmpty", { index: index + 1 });
+        return (
+          <div className="flex min-w-0 items-end gap-2" key={`${label}-${index}`}>
+            <div className="min-w-0 flex-1">
+              <DashboardTextField
+                id={`scope-${index}-${label}`}
+                label={rowLabel}
+                onChange={(event) => onChange(rows.map((row, rowIndex) => (rowIndex === index ? event.target.value : row)))}
+                value={item}
+              />
+            </div>
+            <button aria-label={t("scopeMoveUp")} className="inline-flex size-12 shrink-0 items-center justify-center rounded-lg border border-line text-secondary hover:bg-highlight" onClick={() => move(index, -1)} type="button">
+              <Icon className="rotate-180" name="chevron-down" />
+            </button>
+            <button aria-label={t("scopeMoveDown")} className="inline-flex size-12 shrink-0 items-center justify-center rounded-lg border border-line text-secondary hover:bg-highlight" onClick={() => move(index, 1)} type="button">
+              <Icon name="chevron-down" />
+            </button>
+            <button
+              aria-label={t("scopeRemove")}
+              className="inline-flex size-12 shrink-0 items-center justify-center rounded-lg border border-line text-secondary hover:bg-highlight"
+              onClick={() => onChange(rows.filter((_, rowIndex) => rowIndex !== index))}
+              type="button"
+            >
+              <Icon name="trash" />
+            </button>
+          </div>
+        );
+      })}
+      <DashboardButton icon={<Icon name="plus" />} onClick={() => onChange([...rows, ""])} type="button" variant="ghost">
+        {t("addScope")}
+      </DashboardButton>
     </div>
   );
 }
