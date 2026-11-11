@@ -17,6 +17,13 @@ const AR: Record<string, string> = {
   media_deleted: "حذف ملفاً",
   media_force_deleted: "حذف ملفاً نهائياً",
   revalidation_failed: "فشلت إعادة التحقق من الموقع",
+  content_block_updated: "حدّث قسماً في صفحة",
+  content_block_published: "نشر قسماً في صفحة",
+  hero_slide_updated: "حدّث شريحة",
+  hero_slide_published: "نشر شريحة",
+  statistic_updated: "حدّث إحصائية",
+  statistic_published: "نشر إحصائية",
+  home_sectors_updated: "نشر ترتيب قطاعات الرئيسية",
 };
 
 const EN: Record<string, string> = {
@@ -36,6 +43,13 @@ const EN: Record<string, string> = {
   media_deleted: "Deleted a file",
   media_force_deleted: "Permanently deleted a file",
   revalidation_failed: "Frontend revalidation failed",
+  content_block_updated: "Updated a page section",
+  content_block_published: "Published a page section",
+  hero_slide_updated: "Updated a slide",
+  hero_slide_published: "Published a slide",
+  statistic_updated: "Updated a statistic",
+  statistic_published: "Published a statistic",
+  home_sectors_updated: "Published the Home sectors order",
 };
 
 export function labelAuditAction(action: string, locale: AppLocale): string {

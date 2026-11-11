@@ -233,3 +233,64 @@ export type AdminNewsDetail = {
   updated_at: string | null;
   lookups?: { categories: AdminLookup[] };
 };
+
+export type AdminLocaleText = { ar?: string | null; en?: string | null };
+
+export type AdminPageBlockSummary = {
+  id: number;
+  section_key: string;
+  status: string;
+  updated_at: string | null;
+};
+
+export type AdminPagesIndex = {
+  data: { page: string; blocks: AdminPageBlockSummary[] }[];
+};
+
+type AdminPagesLifecycle = {
+  status: string;
+  has_unpublished_changes: boolean;
+  publish_blockers: AdminPublishBlocker[];
+  published_at: string | null;
+  updated_at: string | null;
+};
+
+export type AdminPageBlockDetail = AdminPagesLifecycle & {
+  id: number;
+  page: string;
+  section_key: string;
+  /** The live payload with both languages; `draft` is the unpublished version when one exists. */
+  payload: unknown;
+  draft: unknown;
+  icons: string[];
+};
+
+export type AdminHeroSlide = AdminPagesLifecycle & {
+  id: number;
+  key: string;
+  headline: AdminLocaleText | null;
+  subline: AdminLocaleText | null;
+  draft: { headline?: AdminLocaleText | null; subline?: AdminLocaleText | null } | null;
+};
+
+export type AdminStatisticFields = {
+  value: number;
+  unit: AdminLocaleText | null;
+  suffix: string | null;
+  scale: string | null;
+  label: AdminLocaleText | null;
+};
+
+export type AdminStatistic = AdminPagesLifecycle &
+  AdminStatisticFields & {
+    id: number;
+    key: string;
+    draft: Partial<AdminStatisticFields> | null;
+  };
+
+export type AdminHomeSectors = {
+  slugs: string[];
+  is_default: boolean;
+  max: number;
+  sectors: { slug: string; name: AdminLocaleText | null }[];
+};

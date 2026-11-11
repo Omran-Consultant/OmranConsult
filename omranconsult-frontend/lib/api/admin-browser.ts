@@ -3,18 +3,23 @@ import {
   ensureSanctumCsrfCookie,
 } from "@/lib/api/browser-client";
 import type {
+  AdminHeroSlide,
+  AdminHomeSectors,
   AdminLoginRequest,
   AdminLogoutResponse,
   AdminLookup,
   AdminMfaPendingResponse,
   AdminNewsDetail,
   AdminNewsListItem,
+  AdminPageBlockDetail,
+  AdminPagesIndex,
   AdminProjectDetail,
   AdminProjectListItem,
   AdminServiceCategory,
   AdminServiceCategoryDetail,
   AdminServiceItemDetail,
   AdminServiceToolsResponse,
+  AdminStatistic,
   AdminSummaryResponse,
   AdminUser,
   AdminUserResponse,
@@ -353,4 +358,64 @@ export async function adminRestoreNews(id: number): Promise<AdminNewsDetail> {
 
 export async function adminDiscardNewsDraft(id: number): Promise<AdminNewsDetail> {
   return browserApiRequest(`/api/admin/news/${id}/discard-draft`, { method: "POST" });
+}
+
+export async function adminPages(): Promise<AdminPagesIndex> {
+  return browserApiRequest("/api/admin/pages", { method: "GET" });
+}
+
+export async function adminPageBlock(id: number): Promise<AdminPageBlockDetail> {
+  return browserApiRequest(`/api/admin/pages/blocks/${id}`, { method: "GET" });
+}
+
+export async function adminPatchPageBlock(id: number, payload: unknown): Promise<AdminPageBlockDetail> {
+  return browserApiRequest(`/api/admin/pages/blocks/${id}`, { method: "PATCH", json: { payload } });
+}
+
+export async function adminPublishPageBlock(id: number): Promise<AdminPageBlockDetail> {
+  return browserApiRequest(`/api/admin/pages/blocks/${id}/publish`, { method: "POST" });
+}
+
+export async function adminDiscardPageBlockDraft(id: number): Promise<AdminPageBlockDetail> {
+  return browserApiRequest(`/api/admin/pages/blocks/${id}/discard-draft`, { method: "POST" });
+}
+
+export async function adminHeroSlides(): Promise<{ data: AdminHeroSlide[] }> {
+  return browserApiRequest("/api/admin/pages/hero-slides", { method: "GET" });
+}
+
+export async function adminPatchHeroSlide(id: number, body: Record<string, unknown>): Promise<AdminHeroSlide> {
+  return browserApiRequest(`/api/admin/pages/hero-slides/${id}`, { method: "PATCH", json: body });
+}
+
+export async function adminPublishHeroSlide(id: number): Promise<AdminHeroSlide> {
+  return browserApiRequest(`/api/admin/pages/hero-slides/${id}/publish`, { method: "POST" });
+}
+
+export async function adminDiscardHeroSlideDraft(id: number): Promise<AdminHeroSlide> {
+  return browserApiRequest(`/api/admin/pages/hero-slides/${id}/discard-draft`, { method: "POST" });
+}
+
+export async function adminStatistics(): Promise<{ data: AdminStatistic[] }> {
+  return browserApiRequest("/api/admin/pages/statistics", { method: "GET" });
+}
+
+export async function adminPatchStatistic(id: number, body: Record<string, unknown>): Promise<AdminStatistic> {
+  return browserApiRequest(`/api/admin/pages/statistics/${id}`, { method: "PATCH", json: body });
+}
+
+export async function adminPublishStatistic(id: number): Promise<AdminStatistic> {
+  return browserApiRequest(`/api/admin/pages/statistics/${id}/publish`, { method: "POST" });
+}
+
+export async function adminDiscardStatisticDraft(id: number): Promise<AdminStatistic> {
+  return browserApiRequest(`/api/admin/pages/statistics/${id}/discard-draft`, { method: "POST" });
+}
+
+export async function adminHomeSectors(): Promise<AdminHomeSectors> {
+  return browserApiRequest("/api/admin/pages/home-sectors", { method: "GET" });
+}
+
+export async function adminPublishHomeSectors(slugs: string[]): Promise<AdminHomeSectors> {
+  return browserApiRequest("/api/admin/pages/home-sectors", { method: "PUT", json: { slugs } });
 }
