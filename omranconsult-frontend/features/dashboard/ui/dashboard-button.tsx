@@ -15,8 +15,9 @@ const VARIANT_CLASS: Record<DashboardButtonVariant, string> = {
 
 const DISABLED_CLASS: Record<DashboardButtonVariant, string> = {
   primary: "bg-accent-strong/70 text-white",
-  secondary: "border border-line bg-highlight text-secondary",
-  ghost: "text-secondary",
+  // Keep the secondary look (border + elevated fill); only mute it — not a grey block.
+  secondary: "border border-line bg-elevated text-primary opacity-50",
+  ghost: "text-secondary opacity-50",
   danger: "bg-danger/70 text-white",
 };
 
