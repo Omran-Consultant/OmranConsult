@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 
 import { blocksFromUnknown, hasVisibleText, type ContentBlock } from "@/core/content/blocks";
 import { BlockEditor } from "@/features/dashboard/content/block-editor";
@@ -102,8 +102,13 @@ export default function NewsEditorPage() {
     setSeoDescriptionEn(typeof seoDescription?.en === "string" ? seoDescription.en : "");
   }
 
+  // An Effect Event: the post loads once per id; `applyDetail` reads the current locale without re-running the load.
+  const applyLoadedDetail = useEffectEvent(applyDetail);
+
   useEffect(() => {
-    void adminNewsPost(id).then(applyDetail).catch(() => setError(t("loadError")));
+    void adminNewsPost(id)
+      .then((detail) => applyLoadedDetail(detail))
+      .catch(() => setError(t("loadError")));
   }, [id, t]);
 
   const blockerCodes = useMemo(() => {

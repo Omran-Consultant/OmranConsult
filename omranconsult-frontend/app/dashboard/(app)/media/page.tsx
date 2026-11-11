@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
 import { ApiError } from "@/lib/api/errors";
@@ -107,9 +107,12 @@ export default function MediaPage() {
     await fetchPage(1, search, kind, false);
   }
 
+  // An Effect Event: the debounce re-runs only when the search or the type changes, not on every render's new `fetchPage`.
+  const reloadFirstPage = useEffectEvent((search: string, kind: string) => fetchPage(1, search, kind, false));
+
   useEffect(() => {
     const handle = window.setTimeout(() => {
-      void fetchPage(1, q, type, false);
+      void reloadFirstPage(q, type);
     }, 200);
     return () => window.clearTimeout(handle);
   }, [q, type]);
