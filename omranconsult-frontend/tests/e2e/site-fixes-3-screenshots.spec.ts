@@ -27,15 +27,20 @@ test.describe("site-fixes-3 screenshots", () => {
 
   test("home, projects, project detail, media, about, contact", async ({ page }) => {
     mkdirSync(SHOTS, { recursive: true });
+    const origin = `http://localhost:${process.env.E2E_PORT ?? "3000"}`;
 
     for (const surface of SURFACES) {
       await page.setViewportSize({ width: surface.width, height: 900 });
+      // Cookie wins over localStorage in theme-init-script / readClientThemePreference.
+      await page.context().addCookies([{ name: "oc-theme", value: surface.theme, url: origin }]);
       await page.addInitScript((theme) => {
         localStorage.setItem("oc-theme", theme);
+        document.cookie = `oc-theme=${theme};path=/;max-age=31536000;SameSite=Lax`;
       }, surface.theme);
 
       for (const route of ROUTES) {
-        await page.goto(`/${surface.locale}${route.path}`, { waitUntil: "networkidle" });
+        // load (not networkidle): contact/newsletter polling can keep the network busy indefinitely.
+        await page.goto(`/${surface.locale}${route.path}`, { waitUntil: "load" });
         const isDark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
         expect(isDark, `${route.name} theme`).toBe(surface.theme === "dark");
 
