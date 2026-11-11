@@ -12,6 +12,7 @@ const SHORT_PROJECT = "investment-consulting-framework-agreement";
 const LONG_NEWS = "partnerships-with-international-firms";
 const SHORT_NEWS = "national-asset-management-guide-education";
 const LONG_TITLE_START = { ar: "مشروع تجريبي بعنوان طويل جداً", en: "A deliberately long project title" } as const;
+const LONG_NEWS_START = { ar: "خبر تجريبي بعنوان طويل جداً", en: "A deliberately long news headline" } as const;
 const SHORT_TITLE = { ar: { project: "مركز", news: "دليل" }, en: { project: "Hub", news: "Guide" } } as const;
 
 async function overflow(page: Page): Promise<number> {
@@ -68,7 +69,7 @@ for (const locale of ["ar", "en"] as const) {
 
       test("a 120-character article with no cover and every block type", async ({ page }) => {
         await page.goto(`/${locale}/media/${LONG_NEWS}`);
-        await expect(page.locator("h1")).toContainText(LONG_TITLE_START[locale]);
+        await expect(page.locator("h1")).toContainText(LONG_NEWS_START[locale]);
         const body = page.locator('[data-section="body"]');
         for (const tag of ["h2", "h3", "ul li", "ol li", "blockquote", "strong", "em", "img"]) {
           await expect(body.locator(tag).first()).toBeVisible();
@@ -94,7 +95,7 @@ for (const locale of ["ar", "en"] as const) {
 
       test("the media grid keeps even cards around the extremes", async ({ page }) => {
         await page.goto(`/${locale}/media?page=2`);
-        await expect(page.getByText(LONG_TITLE_START[locale]).filter({ visible: true }).first()).toBeVisible();
+        await expect(page.getByText(LONG_NEWS_START[locale]).filter({ visible: true }).first()).toBeVisible();
         await gridIsEven(page, '[data-section="grid"] ul > li');
         expect(await overflow(page)).toBe(0);
         expect(await brokenImages(page)).toEqual([]);

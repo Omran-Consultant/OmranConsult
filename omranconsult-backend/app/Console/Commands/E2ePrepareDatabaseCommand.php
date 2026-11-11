@@ -149,7 +149,10 @@ class E2ePrepareDatabaseCommand extends Command
             ['type' => 'image', 'key' => 'aerial', 'alt' => ['ar' => 'صورة داخل الخبر', 'en' => 'Image inside the article']],
         ];
         NewsPost::query()->where('slug', 'partnerships-with-international-firms')->firstOrFail()->update([
-            'title' => ['ar' => $longAr, 'en' => $longEn],
+            'title' => [
+                'ar' => $long('خبر تجريبي بعنوان طويل جداً لاختبار التفاف النص في بطاقات المركز الإعلامي وصفحة الخبر دون كسر الشبكة'),
+                'en' => $long('A deliberately long news headline to test text wrapping in media cards and the article page'),
+            ],
             'body' => ContentBlocks::validateLocaleMap(['ar' => $newsBlocks('ar'), 'en' => $newsBlocks('en')], 'body', true),
             'cover_image' => null,
             'cover_media_id' => null,
