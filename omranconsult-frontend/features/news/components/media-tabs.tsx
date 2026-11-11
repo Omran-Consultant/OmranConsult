@@ -42,7 +42,11 @@ export function MediaTabs({ label, panelId, tabs }: MediaTabsProps) {
   }
 
   return (
-    <div aria-label={label} className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:flex-wrap md:px-0 md:pb-0" role="tablist">
+    <div
+      aria-label={label}
+      className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0"
+      role="tablist"
+    >
       {tabs.map((tab, index) => (
         <Link
           aria-controls={panelId}
