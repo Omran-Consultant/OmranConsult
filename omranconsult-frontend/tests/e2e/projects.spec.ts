@@ -167,7 +167,8 @@ function expectCards(sizes: number[][], expected: readonly (readonly [number, nu
   });
 }
 
-test.describe("Figma card sizes at 1440", () => {
+// Desktop layout sizes only — phone projects set isMobile and skip @desktop.
+test.describe("Figma card sizes at 1440", { tag: "@desktop" }, () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test("home bento", async ({ page }) => {
