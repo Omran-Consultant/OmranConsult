@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { ensureDashboardTheme, loginToDashboard, resetE2eSeed, setDashboardSurface, waitReady } from "./dashboard-helpers";
 
-const SHOTS = path.join(process.cwd(), "..", "review-shots", "dashboard", "5B-3a");
+const SHOTS = path.join(process.cwd(), "..", "review-shots", "dashboard", "5B-3a-fix");
 
 const SURFACES = [
   { locale: "ar" as const, theme: "light" as const, width: 1440 },
