@@ -48,7 +48,7 @@ export function ImageOverlayCard({
   return (
     <Link
       className={classNames(
-        "group relative isolate flex w-full flex-col overflow-hidden rounded-[20px] border border-line-strong/40 bg-[var(--navy-900)] text-white shadow-card [&_img]:absolute [&_img]:inset-0 [&_img]:size-full",
+        "group relative isolate flex w-full flex-col overflow-hidden rounded-[20px] bg-[var(--navy-900)] text-white shadow-card [&_img]:absolute [&_img]:inset-0 [&_img]:size-full",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         className,
       )}
