@@ -1,7 +1,8 @@
 import "server-only";
 
 import { getFrontendServerKey, getServerApiBaseUrl } from "@/core/env/server";
-import { parseApiError } from "@/lib/api/errors";
+import { ApiError, parseApiError } from "@/lib/api/errors";
+import { isTimeoutError, SERVER_FETCH_TIMEOUT_MS, timeoutSignal } from "@/lib/api/fetch-timeout";
 import { fetchRetryingTooManyRequests } from "@/lib/api/retry-after";
 import type { ApiHealthResponse } from "@/lib/api/types";
 
@@ -55,21 +56,29 @@ export async function serverApiRequest<T>(
       body: options.json === undefined ? undefined : JSON.stringify(options.json),
       cache: attempt > 1 ? "no-store" : cache,
       next: attempt > 1 ? undefined : options.next,
-      signal: options.signal,
+      signal: timeoutSignal(SERVER_FETCH_TIMEOUT_MS, options.signal),
     });
   };
 
-  const response = await fetchRetryingTooManyRequests(send);
+  try {
+    const response = await fetchRetryingTooManyRequests(send);
 
-  if (!response.ok) {
-    throw await parseApiError(response);
+    if (!response.ok) {
+      throw await parseApiError(response);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    // A stalled API becomes a typed gateway timeout; the route's error boundary shows the localized retry state.
+    if (isTimeoutError(error)) {
+      throw new ApiError(504, "API request timed out");
+    }
+    throw error;
   }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return (await response.json()) as T;
 }
 
 export async function fetchApiHealth(): Promise<ApiHealthResponse> {
