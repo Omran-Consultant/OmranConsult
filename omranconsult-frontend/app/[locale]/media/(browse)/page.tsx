@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import { MediaPageContent } from "@/features/news/components/media-page-content";
 import { getMediaPageData } from "@/features/news/services/get-media-page-data";
 import { parseMediaFilters } from "@/features/news/services/news-view";
-import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
+import { buildPageMetadata } from "@/core/seo/page-metadata";
+import { getStaticPageSeo } from "@/features/public-content/services/page-seo";
 import { routing } from "@/i18n/routing";
 
 type MediaPageProps = {
@@ -18,7 +19,11 @@ export const instant = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return routeAlternatesMetadata(locale, "/media");
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
+  }
+  const seo = await getStaticPageSeo(locale, "media");
+  return buildPageMetadata({ locale, path: "/media", ...seo });
 }
 
 export default async function MediaPage({ params, searchParams }: MediaPageProps) {

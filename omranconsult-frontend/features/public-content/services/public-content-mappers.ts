@@ -275,5 +275,15 @@ export function mapNewsDetailToUiModel(payload: NewsDetailResponse) {
     tags: (post.tags ?? []).map((tag) => tag.trim()).filter(Boolean),
     body: post.body ?? [],
     related: (post.related ?? []).map(mapNewsPost),
+    seoTitle: mapOptionalText(post.seo?.title ?? null),
+    seoDescription: mapOptionalText(post.seo?.description ?? null),
+    ogImage: post.og_image?.url
+      ? {
+          src: post.og_image.url,
+          width: post.og_image.width ?? 1200,
+          height: post.og_image.height ?? 630,
+          alt: post.og_image.alt ?? "",
+        }
+      : undefined,
   };
 }

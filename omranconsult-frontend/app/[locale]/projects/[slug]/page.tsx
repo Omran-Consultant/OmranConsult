@@ -6,7 +6,9 @@ import { notFound } from "next/navigation";
 
 import { ProjectDetailPageContent } from "@/features/projects/components/project-detail-page-content";
 import { getProjectDetailData } from "@/features/projects/services/get-project-detail-data";
-import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
+import { firstParagraphText } from "@/core/content/blocks";
+import { buildPageMetadata } from "@/core/seo/page-metadata";
+import { getSiteSeo } from "@/features/public-content/services/page-seo";
 import { routing } from "@/i18n/routing";
 
 type ProjectDetailPageProps = {
@@ -17,29 +19,22 @@ export const instant = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const path = `/projects/${encodeURIComponent(slug)}`;
-  const metadata = routeAlternatesMetadata(locale, path);
-  if (locale !== "en" && locale !== "ar") {
-    return metadata;
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
   }
-  const project = await getProjectDetailData(locale, slug);
+  const [site, project] = await Promise.all([getSiteSeo(locale), getProjectDetailData(locale, slug)]);
   if (!project) {
-    return metadata;
+    return {};
   }
-  return {
-    ...metadata,
-    ...(project.seoTitle ? { title: project.seoTitle } : {}),
-    ...(project.seoDescription ? { description: project.seoDescription } : {}),
-    ...(project.seoTitle || project.seoDescription || project.ogImage
-      ? {
-          openGraph: {
-            ...(project.seoTitle ? { title: project.seoTitle } : {}),
-            ...(project.seoDescription ? { description: project.seoDescription } : {}),
-            ...(project.ogImage ? { images: [{ url: project.ogImage.src, alt: project.ogImage.alt }] } : {}),
-          },
-        }
-      : {}),
-  };
+  const image = project.ogImage ?? project.heroImage;
+  return buildPageMetadata({
+    locale,
+    path: `/projects/${encodeURIComponent(slug)}`,
+    siteName: site.siteName,
+    title: project.seoTitle ?? project.title ?? site.siteName,
+    description: project.seoDescription ?? firstParagraphText(project.overviewBlocks) ?? project.title ?? site.description,
+    image: { url: image.src, alt: image.alt, width: image.width, height: image.height },
+  });
 }
 
 export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {

@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import { HomeApiFault } from "@/features/home/components/home-api-fault";
 import { HomePageContent } from "@/features/home/components/home-page-content";
 import { getHomePageData } from "@/features/home/services/get-home-page-data";
-import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
+import { buildPageMetadata } from "@/core/seo/page-metadata";
+import { getSiteSeo } from "@/features/public-content/services/page-seo";
 import { routing } from "@/i18n/routing";
 
 type HomePageProps = {
@@ -15,7 +16,10 @@ type HomePageProps = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return routeAlternatesMetadata(locale, "");
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
+  }
+  return buildPageMetadata({ locale, path: "", ...(await getSiteSeo(locale)) });
 }
 
 export default async function PublicHomePage({ params }: HomePageProps) {

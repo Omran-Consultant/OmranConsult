@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 
 import { AboutPageContent } from "@/features/about/components/about-page-content";
 import { getAboutPageData } from "@/features/about/services/get-about-page-data";
-import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
+import { buildPageMetadata } from "@/core/seo/page-metadata";
+import { getStaticPageSeo } from "@/features/public-content/services/page-seo";
 import { routing } from "@/i18n/routing";
 
 type AboutPageProps = {
@@ -14,7 +15,11 @@ type AboutPageProps = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return routeAlternatesMetadata(locale, "/about");
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
+  }
+  const seo = await getStaticPageSeo(locale, "about");
+  return buildPageMetadata({ locale, path: "/about", ...seo });
 }
 
 export default async function AboutPage({ params }: AboutPageProps) {

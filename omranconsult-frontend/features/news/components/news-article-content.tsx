@@ -1,7 +1,10 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { Fragment } from "react";
 
+import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
+import { JsonLd } from "@/core/seo/json-ld";
+import { getConfiguredPublicSiteOrigin } from "@/core/seo/locale-metadata";
 import { Breadcrumb } from "@/core/ui/breadcrumb";
 import { LinkButton } from "@/core/ui/button";
 import type { ImageAsset } from "@/core/ui/image-asset";
@@ -9,6 +12,7 @@ import { InlineRuns } from "@/core/ui/inline-runs";
 import { ShareLinks } from "@/features/news/components/share-links";
 import type { NewsArticleView } from "@/features/news/services/get-news-article-data";
 import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { LCP_IMAGE } from "@/core/ui/fill-image";
 
 type BodyBlock = NewsArticleView["body"][number];
@@ -40,12 +44,39 @@ function groupBody(blocks: readonly BodyBlock[]): BodyGroup[] {
 export function NewsArticleContent({ article }: { readonly article: NewsArticleView }) {
   const t = useTranslations("MediaPage");
   const tLayout = useTranslations("Layout");
+  const tMeta = useTranslations("Metadata");
+  const locale = useLocale() as AppLocale;
   const groups = groupBody(article.body);
+  const siteOrigin = getConfiguredPublicSiteOrigin() ?? "http://localhost:3000";
+  const absolute = (src: string) => (src.startsWith("http") ? src : `${siteOrigin}${src}`);
+  const pageUrl = `${siteOrigin}/${locale}/media/${article.slug}`;
   const leadIndex = groups.findIndex((group) => group.kind === "text" && group.block.type === "paragraph");
   const meta = [article.monthYear, article.readingMinutes ? t("readingTime", { minutes: article.readingMinutes }) : undefined].filter(Boolean);
 
   return (
     <article aria-labelledby="article-title">
+      <JsonLd
+        data={buildBreadcrumbJsonLd(locale, [
+          { name: tLayout("nav.home"), path: "" },
+          { name: tLayout("nav.media"), path: "/media" },
+          { name: article.title, path: `/media/${article.slug}` },
+        ])}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: article.title,
+          ...(article.excerpt ? { description: article.excerpt } : {}),
+          image: [absolute(article.cover.src)],
+          ...(article.dateTime ? { datePublished: article.dateTime } : {}),
+          inLanguage: locale,
+          mainEntityOfPage: pageUrl,
+          url: pageUrl,
+          author: { "@type": "Organization", name: tMeta("title") },
+          publisher: { "@type": "Organization", name: tMeta("title"), logo: { "@type": "ImageObject", url: `${siteOrigin}/images/brand/logo-dark.svg` } },
+        }}
+      />
       <header className="pt-6 pb-8 lg:pt-20 lg:pb-12" data-section="article-head">
         <div className="container-page">
           <div className="mx-auto flex max-w-260 flex-col gap-5">

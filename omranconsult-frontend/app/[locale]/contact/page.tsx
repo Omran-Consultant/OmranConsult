@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 
 import { ContactPageContent } from "@/features/contact/components/contact-page-content";
 import { getContactPageData } from "@/features/contact/services/get-contact-page-data";
-import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
+import { buildPageMetadata } from "@/core/seo/page-metadata";
+import { getStaticPageSeo } from "@/features/public-content/services/page-seo";
 import { routing } from "@/i18n/routing";
 
 type ContactPageProps = {
@@ -14,7 +15,11 @@ type ContactPageProps = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return routeAlternatesMetadata(locale, "/contact");
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
+  }
+  const seo = await getStaticPageSeo(locale, "contact");
+  return buildPageMetadata({ locale, path: "/contact", ...seo });
 }
 
 export default async function ContactPage({ params }: ContactPageProps) {

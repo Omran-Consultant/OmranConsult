@@ -66,6 +66,9 @@ export async function getNewsArticleData(locale: AppLocale, slug: string) {
     cta: mediaCopySchema.parse(mapPageToBlocks(page).design_copy ?? {}).article_cta,
     ctaImage: toImageAsset(SITE_IMAGES.night, locale),
     shareUrl: origin ? `${origin}/${locale}/media/${post.slug}` : undefined,
+    seoTitle: post.seoTitle,
+    seoDescription: post.seoDescription,
+    ogImage: post.ogImage,
   };
 }
 

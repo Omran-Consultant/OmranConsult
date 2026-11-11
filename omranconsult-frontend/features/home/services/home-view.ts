@@ -145,11 +145,6 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
       }),
     partners: partnerCards(sources.partners),
     profilePdfUrl: sources.settings.profilePdfUrl,
-    organization: {
-      name: sources.settings.companyLegalName,
-      email: sources.settings.contact.email,
-      telephone: sources.settings.contact.phones[0],
-    },
   };
 }
 

@@ -20,6 +20,19 @@ export function plainText(children: readonly InlineNode[]): string {
   return children.map((child) => child.text).join("");
 }
 
+/** Text of the first paragraph with text, for a meta description fallback. */
+export function firstParagraphText(blocks: readonly ContentBlock[]): string | null {
+  for (const block of blocks) {
+    if (block.type === "paragraph") {
+      const text = plainText(block.children).trim();
+      if (text !== "") {
+        return text;
+      }
+    }
+  }
+  return null;
+}
+
 export function hasVisibleText(blocks: readonly ContentBlock[]): boolean {
   return blocks.some((block) => {
     if (block.type === "list") {

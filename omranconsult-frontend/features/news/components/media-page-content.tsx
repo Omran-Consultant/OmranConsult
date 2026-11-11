@@ -1,5 +1,7 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
+import { buildBreadcrumbJsonLd } from "@/core/seo/breadcrumbs";
+import { JsonLd } from "@/core/seo/json-ld";
 import { Breadcrumb } from "@/core/ui/breadcrumb";
 import { LinkButton } from "@/core/ui/button";
 import { EmptyState } from "@/core/ui/empty-state";
@@ -8,6 +10,7 @@ import { NewsletterForm } from "@/core/ui/newsletter-form";
 import { MediaTabs } from "@/features/news/components/media-tabs";
 import type { MediaView } from "@/features/news/services/get-media-page-data";
 import { mediaQuery } from "@/features/news/services/news-view";
+import type { AppLocale } from "@/i18n/routing";
 
 const PANEL_ID = "media-panel";
 
@@ -19,6 +22,7 @@ const PANEL_ID = "media-panel";
 export function MediaPageContent({ view }: { readonly view: MediaView }) {
   const t = useTranslations("MediaPage");
   const tLayout = useTranslations("Layout");
+  const locale = useLocale() as AppLocale;
   const { copy, filters } = view;
   const title = copy.title ?? tLayout("nav.media");
   const tabs = [
@@ -36,6 +40,7 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
 
   return (
     <>
+      <JsonLd data={buildBreadcrumbJsonLd(locale, [{ name: tLayout("nav.home"), path: "" }, { name: tLayout("nav.media"), path: "/media" }])} />
       <section aria-labelledby="media-title" className="pt-6 pb-6 lg:pt-20 lg:pb-12" data-section="intro">
         <div className="container-page flex flex-col gap-4.5 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
           <div className="flex flex-col gap-4.5 md:gap-4">

@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import { ProjectsPageContent } from "@/features/projects/components/projects-page-content";
 import { getProjectsPageData } from "@/features/projects/services/get-projects-page-data";
 import { parseProjectsFilters } from "@/features/projects/services/projects-filters";
-import { routeAlternatesMetadata } from "@/core/seo/locale-metadata";
+import { buildPageMetadata } from "@/core/seo/page-metadata";
+import { getStaticPageSeo } from "@/features/public-content/services/page-seo";
 import { routing } from "@/i18n/routing";
 
 type ProjectsPageProps = {
@@ -18,7 +19,11 @@ export const instant = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return routeAlternatesMetadata(locale, "/projects");
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
+  }
+  const seo = await getStaticPageSeo(locale, "projects");
+  return buildPageMetadata({ locale, path: "/projects", ...seo });
 }
 
 export default async function ProjectsPage({ params, searchParams }: ProjectsPageProps) {
