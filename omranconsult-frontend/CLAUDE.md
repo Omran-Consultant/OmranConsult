@@ -91,7 +91,7 @@ The sections below are the required shape for **future** work. Do not scaffold e
 * Phase 0 env: **`core/env/public.ts`** and **`core/env/server.ts`** (server-only). Manual validation on **`API_BASE_URL`** hostname for local integration. When the env surface grows, add Zod startup validation (e.g. consolidated **`core/env.ts`**) and fail fast per **`SYSTEM_DESIGN.md` v1.5** §4.6.
 * Validate external input (forms, query params, API responses) with Zod.
 * No `dangerouslySetInnerHTML` with unsanitized content. No `eval` / `new Function`.
-* Security headers are set in `next.config.ts` (CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors`). `script-src` and `style-src` include `'unsafe-inline'` because Next injects the theme pre-paint script and style attributes. Do not add `'unsafe-eval'`; the production policy does not include it.
+* Security headers are set in `next.config.ts` (CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors`). `script-src` and `style-src` include `'unsafe-inline'` because Next injects the theme pre-paint script and style attributes. `'unsafe-eval'` is allowed only in the development policy (React dev tooling needs it; owner-approved 2026-11-11); the production policy must never include it, and a Playwright check enforces that.
 * Protect `/api/revalidate` and any webhook with a secret and constant-time comparison. The route does not exist yet.
 * External links to untrusted URLs use `rel="noopener noreferrer"`.
 * Never log PII, tokens, or form contents.
