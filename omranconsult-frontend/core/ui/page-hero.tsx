@@ -7,6 +7,7 @@ import { classNames } from "@/core/ui/class-names";
 import { Container } from "@/core/ui/container";
 import { CountUp } from "@/core/ui/count-up";
 import type { ImageAsset } from "@/core/ui/image-asset";
+import { LCP_IMAGE } from "@/core/ui/fill-image";
 
 export type HeroStat = {
   readonly value: string;
@@ -58,7 +59,7 @@ export function PageHero({
       )}
       data-section="page-hero"
     >
-      <Image alt={image.alt} className="-z-20 object-cover" fill priority quality={60} sizes="100vw" src={image.src} />
+      <Image alt={image.alt} className="-z-20 object-cover" fill {...LCP_IMAGE} quality={60} sizes="100vw" src={image.src} />
       <span aria-hidden="true" className={classNames("absolute inset-0 -z-10 max-lg:scrim-down-60", scrim)} />
       <Container className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex max-w-190 flex-col gap-3 lg:gap-5">

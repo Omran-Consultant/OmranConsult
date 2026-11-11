@@ -9,6 +9,7 @@ import { InlineRuns } from "@/core/ui/inline-runs";
 import { ShareLinks } from "@/features/news/components/share-links";
 import type { NewsArticleView } from "@/features/news/services/get-news-article-data";
 import { Link } from "@/i18n/navigation";
+import { LCP_IMAGE } from "@/core/ui/fill-image";
 
 type BodyBlock = NewsArticleView["body"][number];
 type BodyGroup = { readonly kind: "text"; readonly block: Exclude<BodyBlock, { type: "image" }> } | { readonly kind: "images"; readonly images: ImageAsset[] };
@@ -81,7 +82,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
       <div data-section="cover">
         <div className="container-page">
           <div className="relative aspect-350/220 overflow-hidden rounded-lg bg-highlight md:aspect-1280/620 md:rounded-[28px]">
-            <Image alt={article.cover.alt} className="object-cover" fill priority sizes="(min-width: 1440px) 1280px, 100vw" src={article.cover.src} />
+            <Image alt={article.cover.alt} className="object-cover" fill {...LCP_IMAGE} sizes="(min-width: 1440px) 1280px, 100vw" src={article.cover.src} />
           </div>
         </div>
       </div>

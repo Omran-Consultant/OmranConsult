@@ -8,6 +8,7 @@ import { Container } from "@/core/ui/container";
 import { Overline } from "@/core/ui/overline";
 import { SITE_IMAGES, toImageAsset } from "@/features/media/profile-images";
 import type { AppLocale } from "@/i18n/routing";
+import { LCP_IMAGE } from "@/core/ui/fill-image";
 
 type LocaleErrorProps = {
   readonly error: unknown;
@@ -23,7 +24,7 @@ export default function LocaleError({ retry }: LocaleErrorProps) {
 
   return (
     <main className="scheme-dark relative isolate flex min-h-[calc(100svh-78px)] flex-1 items-center overflow-hidden bg-canvas py-24 text-primary lg:min-h-[calc(100svh-116px)]">
-      <Image alt="" className="-z-20 object-cover opacity-60" fill priority sizes="100vw" src={image.src} />
+      <Image alt="" className="-z-20 object-cover opacity-60" fill {...LCP_IMAGE} sizes="100vw" src={image.src} />
       <span aria-hidden="true" className="scrim-start absolute inset-0 -z-10" />
       <Container className="flex flex-col items-start gap-6">
         <Overline>500</Overline>
