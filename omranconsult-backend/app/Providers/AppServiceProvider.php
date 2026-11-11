@@ -30,8 +30,9 @@ class AppServiceProvider extends ServiceProvider
     {
         if (E2eQueueMode::shouldUseSync()) {
             config(['queue.default' => 'sync']);
-            if (E2eHarness::usesIsolatedDatabase()) {
-                $connection = config('database.default');
+            $connection = config('database.default');
+            // The E2E database is MySQL only (e2e:prepare-database); never point SQLite at a file of that name.
+            if (E2eHarness::usesIsolatedDatabase() && config('database.connections.'.$connection.'.driver') === 'mysql') {
                 config([
                     'database.connections.'.$connection.'.database' => config('e2e.database'),
                 ]);
