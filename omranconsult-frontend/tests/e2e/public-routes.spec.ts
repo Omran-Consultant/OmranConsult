@@ -85,3 +85,14 @@ test("projects filters update URL", async ({ page }) => {
   await expect(page).toHaveURL(/region=riyadh/);
   await expect(page.locator("h1")).toHaveCount(1);
 });
+
+test("the production CSP never allows 'unsafe-eval'", async ({ request }) => {
+  // The suite runs against a production build; 'unsafe-eval' is a development-only allowance.
+  for (const path of ["/en", "/ar/about", "/dashboard/login"]) {
+    const response = await request.get(path);
+    const policy = response.headers()["content-security-policy"];
+    expect(policy, `${path} sends a CSP`).toBeTruthy();
+    expect(policy, path).toContain("script-src 'self'");
+    expect(policy, path).not.toContain("unsafe-eval");
+  }
+});
