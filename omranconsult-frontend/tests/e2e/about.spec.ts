@@ -44,6 +44,55 @@ test("the clients grid shows every client-list record, unnamed ones with a neutr
   }
 });
 
+test.describe("client logo tiles follow the profile clients page", () => {
+  for (const [width, columns] of [
+    [1440, 5],
+    [1024, 4],
+    [768, 3],
+    [390, 2],
+  ] as const) {
+    test(`${columns} columns of 3:1 tiles at ${width} on About and Projects`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      for (const path of ["/ar/about", "/ar/projects"]) {
+        await page.goto(path);
+        // Streamed sections sit in a hidden container until React swaps them in.
+        await expect(page.locator('[data-section="clients"] [data-logo-tile]').first()).toBeVisible();
+        const boxes = await page.locator('[data-section="clients"] [data-logo-tile]').evaluateAll((nodes) =>
+          nodes.map((node) => {
+            const tile = node.getBoundingClientRect();
+            const logo = node.querySelector("img");
+            return {
+              top: Math.round(tile.top),
+              ratio: tile.width / tile.height,
+              border: getComputedStyle(node).borderTopWidth,
+              background: getComputedStyle(node).backgroundColor,
+              fit: logo ? getComputedStyle(logo).objectFit : "contain",
+            };
+          }),
+        );
+        expect(boxes).toHaveLength(30);
+        expect(boxes.filter((box) => box.top === boxes[0]?.top)).toHaveLength(columns);
+        for (const box of boxes) {
+          expect(box.ratio).toBeGreaterThan(2.9);
+          expect(box.ratio).toBeLessThan(3.1);
+          expect(box.border).toBe("1px");
+          expect(box.background).toBe("rgb(255, 255, 255)");
+          expect(box.fit).toBe("contain");
+        }
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      }
+    });
+  }
+
+  test("tiles stay white in the dark theme", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("oc-theme", "dark"));
+    await page.goto("/ar/about");
+    await expect(page.locator("html")).toHaveClass(/dark/);
+    const tile = page.locator('[data-section="clients"] [data-logo-tile]').first();
+    await expect(tile).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  });
+});
+
 test("credentials show every certificate and license scan", async ({ page }) => {
   await page.goto("/ar/about#credentials");
   const section = page.locator("#credentials");
