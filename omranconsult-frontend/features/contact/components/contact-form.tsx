@@ -11,6 +11,7 @@ import { INQUIRY_LIMITS, isValidEmail, isValidSaudiMobile, normalizePhone } from
 import type { AppLocale } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/errors";
 import { postInquiry } from "@/lib/api/public-writes";
+import { useHydrated } from "@/core/hooks/use-hydrated";
 
 type TextField = "name" | "organisation" | "email" | "phone" | "service_type" | "message";
 type Field = TextField | "consent";
@@ -48,6 +49,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
   const submittingRef = useRef(false);
+  const hydrated = useHydrated();
   const [values, setValues] = useState(EMPTY);
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState("");
@@ -142,6 +144,8 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
         </p>
       ) : (
         <form className="flex flex-col gap-4 md:gap-6" noValidate onSubmit={onSubmit} ref={formRef}>
+          {/* Until React hydrates, typing would be reset and a native submit would put the fields in the URL. */}
+          <fieldset className={hydrated ? "contents" : "contents [&_:disabled]:opacity-100"} disabled={!hydrated}>
           <div className="grid gap-4 md:grid-cols-2">
             <InputField autoComplete="name" id={`${id}-name`} label={t("nameLabel")} maxLength={INQUIRY_LIMITS.name} placeholder={t("namePlaceholder")} required {...bind("name")} />
             <InputField
@@ -237,6 +241,7 @@ export function ContactForm({ title, serviceOptions }: ContactFormProps) {
           <Button arrow className="w-full" loading={status.kind === "submitting"} type="submit">
             {t("submit")}
           </Button>
+          </fieldset>
         </form>
       )}
     </div>

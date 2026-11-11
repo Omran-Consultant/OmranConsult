@@ -8,6 +8,9 @@ loadE2eEnv();
 const port = process.env.E2E_PORT ?? "3000";
 const origin = `http://localhost:${port}`;
 
+const PUBLIC_SPECS =
+  /(about|cards-a11y|console-clean|contact|equal-card-heights|error-state|hero-layout|hero-rings|home|images-loaded|layout|llms|media|projects|public-routes|robustness|seo|seo-pages|services|unknown-slug)\.spec\.ts$/;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 60_000,
@@ -47,6 +50,26 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"], channel: "chrome" },
+    },
+    // SITE_POLISH P2: the public suite on Safari and two phones. The dashboard is a desktop tool.
+    {
+      name: "webkit",
+      testMatch: PUBLIC_SPECS,
+      use: { ...devices["Desktop Safari"] },
+    },
+    {
+      name: "iphone-15",
+      testMatch: PUBLIC_SPECS,
+      // Header links, the Home sector chips and the profile download are desktop-only (Figma).
+      grepInvert: /@desktop/,
+      use: { ...devices["iPhone 15"] },
+    },
+    {
+      name: "pixel-7",
+      testMatch: PUBLIC_SPECS,
+      // Header links, the Home sector chips and the profile download are desktop-only (Figma).
+      grepInvert: /@desktop/,
+      use: { ...devices["Pixel 7"], channel: "chrome" },
     },
   ],
 });

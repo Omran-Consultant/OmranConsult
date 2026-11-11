@@ -10,7 +10,7 @@ test("home renders the Figma sections in order", async ({ page }) => {
   await expect(page.locator('[data-section="hero"]').getByRole("link", { name: "استكشف مشاريعنا" })).toHaveAttribute("href", "/ar/projects");
 });
 
-test("sector chips filter the featured projects without a reload", async ({ page }) => {
+test("sector chips filter the featured projects without a reload", { tag: "@desktop" }, async ({ page }) => {
   await page.goto("/en");
   const projects = page.locator('[data-section="projects"]');
   const all = projects.getByRole("button", { name: "All", exact: true });
@@ -78,7 +78,7 @@ test("home does not show the expired-certificate badge", async ({ page }) => {
   await expect(page.locator('[data-section="trust"]').getByText("Expired")).toHaveCount(0);
 });
 
-test("profile download button links to the API file", async ({ page }) => {
+test("profile download button links to the API file", { tag: "@desktop" }, async ({ page }) => {
   await page.goto("/ar");
   const link = page.locator('[data-section="cta"]').getByRole("link", { name: "حمّل الملف التعريفي" });
   await expect(link).toHaveAttribute("href", /\/storage\/files\/omran-profile-2029\.pdf$/);

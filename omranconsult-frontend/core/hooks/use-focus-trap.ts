@@ -7,7 +7,7 @@ const FOCUSABLE_SELECTOR =
 
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return [...container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)].filter(
-    (element) => !element.hasAttribute("disabled") && element.tabIndex !== -1,
+    (element) => !element.hasAttribute("disabled") && element.tabIndex !== -1 && element.getClientRects().length > 0,
   );
 }
 
@@ -61,20 +61,13 @@ export function useFocusTrap({
         return;
       }
 
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      const activeElement = document.activeElement;
-
-      if (event.shiftKey && activeElement === first) {
-        event.preventDefault();
-        last?.focus();
-        return;
-      }
-
-      if (!event.shiftKey && activeElement === last) {
-        event.preventDefault();
-        first?.focus();
-      }
+      // Move focus here on every Tab: Safari's default Tab order skips links, so leaving the
+      // step to the browser lets focus escape the dialog between the first and last element.
+      event.preventDefault();
+      const index = focusables.indexOf(document.activeElement as HTMLElement);
+      const step = event.shiftKey ? -1 : 1;
+      const next = index === -1 ? (event.shiftKey ? focusables.length - 1 : 0) : (index + step + focusables.length) % focusables.length;
+      focusables[next]?.focus();
     };
 
     container.addEventListener("keydown", onKeyDown);

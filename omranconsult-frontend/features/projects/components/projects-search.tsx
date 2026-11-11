@@ -7,6 +7,7 @@ import { Icon } from "@/core/ui/icon";
 import { Spinner } from "@/core/ui/spinner";
 import { projectsQuery, searchTerm, type ProjectsFilters } from "@/features/projects/services/projects-filters";
 import { useRouter } from "@/i18n/navigation";
+import { useHydrated } from "@/core/hooks/use-hydrated";
 
 type ProjectsSearchProps = {
   readonly filters: ProjectsFilters;
@@ -25,6 +26,7 @@ export function ProjectsSearch({ filters, label, placeholder, className }: Proje
   const router = useRouter();
   const id = useId();
   const [pending, startTransition] = useTransition();
+  const hydrated = useHydrated();
   const [value, setValue] = useState(filters.q ?? "");
   const [applied, setApplied] = useState(filters.q);
   const [urlQuery, setUrlQuery] = useState(filters.q);
@@ -63,7 +65,8 @@ export function ProjectsSearch({ filters, label, placeholder, className }: Proje
   }
 
   return (
-    <form action="" className={classNames("relative", className)} onSubmit={onSubmit} role="search">
+    // A plain GET form until hydration (works without JS); the debounced search needs React.
+    <form action="" className={classNames("relative", className)} data-hydrated={hydrated ? "" : undefined} onSubmit={onSubmit} role="search">
       {(["sector", "client", "region"] as const).map((key) =>
         filters[key] ? <input key={key} name={key} type="hidden" value={filters[key]} /> : null,
       )}

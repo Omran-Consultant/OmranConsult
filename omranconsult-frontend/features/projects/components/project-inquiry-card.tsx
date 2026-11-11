@@ -10,6 +10,7 @@ import { INQUIRY_LIMITS, isValidEmail } from "@/core/validation/inquiry";
 import type { AppLocale } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/errors";
 import { postInquiry } from "@/lib/api/public-writes";
+import { useHydrated } from "@/core/hooks/use-hydrated";
 
 type Field = "name" | "organisation" | "email";
 
@@ -35,6 +36,7 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
   const locale = useLocale() as AppLocale;
   const id = useId();
   const submittingRef = useRef(false);
+  const hydrated = useHydrated();
   const [values, setValues] = useState<Record<Field, string>>({ name: "", organisation: "", email: "" });
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [serverErrors, setServerErrors] = useState<Partial<Record<Field, string>>>({});
@@ -107,6 +109,8 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
         <>
           {text ? <p className="text-body-s text-secondary max-md:hidden">{text}</p> : null}
           <form className="flex flex-col gap-4 md:gap-5" noValidate onSubmit={onSubmit}>
+            {/* Until React hydrates, typing would be reset and a native submit would put the fields in the URL. */}
+            <fieldset className={hydrated ? "contents" : "contents [&_:disabled]:opacity-100"} disabled={!hydrated}>
             <InputField autoComplete="name" id={`${id}-name`} label={t("nameLabel")} maxLength={INQUIRY_LIMITS.name} placeholder={t("namePlaceholder")} required {...bind("name")} />
             <InputField
               autoComplete="organization"
@@ -138,6 +142,7 @@ export function ProjectInquiryCard({ projectSlug, title, text }: ProjectInquiryC
             <Button arrow className="w-full" loading={status.kind === "submitting"} type="submit">
               {t("submit")}
             </Button>
+            </fieldset>
           </form>
         </>
       )}

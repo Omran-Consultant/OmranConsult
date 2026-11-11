@@ -11,6 +11,7 @@ import { INQUIRY_LIMITS, isValidEmail } from "@/core/validation/inquiry";
 import type { AppLocale } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/errors";
 import { postNewsletterSubscription } from "@/lib/api/public-writes";
+import { useHydrated } from "@/core/hooks/use-hydrated";
 
 type Status =
   | { readonly kind: "idle" }
@@ -35,6 +36,7 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
   const locale = useLocale() as AppLocale;
   const id = useId();
   const submittingRef = useRef(false);
+  const hydrated = useHydrated();
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -92,6 +94,8 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
 
   return (
     <form className={classNames("flex flex-col gap-2.5", className)} noValidate onSubmit={onSubmit}>
+      {/* Until React hydrates, typing would be reset and a native submit would put the fields in the URL. */}
+      <fieldset className={hydrated ? "contents" : "contents [&_:disabled]:opacity-100"} disabled={!hydrated}>
       <label className={classNames("text-label-s text-secondary", !showLabel && "sr-only")} htmlFor={`${id}-email`}>
         {t("emailLabel")}
       </label>
@@ -126,6 +130,7 @@ export function NewsletterForm({ className, showLabel = true, variant = "inline"
       >
         {message}
       </p>
+      </fieldset>
     </form>
   );
 }

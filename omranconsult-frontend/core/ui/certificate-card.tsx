@@ -7,6 +7,7 @@ import { useId, useRef, type ReactNode } from "react";
 import { classNames } from "@/core/ui/class-names";
 import { Icon } from "@/core/ui/icon";
 import type { CredentialScan } from "@/features/media/credential-scans";
+import { showModalFrom } from "@/core/ui/show-modal";
 
 type CertificateCardProps = {
   /** Latin code or name, for example "ISO 9001". */
@@ -46,7 +47,7 @@ function ScanCard({ code, label, badge, image, className }: CertificateCardProps
           "glass relative flex h-full w-full flex-col items-center gap-3 rounded-lg border border-line p-3 text-center transition-colors duration-150 hover:border-line-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           className,
         )}
-        onClick={() => dialogRef.current?.showModal()}
+        onClick={(event) => showModalFrom(dialogRef.current, event.currentTarget)}
         type="button"
       >
         {badge ? <span className="absolute end-3 top-3 z-10">{badge}</span> : null}

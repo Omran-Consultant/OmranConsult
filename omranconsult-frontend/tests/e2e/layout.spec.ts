@@ -34,20 +34,20 @@ test.describe("mobile menu", () => {
   });
 });
 
-test("desktop header marks the active link and links to contact", async ({ page }) => {
+test("desktop header marks the active link and links to contact", { tag: "@desktop" }, async ({ page }) => {
   await page.goto("/en/about");
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
   await expect(page.locator("header").getByRole("link", { name: "Contact us" })).toHaveAttribute("href", "/en/contact");
 });
 
-test("language switch keeps the path", async ({ page }) => {
+test("language switch keeps the path", { tag: "@desktop" }, async ({ page }) => {
   await page.goto("/en/services");
   await page.locator("header").getByRole("link", { name: "ع" }).click();
   await expect(page).toHaveURL(/\/ar\/services$/);
 });
 
-test("light is the default and the theme toggle persists dark mode", async ({ page }) => {
+test("light is the default and the theme toggle persists dark mode", { tag: "@desktop" }, async ({ page }) => {
   const initialResponse = await page.request.get("/en");
   expect(await initialResponse.text()).not.toMatch(/<html[^>]*class="[^"]*\bdark\b/);
 

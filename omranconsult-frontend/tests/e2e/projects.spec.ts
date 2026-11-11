@@ -35,6 +35,8 @@ test("a sector chip filters through the URL", async ({ page }) => {
 
 test("search is debounced into ?q= and the empty state clears it", async ({ page }) => {
   await page.goto("/ar/projects");
+  // The debounce is React's; before hydration the field is a plain GET form.
+  await expect(page.locator('form[role="search"][data-hydrated]')).toBeAttached();
   await page.getByRole("searchbox", { name: "ابحث عن مشروع" }).fill("جامعة");
   await expect(page).toHaveURL(/q=/);
   await expect(page.locator('[data-section="grid"] ul').first().locator("li")).toHaveCount(2);
@@ -46,7 +48,7 @@ test("search is debounced into ?q= and the empty state clears it", async ({ page
   await expect(page.getByRole("searchbox", { name: "ابحث عن مشروع" })).toHaveValue("");
 });
 
-test("pagination moves to the next page on desktop", async ({ page }) => {
+test("pagination moves to the next page on desktop", { tag: "@desktop" }, async ({ page }) => {
   await page.goto("/ar/projects");
   await page.getByRole("link", { name: "الصفحة التالية" }).click();
   await expect(page).toHaveURL(/page=2/);

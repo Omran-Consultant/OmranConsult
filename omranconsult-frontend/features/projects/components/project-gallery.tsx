@@ -7,6 +7,7 @@ import { classNames } from "@/core/ui/class-names";
 import { FillImage } from "@/core/ui/fill-image";
 import { Icon } from "@/core/ui/icon";
 import type { ImageAsset } from "@/core/ui/image-asset";
+import { showModalFrom } from "@/core/ui/show-modal";
 
 const ROUND_BUTTON = "flex size-12 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-colors duration-150 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
@@ -53,9 +54,9 @@ export function ProjectGallery({ images }: { readonly images: readonly ImageAsse
                   "group relative block h-55 w-full overflow-hidden rounded-[20px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                   lead ? "md:h-110" : "md:h-70",
                 )}
-                onClick={() => {
+                onClick={(event) => {
                   setActive(index);
-                  dialogRef.current?.showModal();
+                  showModalFrom(dialogRef.current, event.currentTarget);
                 }}
                 type="button"
               >

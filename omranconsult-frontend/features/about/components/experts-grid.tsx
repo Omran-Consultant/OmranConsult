@@ -8,6 +8,7 @@ import { filterChipClassName } from "@/core/ui/filter-chip";
 import { Icon } from "@/core/ui/icon";
 import type { ImageAsset } from "@/core/ui/image-asset";
 import { EXPERT_GROUPS, filterExperts, expertGroup, type ExpertGroup } from "@/features/about/services/expert-groups";
+import { showModalFrom } from "@/core/ui/show-modal";
 
 export type ExpertCardModel = {
   readonly slug: string;
@@ -41,9 +42,9 @@ export function ExpertsGrid({ experts }: { readonly experts: readonly ExpertCard
   const visible = filterExperts(experts, group);
   const groups = EXPERT_GROUPS.filter((item) => experts.some((expert) => expertGroup(expert.slug) === item));
 
-  const open = (expert: ExpertCardModel) => {
+  const open = (expert: ExpertCardModel, trigger: HTMLElement) => {
     setSelected(expert);
-    dialogRef.current?.showModal();
+    showModalFrom(dialogRef.current, trigger);
   };
 
   const selectGroup = (next: ExpertGroup | undefined) => {
@@ -152,14 +153,14 @@ function ExpertCard({
 }: {
   readonly expert: ExpertCardModel;
   readonly yearsLabel: string;
-  readonly onOpen: (expert: ExpertCardModel) => void;
+  readonly onOpen: (expert: ExpertCardModel, trigger: HTMLElement) => void;
 }) {
   return (
     <button
       aria-haspopup="dialog"
       className="group flex h-full w-full items-center gap-4 rounded-lg border border-line-strong bg-surface p-4 text-start transition-[transform,border-color,background-color,box-shadow] duration-150 hover:border-line-accent hover:bg-elevated hover:shadow-lift motion-safe:md:hover:-translate-y-1 md:gap-5 md:p-5"
       disabled={!expert.bio}
-      onClick={() => onOpen(expert)}
+      onClick={(event) => onOpen(expert, event.currentTarget)}
       type="button"
     >
       <span className="scheme-dark relative h-24 w-24 shrink-0 overflow-hidden rounded-full border border-line-accent bg-canvas">

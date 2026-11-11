@@ -38,8 +38,11 @@ test("category tabs filter by link and by RTL arrow keys", async ({ page }) => {
   await expect(page).toHaveURL(/\/ar\/media$/);
 });
 
-test("article shows the head, body blocks, sidebar and share links", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+test("article shows the head, body blocks, sidebar and share links", async ({ page, context, browserName }) => {
+  // Only Chromium knows these permission names; WebKit allows writeText on the click itself.
+  if (browserName === "chromium") {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  }
   await page.goto(ARTICLE);
   await expect(page.locator("h1")).toContainText("COP16");
   await expect(page.getByRole("navigation", { name: "مسار التنقل" }).getByRole("link", { name: "المركز الإعلامي" })).toHaveAttribute("href", "/ar/media");
