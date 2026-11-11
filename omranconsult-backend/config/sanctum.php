@@ -19,9 +19,10 @@ return [
 
     'stateful' => array_values(array_unique(array_filter(array_map(
         trim(...),
+        // Local also lists common Playwright E2E_PORT values (3000 default, 3010/3100/3200 when 3000 is taken).
         explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:3000').(
             env('APP_ENV') === 'local'
-                ? ',127.0.0.1:3000,localhost:3010,127.0.0.1:3010'
+                ? ',127.0.0.1:3000,localhost:3010,127.0.0.1:3010,localhost:3100,127.0.0.1:3100,localhost:3200,127.0.0.1:3200'
                 : ''
         ))
     )))),
