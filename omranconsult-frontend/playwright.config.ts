@@ -25,9 +25,12 @@ export default defineConfig({
   webServer: {
     // The production build runs before global setup and keeps `.next/cache/fetch-cache`.
     // Seed the E2E database and drop that cache first, or public pages render the previous run.
+    // Arm the API before the build too: pages prerendered at build time read it, and an unarmed
+    // API serves the dev database (global setup arms it again; teardown disarms).
     command: [
       "rm -rf .next/cache/fetch-cache",
       "php ../omranconsult-backend/artisan e2e:prepare-database",
+      `php ../omranconsult-backend/artisan e2e:arm-harness --frontend-url=${origin}`,
       "npm run build",
       `npm run start -- --hostname localhost --port ${port}`,
     ].join(" && "),
