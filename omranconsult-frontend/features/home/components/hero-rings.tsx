@@ -72,7 +72,7 @@ function Rings({ composition, href, mirror, className }: {
   const inset = `${(inner.offset / box) * 100}%`;
 
   return (
-    <div aria-hidden="true" className={classNames("pointer-events-none absolute -z-10 aspect-square", className)} data-hero-ring="">
+    <div aria-hidden="true" className={classNames("pointer-events-none absolute -z-10 aspect-square motion-safe:animate-ring-in", className)} data-hero-ring="">
       <span className="absolute inset-0 bg-cover bg-center" style={photoLayer(href, sectorMask(box, outer.start, outer.end, outer.inner, mirror))} />
       <span
         className="absolute bg-cover bg-center"
