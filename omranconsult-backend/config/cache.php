@@ -53,6 +53,14 @@ return [
             'lock_path' => storage_path('framework/cache/locks'),
         ],
 
+        // E2E harness flags (App\Support\E2e\E2eHarness). A file store, because an armed API
+        // moves the default database connection to the E2E database.
+        'e2e' => [
+            'driver' => 'file',
+            // PHPUnit arms the harness too; keep its flags away from the running dev API.
+            'path' => storage_path(env('APP_ENV') === 'testing' ? 'framework/testing/e2e-cache' : 'framework/cache/e2e'),
+        ],
+
         'storage' => [
             'driver' => 'storage',
             'disk' => env('CACHE_STORAGE_DISK'),

@@ -2,6 +2,7 @@
 
 namespace App\Support\E2e;
 
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 
 final class E2eHarness
@@ -14,34 +15,43 @@ final class E2eHarness
 
     public static function arm(?string $frontendUrl = null): void
     {
-        Cache::put(self::CACHE_KEY, true, now()->addMinutes(30));
-        Cache::put(self::DB_KEY, true, now()->addMinutes(30));
+        self::store()->put(self::CACHE_KEY, true, now()->addMinutes(30));
+        self::store()->put(self::DB_KEY, true, now()->addMinutes(30));
         if (is_string($frontendUrl) && $frontendUrl !== '') {
-            Cache::put(self::FRONTEND_KEY, rtrim($frontendUrl, '/'), now()->addMinutes(30));
+            self::store()->put(self::FRONTEND_KEY, rtrim($frontendUrl, '/'), now()->addMinutes(30));
         }
     }
 
     public static function disarm(): void
     {
-        Cache::forget(self::CACHE_KEY);
-        Cache::forget(self::DB_KEY);
-        Cache::forget(self::FRONTEND_KEY);
+        self::store()->forget(self::CACHE_KEY);
+        self::store()->forget(self::DB_KEY);
+        self::store()->forget(self::FRONTEND_KEY);
     }
 
     public static function isArmed(): bool
     {
-        return (bool) Cache::get(self::CACHE_KEY);
+        return (bool) self::store()->get(self::CACHE_KEY);
     }
 
     public static function usesIsolatedDatabase(): bool
     {
-        return (bool) Cache::get(self::DB_KEY);
+        return (bool) self::store()->get(self::DB_KEY);
     }
 
     public static function frontendUrl(): ?string
     {
-        $url = Cache::get(self::FRONTEND_KEY);
+        $url = self::store()->get(self::FRONTEND_KEY);
 
         return is_string($url) && $url !== '' ? rtrim($url, '/') : null;
+    }
+
+    /**
+     * Never the default store: once armed, the default database connection is the E2E database,
+     * so database-cache flags written before arming could not be cleared afterwards.
+     */
+    private static function store(): Repository
+    {
+        return Cache::store('e2e');
     }
 }

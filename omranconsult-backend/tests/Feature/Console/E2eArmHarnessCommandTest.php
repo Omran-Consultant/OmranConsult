@@ -10,6 +10,13 @@ class E2eArmHarnessCommandTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function tearDown(): void
+    {
+        E2eHarness::disarm();
+
+        parent::tearDown();
+    }
+
     public function test_arm_harness_sets_sync_queue_flag(): void
     {
         $this->assertFalse(E2eHarness::isArmed());
