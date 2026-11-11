@@ -2,6 +2,11 @@ import type { AppLocale } from "@/i18n/routing";
 
 type Label = readonly [ar: string, en: string];
 
+type SectionMeta = {
+  readonly title: Label;
+  readonly hint: Label;
+};
+
 /**
  * Names for the keys inside content block payloads, so the editor never shows a raw key.
  * The keys are the seeded ones (database/seeders); an unknown key falls back to a neutral name.
@@ -113,20 +118,88 @@ const PAGES: Record<string, Label> = {
   layout: ["التذييل والعناصر المشتركة", "Footer and shared elements"],
 };
 
-const SECTIONS: Record<string, Label> = {
-  design_copy: ["نصوص التصميم", "Design copy"],
-  about: ["من نحن (نص البروفايل)", "About (profile text)"],
-  education_goals: ["أهدافنا", "Our goals"],
-  core_offerings: ["الخدمات الأساسية", "Core offerings"],
-  flexible_model: ["نموذج العمل المرن", "Flexible model"],
-  strategy: ["الرؤية والرسالة والأهداف", "Vision, mission and objectives"],
-  credentials: ["التراخيص والشهادات", "Licenses and certificates"],
-  work_stages: ["مراحل العمل والتغطية", "Work stages and coverage"],
-  esg: ["الحوكمة والاستدامة", "Governance and ESG"],
-  engineering_design: ["التصميم الهندسي", "Engineering design"],
-  multi_phase_approach: ["منهجية المراحل المتعددة", "Multi-phase approach"],
-  section_titles: ["عناوين الأقسام", "Section titles"],
-  service_highlights: ["بطاقات الخدمات في الرئيسية", "Home service cards"],
+/** Human section names: where the text appears on the site — never internal CMS labels. */
+const SECTIONS: Record<string, SectionMeta> = {
+  "home.design_copy": {
+    title: ["نصوص الصفحة الرئيسية — العناوين والدعوات", "Home page — titles and calls to action"],
+    hint: ["العناوين الظاهرة في أعلى الصفحة وأقسامها ودعوة التواصل في الأسفل.", "Titles in the hero, section heads, and the bottom contact call to action."],
+  },
+  "home.about": {
+    title: ["نصوص الصفحة الرئيسية — قسم من نحن", "Home page — About section"],
+    hint: ["النص القصير تحت عنوان من نحن في الصفحة الرئيسية.", "The short About blurb on the home page."],
+  },
+  "home.education_goals": {
+    title: ["نصوص الصفحة الرئيسية — أهدافنا", "Home page — Our goals"],
+    hint: ["بطاقات الأهداف الظاهرة في الصفحة الرئيسية.", "Goal cards shown on the home page."],
+  },
+  "home.core_offerings": {
+    title: ["نصوص الصفحة الرئيسية — الخدمات الأساسية", "Home page — Core offerings"],
+    hint: ["عناوين ووصف الخدمات الأساسية في الصفحة الرئيسية.", "Titles and blurbs for the core offerings on Home."],
+  },
+  "home.flexible_model": {
+    title: ["نصوص الصفحة الرئيسية — نموذج العمل المرن", "Home page — Flexible model"],
+    hint: ["نقاط نموذج العمل المرن في الصفحة الرئيسية.", "Flexible-model points on the home page."],
+  },
+  "home.strategy": {
+    title: ["نصوص الصفحة الرئيسية — الرؤية والرسالة والأهداف", "Home page — Vision, mission and objectives"],
+    hint: ["بطاقات الرؤية والرسالة والأهداف في الصفحة الرئيسية.", "Vision, mission and objectives cards on Home."],
+  },
+  "home.credentials": {
+    title: ["نصوص الصفحة الرئيسية — التراخيص والشهادات", "Home page — Licenses and certificates"],
+    hint: ["عناوين ومقدمات قسم التراخيص والشهادات.", "Titles and intros for the licenses and certificates section."],
+  },
+  "home.work_stages": {
+    title: ["نصوص الصفحة الرئيسية — مراحل العمل والتغطية", "Home page — Work stages and coverage"],
+    hint: ["مراحل العمل ونص التغطية الجغرافية في الصفحة الرئيسية.", "Work stages and coverage copy on Home."],
+  },
+  "home.esg": {
+    title: ["نصوص الصفحة الرئيسية — الحوكمة والاستدامة", "Home page — Governance and ESG"],
+    hint: ["نص ومحاور الحوكمة والاستدامة في الصفحة الرئيسية.", "ESG intro and pillars on the home page."],
+  },
+  "home.engineering_design": {
+    title: ["نصوص الصفحة الرئيسية — التصميم الهندسي", "Home page — Engineering design"],
+    hint: ["نص قسم التصميم الهندسي في الصفحة الرئيسية.", "Engineering design section copy on Home."],
+  },
+  "home.multi_phase_approach": {
+    title: ["نصوص الصفحة الرئيسية — منهجية المراحل المتعددة", "Home page — Multi-phase approach"],
+    hint: ["خطوات ومخرجات المنهجية في الصفحة الرئيسية.", "Approach steps and outputs on Home."],
+  },
+  "home.section_titles": {
+    title: ["نصوص الصفحة الرئيسية — العناوين الصغيرة", "Home page — small section titles"],
+    hint: ["العناوين القصيرة فوق أقسام الخبراء والهيكل والإحصاءات والمشاريع المميزة.", "Short titles above experts, org chart, statistics and featured projects."],
+  },
+  "home.service_highlights": {
+    title: ["نصوص الصفحة الرئيسية — بطاقات الخدمات", "Home page — service cards"],
+    hint: ["عناوين ووصف الروابط في شبكة بطاقات الخدمات الست.", "Titles and blurbs on the six home service cards."],
+  },
+  "home.tools": {
+    title: ["نصوص الصفحة الرئيسية — الأدوات والممكنات", "Home page — Tools and enablers"],
+    hint: ["عناوين أدوات وممكنات الصفحة الرئيسية.", "Tools and enablers titles on Home."],
+  },
+  "about.design_copy": {
+    title: ["نصوص صفحة من نحن — العناوين الصغيرة", "About page — small titles and section heads"],
+    hint: ["عناوين أقسام صفحة من نحن ودعواتها الظاهرة للزائر.", "Section heads and calls to action the visitor sees on About."],
+  },
+  "services.design_copy": {
+    title: ["نصوص صفحة الخدمات — العناوين والأقسام", "Services page — titles and sections"],
+    hint: ["عناوين أعلى الصفحة وأقسام الخدمات الظاهرة للزائر.", "Hero and section titles on the Services page."],
+  },
+  "projects.design_copy": {
+    title: ["نصوص صفحة المشاريع — العناوين وتفاصيل المشروع", "Projects page — titles and project detail"],
+    hint: ["عنوان قائمة المشاريع ونصوص صفحة تفاصيل المشروع.", "Projects list hero and project-detail copy."],
+  },
+  "contact.design_copy": {
+    title: ["نصوص صفحة تواصل معنا — العنوان والنموذج", "Contact page — title and form"],
+    hint: ["عنوان الصفحة ونص المقدمة وعنوان نموذج التواصل.", "Page title, intro and contact form heading."],
+  },
+  "media.design_copy": {
+    title: ["نصوص المركز الإعلامي — العنوان والنشرة", "Media Center — title and newsletter"],
+    hint: ["عنوان المركز الإعلامي والمقدمة ونصوص النشرة ودعوة نهاية المقال.", "Media Center title, intro, newsletter and article CTA."],
+  },
+  "layout.design_copy": {
+    title: ["نصوص التذييل — الظاهر في كل الصفحات", "Footer copy — shown on every page"],
+    hint: ["نبذة التذييل ونص النشرة البريدية والشعار النصي.", "Footer about blurb, newsletter text and tagline."],
+  },
 };
 
 const SLIDES: Record<string, Label> = {
@@ -157,9 +230,62 @@ export const PAGE_PATHS: Record<string, string> = {
   layout: "",
 };
 
+/**
+ * Field keys that rarely change (Latin overlines, links, icons) — shown under «إعدادات متقدمة».
+ */
+export const ADVANCED_FIELD_KEYS = new Set([
+  "overline",
+  "overline_short",
+  "overview_overline",
+  "related_overline",
+  "href",
+  "icon",
+  "link_short",
+  "intro_short",
+  "title_short",
+  "text_short",
+  "lead_short",
+  "short_labels",
+]);
+
+/**
+ * Preferred order of nested groups inside a block, matching the public page top-to-bottom.
+ * Unknown keys keep their stored order after the listed ones.
+ */
+export const SECTION_GROUP_ORDER: Record<string, readonly string[]> = {
+  "home.design_copy": ["hero", "about", "stats", "services", "projects", "coverage", "trust", "cta"],
+  "about.design_copy": [
+    "hero",
+    "intro",
+    "education_goals",
+    "strategy",
+    "work_stages",
+    "experts",
+    "org_chart",
+    "clients",
+    "partners",
+    "licenses",
+    "esg",
+  ],
+  "services.design_copy": ["hero", "offerings", "pillars", "asset_management", "engineering", "approach", "tools"],
+  "projects.design_copy": ["hero", "detail"],
+  "contact.design_copy": ["overline", "title", "intro", "intro_short", "form_title"],
+  "media.design_copy": ["title", "intro", "newsletter", "article_cta"],
+  "layout.design_copy": ["footer"],
+  "home.work_stages": ["stages", "coverage"],
+  "home.multi_phase_approach": ["section_title", "steps", "outputs"],
+  "home.strategy": ["vision", "mission", "objectives"],
+  "home.esg": ["section_title", "body", "pillars"],
+  "home.credentials": ["licenses_title", "licenses_intro", "certificates_title", "certificates_intro"],
+};
+
 function pick(map: Record<string, Label>, key: string, locale: AppLocale, fallback: Label): string {
   const label = map[key] ?? fallback;
   return locale === "ar" ? label[0] : label[1];
+}
+
+function pickMeta(page: string, sectionKey: string): SectionMeta | undefined {
+  return SECTIONS[`${page}.${sectionKey}`] ?? SECTIONS[sectionKey];
 }
 
 export function fieldLabel(key: string, locale: AppLocale): string {
@@ -170,8 +296,21 @@ export function pageLabel(page: string, locale: AppLocale): string {
   return pick(PAGES, page, locale, ["صفحة", "Page"]);
 }
 
-export function sectionLabel(sectionKey: string, locale: AppLocale): string {
-  return pick(SECTIONS, sectionKey, locale, ["قسم", "Section"]);
+/** Plain name of where the section appears on the site. Pass the page when known. */
+export function sectionLabel(sectionKey: string, locale: AppLocale, page?: string): string {
+  const meta = page ? pickMeta(page, sectionKey) : SECTIONS[sectionKey];
+  if (meta) {
+    return locale === "ar" ? meta.title[0] : meta.title[1];
+  }
+  return pick({}, sectionKey, locale, ["قسم", "Section"]);
+}
+
+export function sectionHint(page: string, sectionKey: string, locale: AppLocale): string | undefined {
+  const meta = pickMeta(page, sectionKey);
+  if (!meta) {
+    return undefined;
+  }
+  return locale === "ar" ? meta.hint[0] : meta.hint[1];
 }
 
 export function slideLabel(key: string, locale: AppLocale): string {
@@ -193,4 +332,26 @@ export function pathLabel(path: readonly (string | number)[], locale: AppLocale)
 
 export function hasFieldLabel(key: string): boolean {
   return key in FIELDS;
+}
+
+/** Sort object entries by a preferred key order; unknown keys keep relative order at the end. */
+export function sortEntriesByOrder<T>(entries: readonly (readonly [string, T])[], order: readonly string[] | undefined): (readonly [string, T])[] {
+  if (!order || order.length === 0) {
+    return [...entries];
+  }
+  const rank = new Map(order.map((key, index) => [key, index]));
+  return [...entries].sort((a, b) => {
+    const left = rank.get(a[0]);
+    const right = rank.get(b[0]);
+    if (left === undefined && right === undefined) {
+      return 0;
+    }
+    if (left === undefined) {
+      return 1;
+    }
+    if (right === undefined) {
+      return -1;
+    }
+    return left - right;
+  });
 }

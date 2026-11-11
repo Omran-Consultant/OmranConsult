@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { readDashboardLocaleFromDocument } from "@/features/dashboard/i18n/locale";
 import { pathPattern, TreeChildren, type TreeContext } from "@/features/dashboard/pages/block-tree-editor";
-import { PAGE_PATHS, pageLabel, sectionLabel } from "@/features/dashboard/pages/field-labels";
+import { PAGE_PATHS, pageLabel, sectionHint, sectionLabel } from "@/features/dashboard/pages/field-labels";
 import {
   completeness,
   isLongText,
@@ -138,6 +138,8 @@ export default function PageBlockEditorPage() {
   const ctx: TreeContext = {
     locale,
     lang,
+    page: detail.page,
+    sectionKey: detail.section_key,
     icons: detail.icons,
     longPatterns,
     readOnly: !can("content.pages.update"),
@@ -148,6 +150,7 @@ export default function PageBlockEditorPage() {
   };
   const counts = { ar: completeness(payload, "ar"), en: completeness(payload, "en") };
   const publicPath = `/${locale}${PAGE_PATHS[detail.page] ?? ""}`;
+  const hint = sectionHint(detail.page, detail.section_key, locale);
 
   return (
     <div className="space-y-6" data-ready="true">
@@ -159,8 +162,9 @@ export default function PageBlockEditorPage() {
           </Link>
         }
         subtitle={pageLabel(detail.page, locale)}
-        title={sectionLabel(detail.section_key, locale)}
+        title={sectionLabel(detail.section_key, locale, detail.page)}
       />
+      {hint ? <p className="text-body-s text-muted">{hint}</p> : null}
       {error ? (
         <p className="rounded-xl border border-danger/30 bg-danger/5 p-3 text-body-s text-danger" role="alert">
           {error}
@@ -179,7 +183,6 @@ export default function PageBlockEditorPage() {
               { id: "en", label: `\u2068${t("localeEn")}\u2069 · \u2068${t("completeness", counts.en)}\u2069` },
             ]}
           />
-          <p className="text-caption text-muted">{t("accentHint", { open: "{accent}", close: "{/accent}" })}</p>
           <div className="min-w-0 space-y-4" data-block-tree="">
             <TreeChildren ctx={ctx} node={payload} path={[]} />
           </div>
