@@ -20,11 +20,12 @@ type CommonProps = {
  * Primary hover is green/700 instead of green/500 (white text 3.38:1).
  */
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
+  // Figma button height is 55px (padding 16/28 with Label/M was rendering ~53).
   primary:
-    "bg-accent-strong px-7 py-4 text-white hover:bg-green-700 active:scale-[.98] active:bg-green-700",
+    "h-[55px] bg-accent-strong px-7 text-white hover:bg-green-700 active:scale-[.98] active:bg-green-700",
   secondary:
-    "border border-line-strong px-7 py-4 text-primary hover:border-accent hover:bg-tint active:border-primary active:bg-tint-strong",
-  light: "bg-white px-7 py-4 text-navy-950 hover:bg-neutral-100 active:bg-neutral-300",
+    "h-[55px] border border-line-strong px-7 text-primary hover:border-accent hover:bg-tint active:border-primary active:bg-tint-strong",
+  light: "h-[55px] bg-white px-7 text-navy-950 hover:bg-neutral-100 active:bg-neutral-300",
   ghost: "py-1.5 text-accent hover:text-primary",
 };
 
