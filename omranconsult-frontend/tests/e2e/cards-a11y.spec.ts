@@ -2,11 +2,11 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 /**
- * Dark-theme axe for the A36 card pages. Light is already covered by public-routes.
+ * Dark-theme axe for every public page (SITE_POLISH: axe light + real dark). Light is covered by public-routes.
  * Kept to one viewport so the public-read limit (120/min) still has room.
  */
 const LOCALES = ["ar", "en"] as const;
-const ROUTES = ["", "/services", "/projects", "/projects/cop16-technical-audit", "/media"] as const;
+const ROUTES = ["", "/about", "/services", "/projects", "/projects/cop16-technical-audit", "/contact", "/media", "/media/omran-cop16-technical-audit"] as const;
 
 test.describe("dark 1440", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
