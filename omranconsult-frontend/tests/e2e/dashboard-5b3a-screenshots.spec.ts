@@ -19,7 +19,11 @@ type Target = { name: string; href: string; prepare?: (page: Page) => Promise<vo
 async function blockHref(page: Page, pageKey: string, section: string): Promise<string> {
   await page.goto("/dashboard/pages");
   await waitReady(page);
-  await page.locator(`[data-page-card="${pageKey}"] [data-block-link="${section}"]`).click();
+  const card = page.locator(`[data-page-card="${pageKey}"]`);
+  if ((await card.getByRole("button", { expanded: true }).count()) === 0) {
+    await card.locator("button[aria-expanded]").first().click();
+  }
+  await card.locator(`[data-block-link="${section}"]`).click();
   await page.waitForURL(/\/dashboard\/pages\/blocks\/\d+$/);
   return new URL(page.url()).pathname;
 }

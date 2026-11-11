@@ -3,7 +3,14 @@
 import { useTranslations } from "next-intl";
 
 import { Icon, isIconName } from "@/core/ui/icon";
-import { fieldLabel, itemLabel } from "@/features/dashboard/pages/field-labels";
+import { AccentTextField } from "@/features/dashboard/pages/accent-text-field";
+import {
+  ADVANCED_FIELD_KEYS,
+  SECTION_GROUP_ORDER,
+  fieldLabel,
+  itemLabel,
+  sortEntriesByOrder,
+} from "@/features/dashboard/pages/field-labels";
 import {
   blankLike,
   isRecord,
@@ -16,7 +23,7 @@ import {
 } from "@/features/dashboard/pages/payload-tree";
 import { IconPicker } from "@/features/dashboard/services/icon-picker";
 import { DashboardButton } from "@/features/dashboard/ui/dashboard-button";
-import { DashboardTextField, DashboardTextarea } from "@/features/dashboard/ui/dashboard-field";
+import { DashboardTextField } from "@/features/dashboard/ui/dashboard-field";
 import { RowActionButton } from "@/features/dashboard/ui/row-action-button";
 import type { AppLocale } from "@/i18n/routing";
 
@@ -28,6 +35,8 @@ export type TreeContext = {
   readonly locale: AppLocale;
   /** Language tab being edited. Both languages stay mounted so one save carries both. */
   readonly lang: EditorLocale;
+  readonly page: string;
+  readonly sectionKey: string;
   readonly icons: string[];
   /** Path patterns (list indexes as `*`) whose loaded text was long: those fields are textareas. */
   readonly longPatterns: ReadonlySet<string>;
@@ -48,25 +57,19 @@ function TextNode({ node, path, label, ctx }: { node: TranslationMap; path: Payl
 
   return (
     <div className="min-w-0 flex-1">
-      {(["ar", "en"] as const).map((lang) => {
-        const shared = {
-          dir: "auto" as const,
-          disabled: ctx.readOnly,
-          id: fieldId(path, lang),
-          label,
-          lang,
-          value: node[lang] ?? "",
-        };
-        return (
-          <div className={lang === ctx.lang ? undefined : "hidden"} key={lang}>
-            {long ? (
-              <DashboardTextarea {...shared} onChange={(event) => ctx.onChange([...path, lang], event.target.value)} rows={4} />
-            ) : (
-              <DashboardTextField {...shared} onChange={(event) => ctx.onChange([...path, lang], event.target.value)} />
-            )}
-          </div>
-        );
-      })}
+      {(["ar", "en"] as const).map((lang) => (
+        <div className={lang === ctx.lang ? undefined : "hidden"} key={lang}>
+          <AccentTextField
+            disabled={ctx.readOnly}
+            id={fieldId(path, lang)}
+            label={label}
+            lang={lang}
+            long={long}
+            onChange={(value) => ctx.onChange([...path, lang], value)}
+            value={node[lang] ?? ""}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -192,20 +195,42 @@ function TreeNode({ node, path, fieldKey, ctx }: { node: PayloadNode; path: Payl
   return null;
 }
 
-/** The fields of one map: short text first, then nested groups and lists, in the stored order within each. */
+/** The fields of one map: main texts first, then nested groups; advanced fields in a collapsed group. */
 export function TreeChildren({ node, path, ctx }: { node: PayloadNode; path: PayloadPath; ctx: TreeContext }) {
+  const t = useTranslations("Dashboard.pages");
   if (!isRecord(node)) {
     return null;
   }
-  const entries = Object.entries(node);
-  const leaves = entries.filter(([, child]) => isTranslationMap(child) || typeof child === "string");
-  const groups = entries.filter(([, child]) => !isTranslationMap(child) && typeof child !== "string");
+
+  const orderKey = path.length === 0 ? `${ctx.page}.${ctx.sectionKey}` : undefined;
+  const ordered = sortEntriesByOrder(Object.entries(node), orderKey ? SECTION_GROUP_ORDER[orderKey] : undefined);
+
+  const mainLeaves = ordered.filter(
+    ([key, child]) => (isTranslationMap(child) || typeof child === "string") && !ADVANCED_FIELD_KEYS.has(key),
+  );
+  const advancedLeaves = ordered.filter(
+    ([key, child]) => (isTranslationMap(child) || typeof child === "string") && ADVANCED_FIELD_KEYS.has(key),
+  );
+  const groups = ordered.filter(([, child]) => !isTranslationMap(child) && typeof child !== "string");
 
   return (
     <>
-      {[...leaves, ...groups].map(([key, child]) => (
+      {mainLeaves.map(([key, child]) => (
         <TreeNode ctx={ctx} fieldKey={key} key={key} node={child} path={[...path, key]} />
       ))}
+      {groups.map(([key, child]) => (
+        <TreeNode ctx={ctx} fieldKey={key} key={key} node={child} path={[...path, key]} />
+      ))}
+      {advancedLeaves.length > 0 ? (
+        <details className="rounded-xl border border-line p-4" data-block-advanced="">
+          <summary className="cursor-pointer text-label-s text-secondary">{t("advancedSettings")}</summary>
+          <div className="mt-4 space-y-4">
+            {advancedLeaves.map(([key, child]) => (
+              <TreeNode ctx={ctx} fieldKey={key} key={key} node={child} path={[...path, key]} />
+            ))}
+          </div>
+        </details>
+      ) : null}
     </>
   );
 }

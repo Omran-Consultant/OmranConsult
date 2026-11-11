@@ -8,7 +8,11 @@ const PUBLISHED_PILL = "منشور";
 async function openBlock(page: Page, pageKey: string, section: string) {
   await page.goto("/dashboard/pages");
   await waitReady(page);
-  await page.locator(`[data-page-card="${pageKey}"] [data-block-link="${section}"]`).click();
+  const card = page.locator(`[data-page-card="${pageKey}"]`);
+  if ((await card.getByRole("button", { expanded: true }).count()) === 0) {
+    await card.locator("button[aria-expanded]").first().click();
+  }
+  await card.locator(`[data-block-link="${section}"]`).click();
   await page.waitForURL(/\/dashboard\/pages\/blocks\/\d+$/);
   await expect(page.locator("[data-block-tree]")).toBeVisible();
 }
@@ -37,20 +41,30 @@ test.describe("dashboard site pages (5B-3a)", () => {
     await page.goto("/dashboard/pages");
     await waitReady(page);
     await expect(page.locator("[data-page-card]")).toHaveCount(7);
-    await expect(page.locator('[data-page-card="home"] h2')).toHaveText("الصفحة الرئيسية");
-    await expect(page.locator('[data-page-card="home"] [data-block-link="design_copy"]')).toContainText("نصوص التصميم");
+    await expect(page.locator('[data-page-card="home"]')).toContainText("الصفحة الرئيسية");
+    await expect(page.locator('[data-page-card="home"] [data-block-link="design_copy"]')).toContainText("نصوص الصفحة الرئيسية");
+    await expect(page.locator('[data-page-card="home"] [data-block-link="design_copy"]')).not.toContainText("نصوص التصميم");
     await expect(page.locator('[data-page-card="home"] [data-block-link="tools"]')).toHaveCount(0);
     await expect(page.locator('[data-page-card="home"] [data-block-link="home_sectors"]')).toHaveCount(0);
-    await expect(page.locator('[data-page-card="about"] li')).toHaveCount(1);
+    await page.locator('[data-page-card="about"] button[aria-expanded]').first().click();
+    await expect(page.locator('[data-page-card="about"] [data-block-link]')).toHaveCount(1);
   });
 
   test("an About title edit is a draft until published, then shows on the public page", async ({ page }) => {
     await openBlock(page, "about", "design_copy");
     const field = page.locator("#block-hero-title-ar");
-    const original = await field.inputValue();
+    await expect(field).toBeVisible();
+    // Markers must never appear in the editor; highlight is visual only.
+    await expect(field).not.toContainText("{accent}");
+    const original = await field.innerText();
     expect(original.length).toBeGreaterThan(0);
 
-    await field.fill("عنوان {accent}تجريبي{/accent} للاختبار");
+    await field.evaluate((el) => {
+      el.innerHTML = 'عنوان <span data-accent="">تجريبي</span> للاختبار';
+      el.dispatchEvent(new InputEvent("input", { bubbles: true }));
+    });
+    await expect(field).not.toContainText("{accent}");
+    await expect(field.locator("[data-accent]")).toHaveText("تجريبي");
     await publishCard(page).getByRole("button", { name: "حفظ المسودة" }).click();
     await expect(publishCard(page).getByText(DRAFT_PILL)).toBeVisible();
 
@@ -68,7 +82,10 @@ test.describe("dashboard site pages (5B-3a)", () => {
     // The accent markers colour the word; they never show as text.
     await expect(live.locator("h1")).not.toContainText("{accent}");
 
-    await field.fill(original);
+    await field.evaluate((el, text) => {
+      el.textContent = text;
+      el.dispatchEvent(new InputEvent("input", { bubbles: true }));
+    }, original);
     await publishCard(page).getByRole("button", { name: "نشر التعديلات" }).click();
     await expect(publishCard(page).getByText(PUBLISHED_PILL, { exact: true })).toBeVisible();
     await expect.poll(async () => {
@@ -82,8 +99,11 @@ test.describe("dashboard site pages (5B-3a)", () => {
     await openBlock(page, "contact", "design_copy");
     await page.getByRole("tab", { name: /English/ }).click();
     const english = page.locator("#block-title-en");
-    const original = await english.inputValue();
-    await english.fill("");
+    const original = await english.innerText();
+    await english.evaluate((el) => {
+      el.textContent = "";
+      el.dispatchEvent(new InputEvent("input", { bubbles: true }));
+    });
     await publishCard(page).getByRole("button", { name: "حفظ المسودة" }).click();
 
     await expect(page.locator("[data-publish-blockers] li")).toHaveText(["النص ناقص في إحدى اللغتين: العنوان"]);
@@ -92,7 +112,7 @@ test.describe("dashboard site pages (5B-3a)", () => {
 
     await publishCard(page).getByRole("button", { name: "تجاهل التعديلات" }).click();
     await page.getByRole("dialog").getByRole("button", { name: "تجاهل التعديلات" }).click();
-    await expect(english).toHaveValue(original);
+    await expect(english).toHaveText(original);
     await expect(page.locator("[data-publish-blockers]")).toHaveCount(0);
   });
 
@@ -100,14 +120,14 @@ test.describe("dashboard site pages (5B-3a)", () => {
     await openBlock(page, "home", "work_stages");
     const stages = page.locator('[data-block-list="stages"] > ol > li');
     await expect(stages).toHaveCount(3);
-    const firstTitle = await page.locator("#block-stages-0-title-ar").inputValue();
+    const firstTitle = await page.locator("#block-stages-0-title-ar").innerText();
 
     await stages.nth(0).getByRole("button", { name: "تحريك لأسفل" }).first().click();
-    await expect(page.locator("#block-stages-1-title-ar")).toHaveValue(firstTitle);
+    await expect(page.locator("#block-stages-1-title-ar")).toHaveText(firstTitle);
 
     await page.locator('[data-block-list="stages"]').getByRole("button", { name: "إضافة عنصر" }).last().click();
     await expect(stages).toHaveCount(4);
-    await expect(page.locator("#block-stages-3-title-ar")).toHaveValue("");
+    await expect(page.locator("#block-stages-3-title-ar")).toHaveText("");
     await stages.nth(3).getByRole("button", { name: "حذف العنصر" }).first().click();
     await expect(stages).toHaveCount(3);
     await expect(publishCard(page).getByText("لديك تعديلات لم تُحفظ بعد.")).toBeVisible();
