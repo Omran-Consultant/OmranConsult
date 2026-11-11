@@ -60,14 +60,14 @@ export default defineConfig({
     {
       name: "iphone-15",
       testMatch: PUBLIC_SPECS,
-      // Header links, the Home sector chips and the profile download are desktop-only (Figma).
+      // Header links, Home sector chips, profile download and footer newsletter are desktop-only (Figma).
       grepInvert: /@desktop/,
       use: { ...devices["iPhone 15"] },
     },
     {
       name: "pixel-7",
       testMatch: PUBLIC_SPECS,
-      // Header links, the Home sector chips and the profile download are desktop-only (Figma).
+      // Header links, Home sector chips, profile download and footer newsletter are desktop-only (Figma).
       grepInvert: /@desktop/,
       use: { ...devices["Pixel 7"], channel: "chrome" },
     },

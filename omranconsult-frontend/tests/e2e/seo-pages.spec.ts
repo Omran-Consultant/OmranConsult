@@ -92,11 +92,11 @@ async function checkPage(page: Page, baseURL: string, locale: (typeof LOCALES)[n
       continue;
     }
     // A content image has text in the page language: no Arabic left on English pages, and
-    // Arabic on Arabic pages unless it is a Latin brand name (partner logos).
+    // Arabic on Arabic pages unless it is a Latin brand name (client and partner logos).
     if (locale === "en") {
       expect(image.alt, `${where} ${image.src}`).not.toMatch(ARABIC);
     } else {
-      expect(ARABIC.test(image.alt ?? "") || /^[A-Z0-9 .&—-]+$/.test(image.alt ?? ""), `${where} ${image.src}: ${image.alt}`).toBe(true);
+      expect(ARABIC.test(image.alt ?? "") || /^[A-Za-z0-9 .&'’—-]+$/.test(image.alt ?? ""), `${where} ${image.src}: ${image.alt}`).toBe(true);
     }
   }
   return tags.title;

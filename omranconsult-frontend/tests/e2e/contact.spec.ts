@@ -75,7 +75,7 @@ test("contact form maps server validation and rate limits to localized messages"
   await expect(page.getByText("Too Many Attempts.", { exact: true })).toHaveCount(0);
 });
 
-test("footer newsletter subscribes and announces the server message", async ({ page }) => {
+test("footer newsletter subscribes and announces the server message", { tag: "@desktop" }, async ({ page }) => {
   let body: Record<string, unknown> | undefined;
   await page.route("**/api/newsletter", async (route) => {
     body = route.request().postDataJSON() as Record<string, unknown>;
@@ -89,7 +89,7 @@ test("footer newsletter subscribes and announces the server message", async ({ p
   expect(body).toEqual({ email: "reader@example.com", consent: true });
 });
 
-test("contact and newsletter forms send only one request on a double submit", async ({ page }) => {
+test("contact and newsletter forms send only one request on a double submit", { tag: "@desktop" }, async ({ page }) => {
   let inquiryCalls = 0;
   let releaseInquiry: (() => void) | undefined;
   const inquiryGate = new Promise<void>((resolve) => {

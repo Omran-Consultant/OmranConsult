@@ -71,7 +71,7 @@ for (const locale of ["en", "ar"] as const) {
   });
 }
 
-test("footer newsletter validates the email before sending", async ({ page }) => {
+test("footer newsletter validates the email before sending", { tag: "@desktop" }, async ({ page }) => {
   await page.goto("/en");
   const footer = page.locator("footer");
   await footer.getByLabel("Email").fill("not-an-email");
