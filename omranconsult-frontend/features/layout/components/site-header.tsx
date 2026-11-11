@@ -59,7 +59,7 @@ export function SiteHeader({ email }: SiteHeaderProps) {
         )}
         data-section="header"
       >
-        <div className="container-page flex h-19.5 items-center justify-between gap-6 lg:h-29 lg:justify-start lg:gap-0">
+        <div className="container-page flex h-19.25 items-center justify-between gap-6 lg:h-28.75 lg:justify-start lg:gap-0">
           <Link className="shrink-0" href="/">
             <BrandLogo alt={t("brand.logoAlt")} className="h-auto w-27.5 lg:w-37.5" priority surface="adaptive" />
           </Link>

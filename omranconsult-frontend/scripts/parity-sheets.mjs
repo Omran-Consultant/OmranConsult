@@ -8,6 +8,10 @@
  *
  *   node scripts/parity-sheets.mjs --pages=home --widths=1440,390 [--theme=dark|light] [--sections=hero,stats]
  *
+ * SITE_POLISH P1: `--hd` reads the full-resolution exports in figma-screens-hd/, puts Figma on the
+ * left, writes to `--out` (default review-shots/site-polish/compare) and records both section
+ * heights in sections.json.
+ *
  * APP_BASE defaults to http://127.0.0.1:3000.
  */
 import { chromium } from "@playwright/test";
@@ -16,7 +20,7 @@ import path from "node:path";
 
 const ROOT = path.resolve(process.cwd(), "..");
 const REFERENCE = path.join(ROOT, "docs/design-reference/figma-screens");
-const OUT = path.join(ROOT, "review-shots/phase4c-parity");
+const HD_REFERENCE = path.join(ROOT, "docs/design-reference/figma-screens-hd");
 const APP_BASE = process.env.APP_BASE ?? "http://127.0.0.1:3000";
 
 const args = Object.fromEntries(
@@ -30,6 +34,8 @@ const WIDTHS = (args.widths ?? "1440,390").split(",").map(Number);
 const THEME = args.theme ?? "dark";
 const LOCALE = args.locale ?? "ar";
 const ONLY_SECTIONS = args.sections ? new Set(args.sections.split(",")) : undefined;
+const HD = "hd" in args;
+const OUT = path.join(ROOT, args.out ?? (HD ? "review-shots/site-polish/compare" : "review-shots/phase4c-parity"));
 
 /** Figma frame title prefix, render file key and route for each page. */
 const PAGE_CONFIG = {
@@ -103,6 +109,13 @@ async function preparePage(page) {
 }
 
 async function stitch(browser, { implBuffer, figmaBuffer, outPath, width, label }) {
+  const panels = [
+    `<figure style="margin:0"><figcaption>Implementation — ${label}</figcaption><img src="data:image/png;base64,${implBuffer.toString("base64")}"></figure>`,
+    `<figure style="margin:0"><figcaption>Figma — ${label}</figcaption><img src="data:image/png;base64,${figmaBuffer.toString("base64")}"></figure>`,
+  ];
+  if (HD) {
+    panels.reverse();
+  }
   const page = await browser.newPage({ viewport: { width: width * 2 + 72, height: 600 } });
   await page.setContent(`
     <style>
@@ -111,10 +124,7 @@ async function stitch(browser, { implBuffer, figmaBuffer, outPath, width, label 
       figcaption { margin-bottom: 8px; }
       img { display: block; width: ${width}px; height: auto; outline: 1px solid #555; }
     </style>
-    <div class="wrap">
-      <figure style="margin:0"><figcaption>Implementation — ${label}</figcaption><img src="data:image/png;base64,${implBuffer.toString("base64")}"></figure>
-      <figure style="margin:0"><figcaption>Figma — ${label}</figcaption><img src="data:image/png;base64,${figmaBuffer.toString("base64")}"></figure>
-    </div>`);
+    <div class="wrap">${panels.join("")}</div>`);
   await page.waitForTimeout(100);
   await page.screenshot({ path: outPath, fullPage: true });
   await page.close();
@@ -122,7 +132,7 @@ async function stitch(browser, { implBuffer, figmaBuffer, outPath, width, label 
 
 async function cropFigma(browser, file, y, height, width) {
   const page = await browser.newPage({ viewport: { width, height: Math.max(1, height) } });
-  const data = (await readFile(path.join(REFERENCE, file))).toString("base64");
+  const data = (await readFile(path.join(HD ? HD_REFERENCE : REFERENCE, file))).toString("base64");
   await page.setContent(`<body style="margin:0"><img style="display:block;margin-top:-${y}px" src="data:image/png;base64,${data}"></body>`);
   await page.waitForTimeout(100);
   const buffer = await page.screenshot({ clip: { x: 0, y: 0, width, height } });
@@ -152,13 +162,15 @@ async function captureImpl(page, section) {
 await mkdir(OUT, { recursive: true });
 const browser = await chromium.launch({ channel: "chrome" });
 const written = [];
+const heights = [];
 
 for (const pageKey of PAGES) {
   const config = PAGE_CONFIG[pageKey];
   for (const width of WIDTHS) {
     const mobile = width < 768;
     const frameTitle = `${config.frame} — ${mobile ? "Mobile 390" : "Desktop 1440"}`;
-    const render = `${mobile ? "mobile" : "desktop"}-${config.file}.png`;
+    const render = HD ? `${frameTitle}.png` : `${mobile ? "mobile" : "desktop"}-${config.file}.png`;
+    const menuRender = HD ? "Mobile Menu — Open.png" : "mobile-menu-open.png";
     const sections = await figmaSections(frameTitle, mobile ? config.mobileAliases : config.desktopAliases);
     if (sections.length === 0) {
       console.warn(`No Figma frame "${frameTitle}"; skipped.`);
@@ -189,19 +201,20 @@ for (const pageKey of PAGES) {
       // The Figma mobile header frame is clipped at 32 px; compare with the menu frame's header.
       const figmaBuffer =
         mobile && target.section === "header"
-          ? await cropFigma(browser, "mobile-menu-open.png", 0, 78, width)
+          ? await cropFigma(browser, menuRender, 0, 78, width)
           : await cropFigma(browser, render, target.y, target.height, width);
       const suffix = THEME === "dark" ? "" : `-${THEME}`;
       const outPath = path.join(OUT, `${pageKey}-${target.section}-${width}${suffix}.png`);
       await stitch(browser, { implBuffer, figmaBuffer, outPath, width, label: `${pageKey} / ${target.name} / ${width} / ${THEME}` });
       written.push(path.relative(ROOT, outPath));
+      heights.push({ page: pageKey, width, section: target.section, figma: target.height, implementation: implBuffer.readUInt32BE(20) }); // PNG IHDR height
     }
 
     if (mobile && pageKey === "home" && (!ONLY_SECTIONS || ONLY_SECTIONS.has("menu"))) {
       await page.getByRole("button", { name: /القائمة|menu/i }).first().click();
       await page.waitForTimeout(700);
       const implBuffer = await page.screenshot({ animations: "disabled" });
-      const figmaBuffer = await cropFigma(browser, "mobile-menu-open.png", 0, 844, width);
+      const figmaBuffer = await cropFigma(browser, menuRender, 0, 844, width);
       const outPath = path.join(OUT, `menu-open-${width}${THEME === "dark" ? "" : `-${THEME}`}.png`);
       await stitch(browser, { implBuffer, figmaBuffer, outPath, width, label: `mobile menu / ${width} / ${THEME}` });
       written.push(path.relative(ROOT, outPath));
@@ -212,5 +225,8 @@ for (const pageKey of PAGES) {
 }
 
 await browser.close();
+if (HD) {
+  await writeFile(path.join(OUT, "sections.json"), `${JSON.stringify(heights, null, 2)}\n`);
+}
 await writeFile(path.join(OUT, "README.txt"), `Generated ${new Date().toISOString()}\nAPP_BASE=${APP_BASE}\n${written.join("\n")}\n`);
 console.log(written.join("\n"));

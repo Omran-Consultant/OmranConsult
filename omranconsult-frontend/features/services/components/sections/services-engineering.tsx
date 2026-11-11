@@ -32,7 +32,8 @@ export function ServicesEngineering({ view }: { readonly view: ServicesView }) {
               style={{ "--reveal-index": index % 4 } as React.CSSProperties}
             >
               <span className="font-display text-h4 text-primary">{discipline.title}</span>
-              <span aria-hidden="true" className="h-px flex-1 bg-line-strong" />
+              {/* Figma keeps an unfilled spacer frame here, not a visible rule. */}
+              <span aria-hidden="true" className="flex-1" />
               <span className="num-isolate font-latin text-overline text-accent">{String(index + 1).padStart(2, "0")}</span>
             </li>
           ))}
