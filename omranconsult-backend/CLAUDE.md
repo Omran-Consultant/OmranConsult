@@ -38,12 +38,13 @@ Read the installed Laravel 13 docs before adding framework code. This skeleton c
 * **Seeders:** `database/seeders/Profile/` imports the whole profile as **published** demo data with Claude's unreviewed English (A25); profile errors are stored as printed and recorded in `content_disputes`, which do not hide content (A26). `database/seeders/Design/` adds sectors usage, design copy, featured projects, and demo news. `DatabaseSeeder` runs the profile set; it skips if content exists, and still refreshes the A32 legal-name note.
 * **Tests:** `tests/Feature/Content/`, `tests/Unit/Content/`.
 
-**Not built (planned / proposed — do not implement without approval).**
+**Phase 5 admin API (partial — through 5B-3a).** Admin routes under `/api/admin/*` use Sanctum + dashboard permissions (`DashboardRolesSeeder`). Shipped: users/invites/MFA, audit logs, media uploads, projects, services, news, site pages (blocks, hero slides, statistics, Home sectors), dashboard summary/search, and draft/publish/discard for those modules. Revalidation notify to the frontend after publish.
 
-* Admin content endpoints, CMS drafts and publish/dispute workflow, publish gate, audit log, uploads and media (images and logos are not stored yet).
-* Granular Spatie **permissions** (added with each CMS module per §10.4).
-* **`POST /api/admin/users`** and user-management module (§7.6 module 11).
-* Production deployment, backups jobs, MySQL CI integration job (proposed P7).
+**Not built yet (do not implement without the PHASE5B_RUN task).**
+
+* 5B-3b…e admin modules: partners, clients, regions, sectors, team/experts, org chart, certificates/documents, site settings; Q19 end-state removal of frontend TS image maps.
+* 5C: inquiries inbox, newsletter subscribers admin, content disputes screen, trash, global search polish.
+* Careers CMS; production deployment, backups jobs, MySQL CI integration job (proposed P7).
 
 ## Architecture
 
@@ -142,9 +143,7 @@ This JSON shape is the rule for content tables (implemented in Phase 3).
 
 ## CMS workflow
 
-Not built. Build it only for content in `docs/PROFILE_INVENTORY.md` and `SYSTEM_DESIGN.md` §1.2, plus careers and the Phase 4C types (SDD A29): sectors, inquiries (replace contact messages), newsletter subscribers, news, and design copy. Expected areas include pages, services (and categories), projects (and images), client logos, careers, contact messages, site settings, homepage sections, documents/licenses, leadership/board, and related media. Do not add content types that are not in scope.
-
-When those models are added, follow **`SYSTEM_DESIGN.md` §6–§9** for publish gates, disputes, soft delete/restore, slug reservation, and audit. Summary rules:
+Partial (Phase 5 through 5B-3a). Follow **`SYSTEM_DESIGN.md` §6–§9** and `docs/briefs/PHASE5B_RUN.md` for remaining modules. Scope stays content in `docs/PROFILE_INVENTORY.md` and `SYSTEM_DESIGN.md` §1.2, plus careers (SDD A19) and Phase 4C types (SDD A29). Do not add content types that are not in scope.
 
 * A record is `draft` or `published`. Public queries include `published` only.
 * Publish and unpublish are explicit actions, not a side effect of saving a draft.
@@ -152,7 +151,6 @@ When those models are added, follow **`SYSTEM_DESIGN.md` §6–§9** for publish
 * Delete is distinct from unpublish.
 * Saving a dashboard edit writes both locales onto the same row.
 * An audit record is written for create, update, publish, unpublish, delete/restore/force-delete, and dispute resolution actions per SDD. Store actor id, action, subject type, subject id, timestamp, and a before/after summary of changed fields. Do not store passwords, tokens, or raw request dumps.
-* The audit table does not exist. Add it with the first content write, not before.
 
 ## Files
 

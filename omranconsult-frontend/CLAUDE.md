@@ -27,9 +27,11 @@ Stack to use when building: Next.js App Router · TypeScript strict · Tailwind 
 * **Tooling:** TypeScript **`strict`**. ESLint **`eslint-config-next`**. Dependencies beyond the scaffold: `next-intl`, `zod`; dev: `@playwright/test`, `@axe-core/playwright`. Scripts: **`dev`**, **`build`**, **`start`**, **`lint`**, **`typecheck`**, **`test`**, **`test:e2e`**. Vitest, React Testing Library and Prettier are not installed.
 * **`.env.example`:** **`API_BASE_URL`**, **`NEXT_PUBLIC_SITE_URL`**, server-only **`FRONTEND_SERVER_KEY`** (local value in **`.env.local`**, never **`NEXT_PUBLIC_*`**); documents leaving **`NEXT_PUBLIC_API_BASE_URL`** unset for rewrite mode.
 
-**Not built (planned — do not claim present).**
+**Phase 5 dashboard (in progress).** Do not describe shipped modules as missing.
 
-* Admin dashboard, **`/api/revalidate`**, and CMS publishing integrations.
+* **5A shell:** `/dashboard` login, MFA, independent dashboard locale/theme, app shell, UI gallery, media library, draft/preview/publish helpers, audit activity, and the browser revalidation client calling **`/api/revalidate`**.
+* **5B content (through 5B-3a):** projects (full editor + gallery), services (categories/items/tools + icon picker), news (articles + categories), site pages (content blocks, hero slides, statistics, Home sectors list). Block editor shared for rich text.
+* **Not built yet:** 5B-3b partners/clients/regions/sectors admin, 5B-3c team/experts/org chart, 5B-3d certificates/documents, 5B-3e settings + removing TS image maps, 5C inquiries/newsletter/disputes/trash/search, and careers CMS.
 
 The sections below are the required shape for **future** work. Do not scaffold empty trees unless a task needs them.
 
@@ -230,9 +232,9 @@ Applies to the public website and the admin dashboard. Both languages are comple
 
 ### 12) Dashboard UI
 
-The dashboard is not built. When it is built, use **modular CMS architecture**:
+Use **modular CMS architecture** (5A/5B patterns in `features/dashboard/`):
 
-* One module per CMS responsibility (pages, services, projects, media, careers, contact messages, settings, disputes/inbox where applicable). Modules share admin shell, tables, and form primitives through `core/ui` — not through importing public-site feature components.
+* One module per CMS responsibility (pages, services, projects, media, careers, contact messages, settings, disputes/inbox where applicable). Modules share admin shell, tables, and form primitives through `features/dashboard/ui` and `core/ui` — not through importing public-site feature components.
 * Arabic and English are complete, including navigation, forms, tables, dialogs, notifications, and validation.
 * `dir` follows the dashboard locale on every component, not only the shell.
 * Content editing writes both locales on one record. The field shape is the backend contract.
