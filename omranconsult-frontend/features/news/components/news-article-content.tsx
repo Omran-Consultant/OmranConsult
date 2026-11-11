@@ -5,6 +5,7 @@ import { Fragment } from "react";
 import { Breadcrumb } from "@/core/ui/breadcrumb";
 import { LinkButton } from "@/core/ui/button";
 import type { ImageAsset } from "@/core/ui/image-asset";
+import { InlineRuns } from "@/core/ui/inline-runs";
 import { NewsCard } from "@/core/ui/news-card";
 import { ShareLinks } from "@/features/news/components/share-links";
 import type { NewsArticleView } from "@/features/news/services/get-news-article-data";
@@ -87,7 +88,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
 
       <div className="pt-8 pb-12 lg:pt-20 lg:pb-30" data-section="body">
         <div className="container-page grid gap-12 lg:grid-cols-[minmax(0,820fr)_minmax(0,380fr)] lg:gap-20">
-          <div className="flex min-w-0 flex-col gap-7">
+          <div className="flex min-w-0 flex-col gap-7 wrap-anywhere">
             {groups.length === 0 && article.excerpt ? <p className="font-display text-body-l font-medium text-primary lg:text-h3">{article.excerpt}</p> : null}
             {groups.map((group, index) => {
               if (group.kind === "images") {
@@ -103,22 +104,37 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
               }
               const { block } = group;
               if (block.type === "heading") {
+                const Heading = block.level;
                 return (
-                  <h2 className="font-display text-h2 text-primary" key={index}>
-                    {block.text}
-                  </h2>
+                  <Heading className={block.level === "h2" ? "font-display text-h2 text-primary" : "font-display text-h3 text-primary"} key={index}>
+                    <InlineRuns nodes={block.children} />
+                  </Heading>
                 );
               }
               if (block.type === "quote") {
                 return (
                   <blockquote className="rounded-lg bg-accent-strong/8 px-6 py-6 md:px-8 md:py-7" key={index}>
-                    <p className="border-s-3 border-accent ps-6 font-display text-h4 text-primary md:text-h3">{block.text}</p>
+                    <p className="border-s-3 border-accent ps-6 font-display text-h4 text-primary md:text-h3">
+                      <InlineRuns nodes={block.children} />
+                    </p>
                   </blockquote>
+                );
+              }
+              if (block.type === "list") {
+                const List = block.style === "number" ? "ol" : "ul";
+                return (
+                  <List className={block.style === "number" ? "list-decimal ps-5 text-body-l text-secondary" : "list-disc ps-5 text-body-l text-secondary"} key={index}>
+                    {block.items.map((item, itemIndex) => (
+                      <li key={itemIndex}>
+                        <InlineRuns nodes={item} />
+                      </li>
+                    ))}
+                  </List>
                 );
               }
               return (
                 <p className={index === leadIndex ? "font-display text-body-l font-medium text-primary lg:text-h3" : "text-body-l text-secondary"} key={index}>
-                  {block.text}
+                  <InlineRuns nodes={block.children} />
                 </p>
               );
             })}

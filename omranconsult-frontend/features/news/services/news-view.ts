@@ -55,17 +55,37 @@ export function mediaQuery(filters: MediaFilters, overrides: Partial<MediaFilter
   return query ? `?${query}` : "";
 }
 
-type RawBlock = { readonly type: string; readonly text?: string | null; readonly image?: string | null };
+type RawInline = { readonly text: string; readonly bold?: boolean; readonly italic?: boolean; readonly href?: string };
+
+type RawBlock = {
+  readonly type: string;
+  readonly text?: string | null;
+  readonly image?: string | null;
+  readonly level?: "h2" | "h3";
+  readonly children?: readonly RawInline[];
+  readonly style?: "bullet" | "number";
+  readonly items?: readonly (readonly RawInline[])[];
+};
 
 export type ArticleBlock =
-  | { readonly type: "paragraph" | "heading" | "quote"; readonly text: string }
+  | { readonly type: "paragraph" | "quote"; readonly text: string; readonly children: readonly RawInline[] }
+  | { readonly type: "heading"; readonly level: "h2" | "h3"; readonly text: string; readonly children: readonly RawInline[] }
+  | { readonly type: "list"; readonly style: "bullet" | "number"; readonly text: string; readonly items: readonly (readonly RawInline[])[] }
   | { readonly type: "image"; readonly image: string };
 
-/** Known block types with content (Q9); anything else is dropped. */
+/** Known block types with content (Q9); anything else is dropped. Older bodies carry `text` only. */
 export function articleBlocks(raw: readonly RawBlock[] | undefined): ArticleBlock[] {
   return (raw ?? []).flatMap((block): ArticleBlock[] => {
-    if ((block.type === "paragraph" || block.type === "heading" || block.type === "quote") && block.text?.trim()) {
-      return [{ type: block.type, text: block.text.trim() }];
+    const text = block.text?.trim();
+    const children = block.children?.length ? block.children : [{ text: text ?? "" }];
+    if ((block.type === "paragraph" || block.type === "quote") && text) {
+      return [{ type: block.type, text, children }];
+    }
+    if (block.type === "heading" && text) {
+      return [{ type: "heading", level: block.level ?? "h2", text, children }];
+    }
+    if (block.type === "list" && text && block.items?.length) {
+      return [{ type: "list", style: block.style ?? "bullet", text, items: block.items }];
     }
     if (block.type === "image" && block.image?.trim()) {
       return [{ type: "image", image: block.image.trim() }];

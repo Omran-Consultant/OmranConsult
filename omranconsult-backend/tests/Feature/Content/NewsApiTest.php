@@ -96,7 +96,31 @@ class NewsApiTest extends TestCase
             'body' => json_encode(['en' => [['type' => 'html', 'text' => '<b>x</b>'], ['type' => 'paragraph', 'text' => 'Kept']], 'ar' => []]),
         ]);
 
-        $this->assertSame([['type' => 'paragraph', 'text' => 'Kept']], $this->getJson('/api/news/osool-360-platform-launch')->json('data.body'));
+        $body = $this->getJson('/api/news/osool-360-platform-launch')->json('data.body');
+        $this->assertSame(['paragraph'], array_column($body, 'type'));
+        $this->assertSame('Kept', $body[0]['text']);
+    }
+
+    public function test_editor_blocks_keep_lists_heading_levels_and_marks(): void
+    {
+        NewsPost::query()->where('slug', 'osool-360-platform-launch')->firstOrFail()->update([
+            'body' => ['en' => [
+                ['type' => 'heading', 'level' => 'h3', 'children' => [['text' => 'Sub']]],
+                ['type' => 'paragraph', 'children' => [['text' => 'Plain '], ['text' => 'bold', 'bold' => true], ['text' => 'site', 'href' => 'https://omranconsult.com']]],
+                ['type' => 'list', 'style' => 'number', 'items' => [[['text' => 'One']], [['text' => 'Two', 'italic' => true]]]],
+            ], 'ar' => []],
+        ]);
+
+        $body = $this->getJson('/api/news/osool-360-platform-launch')->assertOk()->json('data.body');
+
+        $this->assertSame(['heading', 'paragraph', 'list'], array_column($body, 'type'));
+        $this->assertSame('h3', $body[0]['level']);
+        $this->assertSame('Sub', $body[0]['text']);
+        $this->assertSame([['text' => 'Plain '], ['text' => 'bold', 'bold' => true], ['text' => 'site', 'href' => 'https://omranconsult.com']], $body[1]['children']);
+        $this->assertSame('Plain boldsite', $body[1]['text']);
+        $this->assertSame('number', $body[2]['style']);
+        $this->assertSame([[['text' => 'One']], [['text' => 'Two', 'italic' => true]]], $body[2]['items']);
+        $this->assertSame("One\nTwo", $body[2]['text']);
     }
 
     public function test_unpublished_post_is_not_found(): void

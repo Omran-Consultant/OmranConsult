@@ -47,8 +47,10 @@ class NewsPostDetailResource extends NewsPostResource
 
     /**
      * Present body for the public renderer. Legacy `{type,text}` and ContentBlocks both work.
+     * Text blocks keep `text` and add the editor structure: `children` (paragraph, quote, heading),
+     * `level` (heading), `style` and `items` (list).
      *
-     * @return list<array{type: string, text?: string, image?: string, media_id?: int, alt?: string|null}>
+     * @return list<array<string, mixed>>
      */
     private function blocks(): array
     {
@@ -66,14 +68,19 @@ class NewsPostDetailResource extends NewsPostResource
 
                 continue;
             }
-            if (! in_array($type, ['paragraph', 'heading', 'quote'], true)) {
+            if (! in_array($type, ['paragraph', 'heading', 'quote', 'list'], true)) {
                 continue;
             }
             $text = ContentBlocks::plainText([$block]);
             if ($text === '') {
                 continue;
             }
-            $resolved[] = ['type' => $type, 'text' => $text];
+            // `text` stays for older readers; the editor's structure travels beside it.
+            $resolved[] = ['type' => $type, 'text' => $text, ...match ($type) {
+                'heading' => ['level' => $block['level'], 'children' => $block['children']],
+                'list' => ['style' => $block['style'], 'items' => $block['items']],
+                default => ['children' => $block['children']],
+            }];
         }
 
         return $resolved;

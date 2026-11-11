@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Modules\News\Infrastructure\Models\NewsPost;
 use App\Modules\Projects\Domain\DeliveryStatus;
 use App\Modules\Projects\Infrastructure\Models\Project;
+use App\Support\Content\ContentBlocks;
 use Database\Seeders\Profile\ProfileContentSeeder;
 use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Console\Command;
@@ -61,6 +63,7 @@ class E2ePrepareDatabaseCommand extends Command
         $this->call(SuperAdminRoleSeeder::class);
         $this->call(ProfileContentSeeder::class);
         $this->enrichProjectDetailFixtures();
+        $this->robustnessFixtures();
         Artisan::call('media:import-site-images');
         $this->output->write(Artisan::output());
 
@@ -102,5 +105,57 @@ class E2ePrepareDatabaseCommand extends Command
 
         Project::query()->where('slug', 'western-region-education-projects-study')->firstOrFail()
             ->forceFill(['has_demo_content' => true])->save();
+    }
+
+    /**
+     * SITE_POLISH P3: editor-shaped extremes on existing rows, so list counts stay as the other
+     * tests expect. Long titles are exactly 120 characters; "no image" means no gallery or cover.
+     */
+    private function robustnessFixtures(): void
+    {
+        $long = fn (string $text): string => mb_substr(str_repeat($text.' ', 4), 0, 120);
+        $longAr = $long('مشروع تجريبي بعنوان طويل جداً لاختبار التفاف النص في البطاقات والصفحات دون كسر الشبكة أو ظهور تمرير أفقي');
+        $longEn = $long('A deliberately long project title to test text wrapping in cards and pages without breaking the grid');
+        $text = fn (string $value, array $marks = []): array => ['text' => $value, ...$marks];
+        $blocks = fn (string $locale): array => [
+            ['type' => 'paragraph', 'children' => [
+                $text($locale === 'ar' ? 'فقرة تحتوي ' : 'A paragraph with '),
+                $text($locale === 'ar' ? 'نصاً عريضاً' : 'bold text', ['bold' => true]),
+                $text($locale === 'ar' ? ' و' : ', '),
+                $text($locale === 'ar' ? 'نصاً مائلاً' : 'italic text', ['italic' => true]),
+                $text($locale === 'ar' ? ' ورابطاً ' : ' and a link '),
+                $text('omranconsult.com', ['href' => 'https://omranconsult.com']),
+                $text(' https://omranconsult.com/an/unbroken/path/that/is/much/longer/than/a/phone/screen/is/wide/'),
+            ]],
+            ['type' => 'heading', 'level' => 'h2', 'children' => [$text($locale === 'ar' ? 'عنوان من المستوى الثاني' : 'Second level heading')]],
+            ['type' => 'paragraph', 'children' => [$text(str_repeat($locale === 'ar' ? 'نص طويل لاختبار الأسطر المتعددة. ' : 'Long text to test many lines. ', 30))]],
+            ['type' => 'heading', 'level' => 'h3', 'children' => [$text($locale === 'ar' ? 'عنوان من المستوى الثالث' : 'Third level heading')]],
+            ['type' => 'list', 'style' => 'bullet', 'items' => [[$text($locale === 'ar' ? 'بند نقطي أول' : 'First bullet')], [$text($longAr)], [$text($longEn)]]],
+            ['type' => 'list', 'style' => 'number', 'items' => [[$text($locale === 'ar' ? 'بند مرقّم أول' : 'First numbered')], [$text($locale === 'ar' ? 'بند مرقّم ثانٍ' : 'Second numbered')]]],
+            ['type' => 'quote', 'children' => [$text($locale === 'ar' ? 'اقتباس للاختبار' : 'A test quote')]],
+        ];
+
+        Project::query()->where('slug', 'king-abdulaziz-hospital-site-development')->firstOrFail()->update([
+            'title' => ['ar' => $longAr, 'en' => $longEn],
+            'overview' => ContentBlocks::validateLocaleMap(['ar' => $blocks('ar'), 'en' => $blocks('en')], 'overview'),
+            'gallery' => [],
+        ]);
+        Project::query()->where('slug', 'investment-consulting-framework-agreement')->firstOrFail()->update([
+            'title' => ['ar' => 'مركز', 'en' => 'Hub'],
+        ]);
+
+        $newsBlocks = fn (string $locale): array => [
+            ...$blocks($locale),
+            ['type' => 'image', 'key' => 'aerial', 'alt' => ['ar' => 'صورة داخل الخبر', 'en' => 'Image inside the article']],
+        ];
+        NewsPost::query()->where('slug', 'partnerships-with-international-firms')->firstOrFail()->update([
+            'title' => ['ar' => $longAr, 'en' => $longEn],
+            'body' => ContentBlocks::validateLocaleMap(['ar' => $newsBlocks('ar'), 'en' => $newsBlocks('en')], 'body', true),
+            'cover_image' => null,
+            'cover_media_id' => null,
+        ]);
+        NewsPost::query()->where('slug', 'national-asset-management-guide-education')->firstOrFail()->update([
+            'title' => ['ar' => 'دليل', 'en' => 'Guide'],
+        ]);
     }
 }

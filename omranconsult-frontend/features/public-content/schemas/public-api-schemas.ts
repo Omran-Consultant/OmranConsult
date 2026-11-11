@@ -312,7 +312,7 @@ export const newsIndexResponseSchema = z.object({
   meta: projectsMetaSchema,
 });
 
-/** Body blocks (Q9): paragraph, heading, quote (`text`) and image (`image` key); unknown types are dropped by the mapper. */
+/** Body blocks (Q9): paragraph, heading, quote, list (`text` plus the editor structure) and image (`image` key); unknown types are dropped by the mapper. */
 export const newsDetailResponseSchema = z.object({
   locale: localeSchema,
   data: newsPostSchema.extend({
@@ -326,6 +326,11 @@ export const newsDetailResponseSchema = z.object({
           image: nullableStringSchema.optional(),
           media_id: z.number().nullable().optional(),
           alt: nullableStringSchema.optional(),
+          // Editor structure beside `text` (heading level, inline marks, list items).
+          level: z.enum(["h2", "h3"]).optional().catch(undefined),
+          children: z.array(inlineNodeSchema).optional().catch(undefined),
+          style: z.enum(["bullet", "number"]).optional().catch(undefined),
+          items: z.array(z.array(inlineNodeSchema)).optional().catch(undefined),
         }),
       )
       .optional(),

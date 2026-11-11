@@ -23,9 +23,27 @@ test("keeps known blocks with content only", () => {
     { type: "video", text: "x" },
   ]);
   assert.deepEqual(blocks, [
-    { type: "paragraph", text: "نص" },
+    { type: "paragraph", text: "نص", children: [{ text: "نص" }] },
     { type: "image", image: "night" },
   ]);
+});
+
+test("keeps the editor structure: heading level, inline marks and lists", () => {
+  const bold = [{ text: "a " }, { text: "b", bold: true }];
+  const items = [[{ text: "one" }], [{ text: "two", italic: true }]];
+  assert.deepEqual(
+    articleBlocks([
+      { type: "heading", level: "h3", text: "Sub", children: [{ text: "Sub" }] },
+      { type: "paragraph", text: "a b", children: bold },
+      { type: "list", style: "number", text: "one\ntwo", items },
+      { type: "list", style: "bullet", text: "", items: [] },
+    ]),
+    [
+      { type: "heading", level: "h3", text: "Sub", children: [{ text: "Sub" }] },
+      { type: "paragraph", text: "a b", children: bold },
+      { type: "list", style: "number", text: "one\ntwo", items },
+    ],
+  );
 });
 
 test("reading time rounds up whole minutes and needs text", () => {

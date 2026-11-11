@@ -1,31 +1,10 @@
-import { Fragment, type ReactNode } from "react";
-
-import type { ContentBlock, InlineNode } from "@/core/content/blocks";
-
-function InlineRuns({ nodes }: { readonly nodes: readonly InlineNode[] }) {
-  return nodes.map((node, index) => {
-    let content: ReactNode = node.text;
-    if (node.bold) {
-      content = <strong>{content}</strong>;
-    }
-    if (node.italic) {
-      content = <em>{content}</em>;
-    }
-    if (node.href) {
-      content = (
-        <a className="text-accent underline" href={node.href} rel="noopener noreferrer">
-          {content}
-        </a>
-      );
-    }
-    return <Fragment key={`${node.text}-${index}`}>{content}</Fragment>;
-  });
-}
+import type { ContentBlock } from "@/core/content/blocks";
+import { InlineRuns } from "@/core/ui/inline-runs";
 
 /** Project overview blocks. A single plain paragraph stays on the section subtitle instead. */
 export function ProjectOverview({ blocks }: { readonly blocks: readonly ContentBlock[] }) {
   return (
-    <div className="flex max-w-160 flex-col gap-4">
+    <div className="flex max-w-160 min-w-0 flex-col gap-4 wrap-anywhere">
       {blocks.map((block, index) => {
         if (block.type === "heading") {
           const Heading = block.level;
