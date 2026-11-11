@@ -8,6 +8,7 @@ import type { ProjectsView } from "@/features/projects/services/get-projects-pag
 /** Clients on Projects: logo tiles aligned with About «عملاؤنا»; name fallback when no logo file exists. */
 export async function ProjectsClients({ view }: { readonly view: ProjectsView }) {
   const t = await getTranslations("ProjectsPage");
+  const layout = await getTranslations("Layout");
 
   if (view.clients.length === 0) {
     return null;
@@ -22,7 +23,7 @@ export async function ProjectsClients({ view }: { readonly view: ProjectsView })
             <li className="flex h-24 items-center justify-center rounded-md border border-line bg-white p-4 lg:h-28 dark:bg-elevated" key={client.key}>
               {client.logo ? (
                 <Image
-                  alt={client.name ?? ""}
+                  alt={client.name ?? layout("brand.clientLogoAlt")}
                   className="max-h-full w-auto object-contain"
                   height={client.logo.height}
                   sizes="160px"

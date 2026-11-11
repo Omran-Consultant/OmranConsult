@@ -22,6 +22,28 @@ test("about renders the design and profile sections in order", async ({ page }) 
   await expect(page.locator('[data-section="clients"] img')).toHaveCount(await clientTiles.count());
 });
 
+test("the clients grid shows every client-list record, unnamed ones with a neutral alt", async ({ page, request }) => {
+  const api = await request.get(`${process.env.E2E_API_BASE_URL ?? "http://127.0.0.1:8000"}/api/clients`, { headers: { "Accept-Language": "ar" } });
+  const listed = ((await api.json()) as { data: { in_client_list: boolean }[] }).data.filter((client) => client.in_client_list).length;
+  expect(listed).toBe(30);
+
+  for (const [path, alt] of [
+    ["/ar/about", "شعار عميل"],
+    ["/en/about", "Client logo"],
+    ["/ar/projects", "شعار عميل"],
+    ["/en/projects", "Client logo"],
+  ] as const) {
+    await page.goto(path);
+    const logos = page.locator('[data-section="clients"] li img');
+    await expect(logos).toHaveCount(listed);
+    // Profile logos 23 and 30 have no readable name (open content_disputes): neutral alt, profile order.
+    await expect(page.locator(`[data-section="clients"] li img[alt="${alt}"]`)).toHaveCount(2);
+    const sources = await logos.evaluateAll((nodes) => nodes.map((node) => decodeURIComponent(node.getAttribute("src") ?? "")));
+    expect(sources[22]).toContain("client-23.png");
+    expect(sources[29]).toContain("client-30.png");
+  }
+});
+
 test("credentials show every certificate and license scan", async ({ page }) => {
   await page.goto("/ar/about#credentials");
   const section = page.locator("#credentials");

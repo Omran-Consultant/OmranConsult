@@ -18,7 +18,7 @@ test("projects renders the design sections in order", async ({ page }) => {
 test("every client tile on Projects shows a logo or a name", async ({ page }) => {
   await page.goto("/ar/projects");
   const tiles = page.locator('[data-section="clients"] li');
-  await expect(tiles).toHaveCount(28);
+  await expect(tiles).toHaveCount(30);
   const blank = await tiles.evaluateAll((items) =>
     items.filter((item) => !item.textContent?.trim() && !item.querySelector("img[alt]:not([alt=''])")).length,
   );

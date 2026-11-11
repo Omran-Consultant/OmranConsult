@@ -68,9 +68,10 @@ export type ClientTile = {
   readonly logo?: ReturnType<typeof getClientLogo>;
 };
 
+/** Every profile client-list record in profile order; a name is not required to show a logo (profile logos 23 and 30). */
 export function clientTiles(clients: readonly { slug?: string; name?: string; inClientList: boolean; sortOrder: number }[]): ClientTile[] {
   return clients
-    .filter((client) => client.inClientList && client.name)
+    .filter((client) => client.inClientList)
     .map((client) => ({
       key: client.slug ?? `client-${client.sortOrder}`,
       name: client.name,

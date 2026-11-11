@@ -140,7 +140,8 @@
   },
   "Layout": {
     "brand": {
-      "logoAlt": "OMRAN Advanced Company for Engineering Consultancy logo"
+      "logoAlt": "OMRAN Advanced Company for Engineering Consultancy logo",
+      "clientLogoAlt": "Client logo"
     },
     "skipToContent": "Skip to content",
     "breadcrumbLabel": "Breadcrumb",
