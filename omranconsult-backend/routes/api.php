@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\Internal\PreviewTokenLookupController;
 use App\Http\Middleware\SetPublicLocale;
 use App\Modules\Audit\Presentation\Http\Controllers\AdminAuditLogsController;
+use App\Modules\Content\Infrastructure\Models\ContentBlock;
+use App\Modules\Content\Presentation\Http\Controllers\AdminPagesController;
 use App\Modules\Content\Presentation\Http\Controllers\HomeController;
 use App\Modules\Content\Presentation\Http\Controllers\PagesController;
 use App\Modules\Content\Presentation\Http\Controllers\SettingsController;
@@ -114,6 +116,35 @@ Route::prefix('admin')->group(function (): void {
         Route::bind('serviceCategory', fn (string $value) => ServiceCategory::withTrashed()->whereKey($value)->firstOrFail());
         Route::bind('service', fn (string $value) => Service::withTrashed()->whereKey($value)->firstOrFail());
         Route::bind('newsPost', fn (string $value) => NewsPost::withTrashed()->whereKey($value)->firstOrFail());
+
+        // Site pages (5B-3a). Blocks edited elsewhere (tools, the Home sectors order) are not addressable here.
+        Route::bind('contentBlock', fn (string $value) => ContentBlock::query()
+            ->whereNotIn('section_key', AdminPagesController::EXCLUDED_SECTIONS)
+            ->whereKey($value)
+            ->firstOrFail());
+        Route::prefix('pages')->group(function (): void {
+            Route::middleware('permission:'.DashboardPermission::PAGES_VIEW)->group(function (): void {
+                Route::get('/', [AdminPagesController::class, 'index']);
+                Route::get('/blocks/{contentBlock}', [AdminPagesController::class, 'showBlock']);
+                Route::get('/hero-slides', [AdminPagesController::class, 'heroSlides']);
+                Route::get('/statistics', [AdminPagesController::class, 'statistics']);
+                Route::get('/home-sectors', [AdminPagesController::class, 'homeSectors']);
+            });
+            Route::middleware('permission:'.DashboardPermission::PAGES_UPDATE)->group(function (): void {
+                Route::patch('/blocks/{contentBlock}', [AdminPagesController::class, 'updateBlock']);
+                Route::post('/blocks/{contentBlock}/discard-draft', [AdminPagesController::class, 'discardBlockDraft']);
+                Route::patch('/hero-slides/{heroSlide}', [AdminPagesController::class, 'updateHeroSlide']);
+                Route::post('/hero-slides/{heroSlide}/discard-draft', [AdminPagesController::class, 'discardHeroSlideDraft']);
+                Route::patch('/statistics/{statistic}', [AdminPagesController::class, 'updateStatistic']);
+                Route::post('/statistics/{statistic}/discard-draft', [AdminPagesController::class, 'discardStatisticDraft']);
+            });
+            Route::middleware('permission:'.DashboardPermission::PAGES_PUBLISH)->group(function (): void {
+                Route::post('/blocks/{contentBlock}/publish', [AdminPagesController::class, 'publishBlock']);
+                Route::post('/hero-slides/{heroSlide}/publish', [AdminPagesController::class, 'publishHeroSlide']);
+                Route::post('/statistics/{statistic}/publish', [AdminPagesController::class, 'publishStatistic']);
+                Route::put('/home-sectors', [AdminPagesController::class, 'updateHomeSectors']);
+            });
+        });
 
         Route::middleware('permission:'.DashboardPermission::SERVICES_VIEW)->group(function (): void {
             Route::get('/services', [AdminServicesController::class, 'index']);

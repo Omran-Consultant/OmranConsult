@@ -2,7 +2,11 @@
 
 namespace App\Support\Content;
 
+use App\Modules\Content\Application\BlockPayloadShape;
+use App\Modules\Content\Infrastructure\Models\ContentBlock;
 use App\Modules\Content\Infrastructure\Models\ContentDispute;
+use App\Modules\Content\Infrastructure\Models\HeroSlide;
+use App\Modules\Content\Infrastructure\Models\Statistic;
 use App\Modules\News\Infrastructure\Models\NewsPost;
 use App\Modules\Projects\Application\ProjectGallery;
 use App\Modules\Projects\Infrastructure\Models\Project;
@@ -29,6 +33,18 @@ final class PublishGate
         }
         if ($subject instanceof NewsPost) {
             $blockers = array_merge($blockers, $this->newsBlockers($payload));
+        }
+        if ($subject instanceof ContentBlock) {
+            $blockers = array_merge($blockers, $this->contentBlockBlockers($payload));
+        }
+        if ($subject instanceof HeroSlide) {
+            $blockers = array_merge($blockers, $this->bothLocales($payload, 'headline'));
+        }
+        if ($subject instanceof Statistic) {
+            $blockers = array_merge($blockers, $this->bothLocales($payload, 'label'));
+            if (! is_numeric($payload['value'] ?? null)) {
+                $blockers[] = ['field' => 'value', 'code' => 'value_required'];
+            }
         }
 
         $unique = [];
@@ -130,6 +146,37 @@ final class PublishGate
         }
         if (! $isCategory && ! filled($payload['category_id'] ?? null)) {
             $blockers[] = ['field' => 'category_id', 'code' => 'category_required'];
+        }
+
+        return $blockers;
+    }
+
+    /**
+     * Q13: a content block is publishable when no text is present in one language only.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return list<array{field: string, code: string}>
+     */
+    private function contentBlockBlockers(array $payload): array
+    {
+        return array_map(
+            fn (string $path): array => ['field' => $path, 'code' => 'translation_missing'],
+            BlockPayloadShape::halfTranslated($payload['payload'] ?? []),
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return list<array{field: string, code: string}>
+     */
+    private function bothLocales(array $payload, string $field): array
+    {
+        $blockers = [];
+        foreach (PublicLocale::SUPPORTED as $locale) {
+            $value = is_array($payload[$field] ?? null) ? ($payload[$field][$locale] ?? null) : null;
+            if (! is_string($value) || trim($value) === '') {
+                $blockers[] = ['field' => $field.'.'.$locale, 'code' => $field.'_'.$locale.'_required'];
+            }
         }
 
         return $blockers;

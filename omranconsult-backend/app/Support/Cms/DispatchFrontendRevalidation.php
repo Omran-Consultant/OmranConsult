@@ -30,6 +30,33 @@ final class DispatchFrontendRevalidation
         self::tags(['services', 'home', 'pages']);
     }
 
+    /**
+     * A content block of one public page. Home blocks are also part of GET /api/home.
+     */
+    public static function forPage(string $page): void
+    {
+        $tags = ['pages', 'pages:'.$page];
+        if ($page === 'home') {
+            $tags[] = 'home';
+        }
+        if ($page === 'contact') {
+            $tags[] = 'contact';
+        }
+        if ($page === 'layout') {
+            $tags[] = 'footer';
+        }
+
+        self::tags($tags);
+    }
+
+    /**
+     * Hero slides and statistics: served by GET /api/home, read by Home, About and Projects.
+     */
+    public static function forHomeContent(): void
+    {
+        self::tags(['home']);
+    }
+
     public static function forNews(NewsPost $post): void
     {
         self::tags(['news', 'news:'.$post->slug, 'home']);

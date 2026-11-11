@@ -44,6 +44,10 @@ final class DashboardPermission
 
     public const PAGES_VIEW = 'content.pages.view';
 
+    public const PAGES_UPDATE = 'content.pages.update';
+
+    public const PAGES_PUBLISH = 'content.pages.publish';
+
     public const PARTNERS_VIEW = 'content.partners.view';
 
     public const CLIENTS_VIEW = 'content.clients.view';
@@ -128,6 +132,8 @@ final class DashboardPermission
             self::NEWS_PUBLISH,
             self::NEWS_RESTORE,
             self::PAGES_VIEW,
+            self::PAGES_UPDATE,
+            self::PAGES_PUBLISH,
             self::PARTNERS_VIEW,
             self::CLIENTS_VIEW,
             self::REGIONS_VIEW,
