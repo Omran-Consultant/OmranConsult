@@ -16,7 +16,10 @@ export function getConfiguredPublicSiteOrigin(): string | undefined {
 }
 
 export function getPublicMetadataBase(): URL | undefined {
-  const origin = getConfiguredPublicSiteOrigin();
+  // `next dev` without NEXT_PUBLIC_SITE_URL serves localhost; say so instead of letting Next warn.
+  const origin =
+    getConfiguredPublicSiteOrigin() ??
+    (process.env.NODE_ENV === "development" ? `http://localhost:${process.env.PORT ?? "3000"}` : undefined);
   if (!origin) {
     return undefined;
   }

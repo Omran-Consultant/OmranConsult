@@ -61,6 +61,7 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
                 excerpt={view.featured.excerpt}
                 href={view.featured.href}
                 image={view.featured.image}
+                priority
                 readTime={
                   view.featured.readingMinutes ? t("readingTime", { minutes: view.featured.readingMinutes }) : undefined
                 }

@@ -16,6 +16,8 @@ type NewsCardProps = {
   readonly emphasis?: "standard" | "featured";
   readonly titleId?: string;
   readonly className?: string;
+  /** Only the first card above the fold (the Media featured post, its LCP). */
+  readonly priority?: boolean;
 };
 
 /** Media centre card (SITE_TWEAKS T2): same overlay language as the Figma project card. */
@@ -31,6 +33,7 @@ export function NewsCard({
   emphasis = "standard",
   titleId,
   className,
+  priority = false,
 }: NewsCardProps) {
   const meta = [date, readTime].filter(Boolean);
 
@@ -55,6 +58,7 @@ export function NewsCard({
         }
         href={href}
         image={image}
+        priority={priority}
         sizes={emphasis === "featured" ? "(min-width: 1024px) 1200px, 100vw" : "(min-width: 1024px) 410px, (min-width: 768px) 50vw, 100vw"}
         title={title}
         titleAs={emphasis === "featured" ? "h2" : "h3"}

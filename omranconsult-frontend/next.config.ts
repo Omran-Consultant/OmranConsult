@@ -10,9 +10,10 @@ const csp = [
   `connect-src 'self' ${apiOrigin}`,
   `img-src 'self' data: blob: ${apiOrigin}`,
   "font-src 'self' data:",
-  // Next emits the theme pre-paint script and style attributes. 'unsafe-eval' is intentionally absent.
+  // Next emits the theme pre-paint script and style attributes. React needs eval() in development only
+  // (call stacks across environments); production never sends 'unsafe-eval'.
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

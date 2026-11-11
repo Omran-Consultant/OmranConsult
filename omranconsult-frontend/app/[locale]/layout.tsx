@@ -23,6 +23,12 @@ type LocaleLayoutProps = {
   params: Promise<{ locale: string }>;
 };
 
+/**
+ * The locale layout reads the locale for `<html lang dir>`, so it cannot sit inside Suspense, and a
+ * locale switch re-renders the whole document anyway. Navigations below it stay validated.
+ */
+export const instant = false;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }

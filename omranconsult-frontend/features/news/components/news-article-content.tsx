@@ -80,7 +80,7 @@ export function NewsArticleContent({ article }: { readonly article: NewsArticleV
       <div data-section="cover">
         <div className="container-page">
           <div className="relative aspect-350/220 overflow-hidden rounded-lg bg-highlight md:aspect-1280/620 md:rounded-[28px]">
-            <Image alt={article.cover.alt} className="object-cover" fill priority quality={70} sizes="(min-width: 1440px) 1280px, 100vw" src={article.cover.src} />
+            <Image alt={article.cover.alt} className="object-cover" fill priority sizes="(min-width: 1440px) 1280px, 100vw" src={article.cover.src} />
           </div>
         </div>
       </div>
