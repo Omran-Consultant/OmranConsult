@@ -10,13 +10,15 @@ type BrandLogoProps = {
   readonly className: string;
   /** `adaptive`: dark logo on light surfaces, white logo on dark ones. `onDark`: always white. */
   readonly surface: "adaptive" | "onDark";
-  /** Above the fold: fetch eagerly at high priority (Next 16 deprecates `priority`). */
+  /** The header copy, the usual LCP: high fetch priority (Next 16 deprecates `priority`). */
   readonly priority?: boolean;
 };
 
 /** Vector logo from the Figma handoff (A28). Sizes: 150 header, 180 footer, 110 mobile. */
 export function BrandLogo({ alt, className, surface, priority = false }: BrandLogoProps) {
-  const loading = priority ? { fetchPriority: "high", loading: "eager" } as const : {};
+  // Always eager: the header, menu and footer share these few-KB files, and Next keys its LCP
+  // check by URL, so one lazy copy flags the header logo when it is the LCP.
+  const loading = priority ? ({ fetchPriority: "high", loading: "eager" } as const) : ({ loading: "eager" } as const);
 
   if (surface === "onDark") {
     return (

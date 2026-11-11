@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
-import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import {
   getMessages,
@@ -12,7 +11,7 @@ import type { ReactNode } from "react";
 
 import { publicFontVariables } from "@/core/fonts/public";
 import { getPublicMetadataBase } from "@/core/seo/locale-metadata";
-import { themeInitScript } from "@/core/theme/theme-init-script";
+import { ThemeInit } from "@/core/theme/theme-init";
 import { ThemeProvider } from "@/core/theme/theme-provider";
 import { PreviewBanner } from "@/features/layout/components/preview-banner";
 import { PublicLayoutShell } from "@/features/layout/components/public-layout-shell";
@@ -99,11 +98,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
-        <Script
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-          id="theme-init"
-          strategy="beforeInteractive"
-        />
+        <ThemeInit />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
             {preview ? <PreviewBanner /> : null}
