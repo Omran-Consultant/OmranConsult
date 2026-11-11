@@ -12,11 +12,15 @@ const BREADCRUMB_LABEL = { ar: "مسار التنقل", en: "Breadcrumb" } as co
 const ARABIC = /[؀-ۿ]/;
 
 async function publishedSlugs(request: APIRequestContext) {
-  const projects = (await (await request.get("/api/projects?per_page=100")).json()) as { data: { slug: string }[] };
+  const projects = (await (await request.get("/api/projects?per_page=100")).json()) as { data: { slug: string; updated_at: string | null }[] };
   const news = (await (await request.get("/api/news?per_page=50")).json()) as { data: { slug: string; date: string | null }[] };
   const featured = (await (await request.get("/api/news?featured=1&per_page=50")).json()) as { data: { slug: string; date: string | null }[] };
   const articles = new Map([...news.data, ...featured.data].map((post) => [post.slug, post]));
-  return { projects: projects.data.map((project) => project.slug), articles: [...articles.values()] };
+  return {
+    projects: projects.data.map((project) => project.slug),
+    projectDates: new Map(projects.data.map((project) => [project.slug, project.updated_at])),
+    articles: [...articles.values()],
+  };
 }
 
 async function head(page: Page) {
@@ -124,14 +128,23 @@ test("every public page has its own title, description, canonical, sharing tags 
 });
 
 test("the sitemap lists every published project and article in both locales with lastmod", async ({ request, baseURL }) => {
-  const { projects, articles } = await publishedSlugs(request);
+  const { projects, projectDates, articles } = await publishedSlugs(request);
   const xml = await (await request.get("/sitemap.xml")).text();
   const entries = new Map(
     Array.from(xml.matchAll(/<url>([\s\S]*?)<\/url>/g)).map(([, body]) => [/<loc>(.*?)<\/loc>/.exec(body ?? "")?.[1] ?? "", /<lastmod>(.*?)<\/lastmod>/.exec(body ?? "")?.[1]]),
   );
   for (const locale of LOCALES) {
     for (const slug of projects) {
-      expect(entries.get(`${baseURL}/${locale}/projects/${slug}`), `${locale} project ${slug}`).toBeTruthy();
+      const lastmod = entries.get(`${baseURL}/${locale}/projects/${slug}`);
+      expect(lastmod, `${locale} project ${slug}`).toBeTruthy();
+      // A project's lastmod is its `updated_at` from the public API, not the generation time. The
+      // harness seeds the database again between the build (which prerenders the sitemap) and the
+      // tests, so the two seeds differ by the build time: compare within ten minutes.
+      const updatedAt = projectDates.get(slug);
+      expect(updatedAt, `project ${slug} updated_at`).toBeTruthy();
+      expect(Math.abs(Date.parse(lastmod ?? "") - Date.parse(updatedAt ?? "")), `${locale} project ${slug}`).toBeLessThan(600_000);
+      // Static pages carry the generation time; a project that falls back to it shows the same instant.
+      expect(lastmod, `${locale} project ${slug} uses the generation time`).not.toBe(entries.get(`${baseURL}/${locale}`));
     }
     for (const post of articles) {
       const lastmod = entries.get(`${baseURL}/${locale}/media/${post.slug}`);

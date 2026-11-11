@@ -32,6 +32,12 @@ class PublicApiContractTest extends TestCase
         'resolution_reason', 'rejection_reason', 'resolved_by', 'notes',
     ];
 
+    /**
+     * Project objects expose `updated_at` for the sitemap's lastmod (owner-approved 2026-11-11).
+     * It stays internal everywhere else.
+     */
+    private const PROJECT_PATHS = ['/api/projects?per_page=100', '/api/projects/cop16-technical-audit'];
+
     private int $published = 0;
 
     public function test_home_query_count_does_not_grow_with_records(): void
@@ -98,6 +104,19 @@ class PublicApiContractTest extends TestCase
         ]);
     }
 
+    public function test_projects_expose_updated_at_as_iso_8601_on_list_and_detail(): void
+    {
+        $this->createProjects(2);
+        $project = Project::query()->where('slug', 'project-1')->firstOrFail();
+        $project->forceFill(['updated_at' => Carbon::parse('2026-10-01 08:30:00', 'UTC')])->saveQuietly();
+
+        $list = $this->getJson('/api/projects?per_page=100')->assertOk();
+        $this->assertSame('2026-10-01T08:30:00+00:00', $list->json('data.0.updated_at'));
+
+        $detail = $this->getJson('/api/projects/project-1')->assertOk();
+        $this->assertSame('2026-10-01T08:30:00+00:00', $detail->json('data.updated_at'));
+    }
+
     #[DataProvider('publicEndpoints')]
     public function test_public_response_has_no_internal_fields(string $path): void
     {
@@ -105,7 +124,8 @@ class PublicApiContractTest extends TestCase
 
         foreach (['en', 'ar'] as $locale) {
             $data = $this->getJson($path, ['Accept-Language' => $locale])->assertOk()->json('data');
-            $leaked = array_values(array_intersect(self::INTERNAL_KEYS, $this->keysOf($data)));
+            $internal = in_array($path, self::PROJECT_PATHS, true) ? array_diff(self::INTERNAL_KEYS, ['updated_at']) : self::INTERNAL_KEYS;
+            $leaked = array_values(array_intersect($internal, $this->keysOf($data)));
 
             $this->assertSame([], $leaked, "{$path} ({$locale}) exposes internal fields.");
         }

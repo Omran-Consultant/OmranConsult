@@ -97,6 +97,7 @@ function mapProjectSummary(project: ProjectsIndexResponse["data"][number]) {
     imageWidth: project.image_width ?? null,
     imageHeight: project.image_height ?? null,
     imageAlt: project.image_alt ?? null,
+    updatedAt: project.updated_at ?? null,
     regions: project.regions.map((region) => ({
       slug: region.slug,
       code: mapOptionalText(region.code),

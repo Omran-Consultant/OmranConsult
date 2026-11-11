@@ -40,6 +40,8 @@ class ProjectResource extends JsonResource
             'image_height' => $this->coverMedia()['height'] ?? null,
             'image_alt' => $this->coverMedia()['alt'] ?? null,
             'regions' => RegionResource::collection($this->whenLoaded('regions')),
+            // Last change to the published row (owner-approved 2026-11-11): the sitemap's lastmod.
+            'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 

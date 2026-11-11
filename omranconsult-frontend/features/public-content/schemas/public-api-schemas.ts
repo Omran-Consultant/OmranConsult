@@ -28,6 +28,8 @@ const projectSchema = z.object({
   image_height: z.number().nullable().optional(),
   image_alt: z.string().nullable().optional(),
   regions: z.array(regionSchema),
+  /** ISO 8601, last change to the published row (sitemap lastmod). */
+  updated_at: z.string().nullable().optional(),
 });
 
 const paginationLinkSchema = z.object({
