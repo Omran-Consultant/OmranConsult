@@ -10,6 +10,7 @@ type StatisticValueInput = {
 };
 
 const SCALE_LABELS: Record<string, string> = {
+  million: "M",
   billion: "B",
 };
 

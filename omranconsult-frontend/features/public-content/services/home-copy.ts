@@ -73,3 +73,8 @@ export const serviceHighlightsSchema = z
       .catch([]),
   })
   .catch({ items: [] });
+
+/** Ordered sector slugs for the Home chips (`home_sectors` block). Absent or malformed → the built-in order. */
+export const homeSectorsSchema = z
+  .object({ items: z.array(z.string()).min(1).optional().catch(undefined) })
+  .catch({});

@@ -68,3 +68,7 @@ test("appends a percent unit from the API", () => {
   assert.equal(formatStatisticValue({ value: 72.92, unit: "%", locale: "ar" }), "72.92%");
   assert.equal(formatStatisticValue({ value: 15, scale: "billion", suffix: "+", unit: "SAR", locale: "ar" }), "15B+");
 });
+
+test("a million scale shows as M", () => {
+  assert.equal(formatStatisticValue({ value: 750, scale: "million", suffix: "+", unit: null, locale: "en" }), "750M+");
+});

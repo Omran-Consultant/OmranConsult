@@ -4,7 +4,7 @@ import type { ImageAsset } from "@/core/ui/image-asset";
 import { capabilityChips } from "@/features/home/services/capability-chips";
 import { groupRegions } from "@/features/home/lib/coverage-groups";
 import { shortStandardCode } from "@/core/format/standard-code";
-import { homeCopySchema, serviceHighlightsSchema, type HomeCopy } from "@/features/public-content/services/home-copy";
+import { homeCopySchema, homeSectorsSchema, serviceHighlightsSchema, type HomeCopy } from "@/features/public-content/services/home-copy";
 import { formatStatisticValue } from "@/core/format/statistic";
 import { partnerCards } from "@/features/media/brand-logos";
 import { certificateScan } from "@/features/media/credential-scans";
@@ -60,8 +60,11 @@ export type HomeServiceHighlight = {
 /** The five profile statistics in the profile order (Stats section). */
 const PROFILE_STAT_KEYS = ["completed_projects", "project_volume", "employees", "local_content", "partnerships"];
 
-/** The design's five sector chips on Home (H4); the Projects page lists every sector. */
-const HOME_SECTOR_SLUGS = ["education", "health", "water-and-environment", "infrastructure", "universities"];
+/**
+ * The design's five sector chips on Home (H4); the Projects page lists every sector. The dashboard
+ * can publish its own ordered list (`home_sectors` block, Q21); until it does, this order applies.
+ */
+const DEFAULT_HOME_SECTOR_SLUGS = ["education", "health", "water-and-environment", "infrastructure", "universities"];
 
 /** Hero mini-stats in reading order (21+ first in RTL, as designed). */
 const HERO_STAT_KEYS = ["years_experience", "completed_projects", "project_volume"];
@@ -126,7 +129,8 @@ export function buildHomeView(locale: AppLocale, sources: HomeSources) {
     groupExperience: statsByKey.get("group_experience")?.value,
     highlights,
     servicesFeaturedImage,
-    sectors: HOME_SECTOR_SLUGS.map((slug) => sources.sectors.find((sector) => sector.slug === slug))
+    sectors: (homeSectorsSchema.parse(sources.home.blocks.home_sectors ?? {}).items ?? DEFAULT_HOME_SECTOR_SLUGS)
+      .map((slug) => sources.sectors.find((sector) => sector.slug === slug))
       .filter((sector): sector is { slug: string; name: string; projectsCount: number } => Boolean(sector?.name && sector.projectsCount > 0)),
     projects,
     featured,

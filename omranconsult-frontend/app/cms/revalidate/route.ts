@@ -25,6 +25,11 @@ function pathsForTag(tag: string): string[] {
   if (tag === "news") {
     return ["/ar/media", "/en/media"];
   }
+  // A published content block of one page (5B-3a). Home is covered by the `home` tag above.
+  const page = /^pages:(about|services|projects|contact|media)$/.exec(tag);
+  if (page) {
+    return [`/ar/${page[1]}`, `/en/${page[1]}`];
+  }
   const project = /^project:(.+)$/.exec(tag);
   if (project) {
     return [`/ar/projects/${project[1]}`, `/en/projects/${project[1]}`];
