@@ -21,7 +21,9 @@
     "expired": "Expired",
     "certificatesLabel": "ISO certificates",
     "licensesLabel": "Licenses",
-    "stage": "Stage {n}"
+    "workStagesTitle": "Work stages",
+    "lifecycleLine1": "Asset",
+    "lifecycleLine2": "lifecycle"
   },
   "ServicesPage": {
     "outputsHeading": "Expected outputs",

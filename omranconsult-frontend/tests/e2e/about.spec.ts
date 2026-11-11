@@ -93,6 +93,86 @@ test.describe("client logo tiles follow the profile clients page", () => {
   });
 });
 
+test.describe("work stages (concept C1)", () => {
+  test("a dark earth band with three ordered stage cards, in both themes and languages", async ({ page }) => {
+    for (const theme of ["light", "dark"]) {
+      await page.addInitScript((value) => localStorage.setItem("oc-theme", value), theme);
+      await page.goto("/ar/about");
+      const section = page.locator("#work-stages");
+      await expect(section).toHaveAttribute("aria-labelledby", "about-stages-title");
+      await expect(section).toHaveCSS("background-color", "rgb(8, 19, 34)");
+      await expect(section.getByRole("heading", { level: 2 })).toHaveText("مراحل العمل");
+      await expect(section.getByRole("heading", { level: 2 })).toHaveCSS("color", "rgb(255, 255, 255)");
+      await expect(section.locator("img").first()).toHaveAttribute("src", /earth/);
+    }
+
+    const section = page.locator("#work-stages");
+    const stages = section.locator("ol > li");
+    await expect(stages).toHaveCount(3);
+    await expect(stages.locator("h3")).toHaveText(["مرحلة البناء", "مرحلة التسليم", "مرحلة التشغيل"]);
+    await expect(stages.nth(1).locator("ul li")).toHaveText(["اعتمادات الأعمال", "الامتثال لمعايير المباني الخضراء"]);
+    await expect(section.locator("[data-lifecycle-ring]")).toHaveAttribute("aria-hidden", "true");
+    await expect(section.locator("[data-lifecycle-ring] [data-ring-arc]")).toHaveCount(3);
+
+    await page.goto("/en/about");
+    await expect(page.locator("#work-stages").getByRole("heading", { level: 2 })).toHaveText("Work stages");
+    await expect(page.locator("#work-stages [data-lifecycle-ring]")).toContainText("Asset");
+  });
+
+  test("the coverage card shows the project_volume statistic from the API as 15B+", async ({ page, request }) => {
+    const api = await request.get(`${process.env.E2E_API_BASE_URL ?? "http://127.0.0.1:8000"}/api/home`, { headers: { "Accept-Language": "ar" } });
+    const stats = ((await api.json()) as { data: { statistics: { key: string; value: number; suffix: string | null }[] } }).data.statistics;
+    const volume = stats.find((stat) => stat.key === "project_volume");
+    expect(volume).toBeTruthy();
+
+    await page.goto("/ar/about");
+    const card = page.locator("#work-stages [data-coverage-card]");
+    await expect(card.getByRole("heading", { level: 3 })).toHaveText("تغطيتنا");
+    await expect(card.locator("[data-coverage-stat] span").first()).toHaveText(`${volume?.value}B${volume?.suffix ?? ""}`);
+    await expect(card.locator("[data-coverage-stat] span").first()).toHaveText("15B+");
+    await expect(card.locator("[data-coverage-stat] span").nth(1)).toHaveText("حجم المشاريع");
+  });
+
+  test("the ring arcs draw in once in view, and do not animate under reduced motion", async ({ page }) => {
+    await page.goto("/ar/about");
+    const arc = page.locator("#work-stages [data-ring-arc]").last();
+    await page.locator("#work-stages [data-lifecycle-ring]").scrollIntoViewIfNeeded();
+    await expect(arc).toHaveCSS("transition-property", "stroke-dashoffset");
+    await expect(arc).toHaveCSS("stroke-dashoffset", "0px");
+    const running = await page
+      .locator("#work-stages")
+      .evaluate((node) => node.getAnimations({ subtree: true }).filter((animation) => animation instanceof CSSAnimation).length);
+    expect(running).toBe(0);
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/ar/about");
+    const still = page.locator("#work-stages [data-ring-arc]").last();
+    await expect(still).toHaveCSS("stroke-dasharray", "none");
+    await expect(still).not.toHaveCSS("transition-property", "stroke-dashoffset");
+  });
+
+  for (const width of [1440, 1024, 768, 390]) {
+    test(`no horizontal scroll and the ring sits ${width >= 1024 ? "beside" : "above"} the cards at ${width}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/ar/about");
+      const ring = page.locator("#work-stages [data-lifecycle-ring]");
+      await ring.scrollIntoViewIfNeeded();
+      const ringBox = await ring.boundingBox();
+      const cardsBox = await page.locator("#work-stages ol").boundingBox();
+      expect(ringBox && cardsBox).toBeTruthy();
+      if (ringBox && cardsBox) {
+        if (width >= 1024) {
+          // RTL: the cards start on the right, the ring sits at the end (left).
+          expect(ringBox.x + ringBox.width).toBeLessThanOrEqual(cardsBox.x);
+        } else {
+          expect(ringBox.y + ringBox.height).toBeLessThanOrEqual(cardsBox.y);
+        }
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    });
+  }
+});
+
 test("credentials show every certificate and license scan", async ({ page }) => {
   await page.goto("/ar/about#credentials");
   const section = page.locator("#credentials");

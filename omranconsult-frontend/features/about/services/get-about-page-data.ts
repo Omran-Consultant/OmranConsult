@@ -58,6 +58,11 @@ export async function getAboutPageData(locale: AppLocale) {
       clients: slides.get("clients"),
     },
     introStats: formatStats(homeModel.statistics, ["years_experience", "group_experience"], locale),
+    /** Work stages coverage card: the existing statistic with the seeded short label (Home stats copy). */
+    coverageStat: formatStats(homeModel.statistics, ["project_volume"], locale).map((stat) => ({
+      value: stat.value,
+      label: homeCopy.stats.short_labels[stat.key] ?? stat.label,
+    }))[0],
     experts: mapExpertsToUiModel(experts),
     orgChart: mapOrgChartToUiModel(orgChart),
     certificates: docs

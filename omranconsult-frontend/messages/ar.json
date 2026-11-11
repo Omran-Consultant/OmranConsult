@@ -21,7 +21,9 @@
     "expired": "منتهية",
     "certificatesLabel": "شهادات الأيزو",
     "licensesLabel": "التراخيص",
-    "stage": "المرحلة {n}"
+    "workStagesTitle": "مراحل العمل",
+    "lifecycleLine1": "دورة حياة",
+    "lifecycleLine2": "الأصل"
   },
   "ServicesPage": {
     "outputsHeading": "المخرجات المتوقعة",

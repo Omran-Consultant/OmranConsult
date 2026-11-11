@@ -23,6 +23,8 @@
   --green-700: #0b6b36;
   --green-600: #0e8442;
   --green-500: #1fa055;
+  /* Lifecycle ring middle arc only (work-stages concept C1). */
+  --green-400: #3fb27f;
   --green-300: #72c067;
   --green-100: #ddf1d8;
   --neutral-0: #ffffff;
@@ -216,7 +218,11 @@ html[lang="ar"] {
   --color-neutral-100: var(--neutral-100);
   --color-neutral-300: var(--neutral-300);
   --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
   --color-green-700: var(--green-700);
+  --color-green-600: var(--green-600);
+  --color-green-500: var(--green-500);
+  --color-green-400: var(--green-400);
   --color-green-300: var(--green-300);
 
   /* Semantic */
@@ -465,4 +471,30 @@ html:has(dialog[data-lightbox][open]) {
 /* Page hero scrims fading down to opaque navy: scrim-down-70 = 70 % at the top (About), -75 (Projects), -60 (mobile). */
 @utility scrim-down-* {
   background-image: linear-gradient(to bottom, rgb(8 19 34 / calc(--value(integer) * 1%)), rgb(8 19 34 / 1));
+}
+
+/* About work stages (concept C1): navy/950 over the earth photo, 55 % at the top to 88 % at the bottom. */
+@utility scrim-band {
+  background-image: linear-gradient(to bottom, rgb(8 19 34 / 0.55), rgb(8 19 34 / 0.88));
+}
+
+/* Coverage card. The concept runs green/600 → green/500 → green/400; white body text is below 4.5:1
+   on the two lighter stops, so the card runs green/700 → green/600 (AA, same recorded reason as the
+   primary button hover). */
+@utility coverage-green {
+  background-image: linear-gradient(120deg, var(--green-700) 0%, var(--green-600) 100%);
+}
+
+/* Lifecycle ring: each arc draws in once when the ring is revealed. Paths use pathLength="1". */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-ring-arc] {
+    stroke-dasharray: 1 1.1;
+    stroke-dashoffset: 1.05;
+    transition: stroke-dashoffset 1200ms var(--ease-out);
+    transition-delay: calc(var(--arc-index, 0) * 200ms);
+  }
+
+  html.js [data-revealed] [data-ring-arc] {
+    stroke-dashoffset: 0;
+  }
 }
