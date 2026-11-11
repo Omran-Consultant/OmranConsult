@@ -27,7 +27,7 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
       <li key={slug ?? "all"}>
         <Link
           aria-current={selected ? "true" : undefined}
-          className={filterChipClassName(selected, "max-md:min-h-9.5 max-md:px-4 max-md:py-2.25")}
+          className={filterChipClassName(selected)}
           href={`/projects${projectsQuery(filters, { sector: slug, page: 1 })}`}
           scroll={false}
         >
@@ -36,6 +36,8 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
       </li>
     );
   };
+
+  const filterSelectClass = "box-border h-11 py-0 md:h-12";
 
   return (
     <section aria-label={t("filtersLabel")} className="md:border-b md:border-line md:bg-surface" data-section="filter-bar">
@@ -50,7 +52,7 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
           <details className="group relative">
             <summary
               className={classNames(
-                "relative flex size-12 cursor-pointer list-none items-center justify-center rounded-full border transition-colors duration-150 [&::-webkit-details-marker]:hidden",
+                "relative flex size-11 cursor-pointer list-none items-center justify-center rounded-full border transition-colors duration-150 md:size-12 [&::-webkit-details-marker]:hidden",
                 extraCount > 0 ? "border-accent text-primary" : "border-line-strong text-secondary hover:border-accent hover:text-primary",
               )}
               title={t("moreFilters")}
@@ -69,7 +71,13 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
             >
               {filters.sector ? <input name="sector" type="hidden" value={filters.sector} /> : null}
               {filters.q ? <input name="q" type="hidden" value={filters.q} /> : null}
-              <SelectField defaultValue={filters.client ?? ""} id="projects-client" label={t("clientFilterLabel")} name="client">
+              <SelectField
+                defaultValue={filters.client ?? ""}
+                id="projects-client"
+                label={t("clientFilterLabel")}
+                name="client"
+                selectClassName={filterSelectClass}
+              >
                 <option value="">{t("allClients")}</option>
                 {view.owners.map((owner) => (
                   <option key={owner.slug} value={owner.slug}>
@@ -77,7 +85,13 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
                   </option>
                 ))}
               </SelectField>
-              <SelectField defaultValue={filters.region ?? ""} id="projects-region" label={t("regionFilterLabel")} name="region">
+              <SelectField
+                defaultValue={filters.region ?? ""}
+                id="projects-region"
+                label={t("regionFilterLabel")}
+                name="region"
+                selectClassName={filterSelectClass}
+              >
                 <option value="">{t("allRegions")}</option>
                 {view.regions.map((region) => (
                   <option key={region.slug} value={region.slug}>

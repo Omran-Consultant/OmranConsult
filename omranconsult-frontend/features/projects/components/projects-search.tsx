@@ -78,7 +78,7 @@ export function ProjectsSearch({ filters, label, placeholder, className }: Proje
       </span>
       <input
         autoComplete="off"
-        className="h-12 w-full rounded-full border border-line-strong bg-glass ps-11 max-md:bg-surface pe-4 text-body-s text-primary transition-[border-color,box-shadow] duration-150 placeholder:text-muted focus:border-accent focus:ring-3 focus:ring-accent/20 focus:outline-none"
+        className="h-11 w-full rounded-full border border-line-strong bg-glass ps-11 pe-4 text-body-s text-primary transition-[border-color,box-shadow] duration-150 placeholder:text-muted focus:border-accent focus:ring-3 focus:ring-accent/20 focus:outline-none max-md:bg-surface md:h-12"
         enterKeyHint="search"
         id={id}
         maxLength={100}

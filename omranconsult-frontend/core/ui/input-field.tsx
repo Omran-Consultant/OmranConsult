@@ -97,18 +97,20 @@ type SelectFieldProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, "id" | "cl
   readonly error?: string;
   readonly helper?: string;
   readonly className?: string;
+  /** Extra classes on the control (for example a fixed filter-bar height). */
+  readonly selectClassName?: string;
   readonly children: ReactNode;
 };
 
 /** Native select in the Input Field frame; the chevron sits at the inline end. */
-export function SelectField({ id, label, error, helper, className, required, children, ...rest }: SelectFieldProps) {
+export function SelectField({ id, label, error, helper, className, selectClassName, required, children, ...rest }: SelectFieldProps) {
   return (
     <FieldFrame className={className} error={error} helper={helper} id={id} label={label} requiredMark={required}>
       <span className="relative flex">
         <select
           aria-describedby={error || helper ? `${id}-message` : undefined}
           aria-invalid={error ? true : undefined}
-          className={classNames(FIELD_CLASS, "appearance-none pe-12", fieldState(error))}
+          className={classNames(FIELD_CLASS, "appearance-none pe-12", fieldState(error), selectClassName)}
           id={id}
           required={required}
           {...rest}
