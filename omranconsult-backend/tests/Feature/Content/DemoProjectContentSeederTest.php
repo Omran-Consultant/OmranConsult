@@ -5,11 +5,13 @@ namespace Tests\Feature\Content;
 use App\Models\User;
 use App\Modules\Projects\Infrastructure\Models\Project;
 use App\Support\Content\ContentBlocks;
+use App\Support\Content\PublicationStatus;
 use App\Support\SuperAdminRole;
 use Database\Seeders\Demo\DemoProjectContentSeeder;
 use Database\Seeders\Profile\ProfileContentSeeder;
 use Database\Seeders\SuperAdminRoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class DemoProjectContentSeederTest extends TestCase
@@ -92,8 +94,9 @@ class DemoProjectContentSeederTest extends TestCase
         $this->assertSame('wave', $gallery[0]['key'] ?? $gallery[0]);
     }
 
-    public function test_the_first_dashboard_save_clears_the_flag_on_a_published_project(): void
+    public function test_saving_a_draft_keeps_the_flag_and_publishing_from_the_dashboard_clears_it(): void
     {
+        Bus::fake();
         $this->seed(DemoProjectContentSeeder::class);
         $project = Project::query()->where('slug', self::SLUG)->firstOrFail();
 
@@ -102,12 +105,32 @@ class DemoProjectContentSeederTest extends TestCase
             ->assertOk()
             ->assertJsonPath('has_demo_content', true);
 
+        // «حفظ مسودة» on a published project: the live row still shows the demo content.
         $this->actingAs($this->admin())
             ->patchJson('/api/admin/projects/'.$project->id, ['service_type' => ['ar' => 'تعديل', 'en' => 'Edited']])
             ->assertOk()
-            ->assertJsonPath('has_demo_content', false);
+            ->assertJsonPath('has_demo_content', true);
+        $this->assertTrue($project->fresh()->has_demo_content);
 
+        $this->actingAs($this->admin())
+            ->postJson('/api/admin/projects/'.$project->id.'/publish')
+            ->assertOk()
+            ->assertJsonPath('has_demo_content', false);
         $this->assertFalse($project->fresh()->has_demo_content);
+    }
+
+    public function test_saving_an_unpublished_project_keeps_the_flag(): void
+    {
+        $this->seed(DemoProjectContentSeeder::class);
+        $project = Project::query()->where('slug', self::SLUG)->firstOrFail();
+        $project->forceFill(['status' => PublicationStatus::Draft])->save();
+
+        $this->actingAs($this->admin())
+            ->patchJson('/api/admin/projects/'.$project->id, ['service_type' => ['ar' => 'تعديل', 'en' => 'Edited']])
+            ->assertOk()
+            ->assertJsonPath('has_demo_content', true);
+
+        $this->assertTrue($project->fresh()->has_demo_content);
     }
 
     public function test_the_public_api_never_exposes_the_flag(): void

@@ -114,9 +114,6 @@ class AdminProjectsController extends Controller
             );
         }
 
-        // The first dashboard save, draft or live, means an editor has taken over this record.
-        $project->forceFill(['has_demo_content' => false])->save();
-
         if ($project->status === PublicationStatus::Published && ! $project->trashed()) {
             $draft = $this->drafts->put($project, $merged, $request->user());
             $this->syncMedia($project, $merged);
@@ -144,9 +141,12 @@ class AdminProjectsController extends Controller
         $this->gate->assertCanPublish($project, $payload);
 
         $this->drafts->apply($project, $payload);
+        // Publishing from the dashboard means an editor has approved what is live; a saved draft
+        // leaves the seeded demo content on the site, so only this action clears the marker.
         $project->forceFill([
             'status' => PublicationStatus::Published,
             'published_at' => $project->published_at ?? now(),
+            'has_demo_content' => false,
         ])->save();
         $this->drafts->discard($project);
         $this->syncMedia($project, $payload);
