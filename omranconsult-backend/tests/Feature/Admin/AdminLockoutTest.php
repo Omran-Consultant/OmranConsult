@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\User;
 use App\Modules\Audit\Infrastructure\Models\AuditLog;
+use App\Support\Auth\AccountLockout;
 use App\Support\EditorRole;
 use App\Support\SuperAdminRole;
 use Database\Seeders\SuperAdminRoleSeeder;
@@ -44,7 +45,7 @@ class AdminLockoutTest extends TestCase
         $locked
             ->assertStatus(423)
             ->assertJsonPath('message', 'account_locked');
-        $this->assertGreaterThanOrEqual(1, (int) $locked->json('minutes_remaining'));
+        $this->assertSame(AccountLockout::LOCK_MINUTES, (int) $locked->json('minutes_remaining'));
 
         $this->assertNotNull($user->fresh()->locked_until);
         $this->assertTrue(AuditLog::query()->where('action', 'account_locked')->exists());

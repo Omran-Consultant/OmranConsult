@@ -363,24 +363,39 @@ test.describe("dashboard authenticated", () => {
   test("five wrong passwords lock a throwaway user with 423", async ({ page }) => {
     const email = uniqueTestEmail("e2e-lockout");
     await inviteAndAccept(page, "E2E Lockout", email, throwawayPassword);
+    // Accept-invite shares the login throttle key (IP + email); start the attempts from a clean limiter.
     artisan(["cache:clear"]);
     await page.goto("/dashboard/login");
     await waitReady(page);
-    for (let attempt = 0; attempt < 5; attempt += 1) {
+
+    /** Submit once and return the API status, so every attempt is counted before the next one starts. */
+    async function attempt(password: string): Promise<number> {
       await page.locator("#email").fill(email);
-      await page.locator("#password").fill("wrong-password");
+      await page.locator("#password").fill(password);
+      const response = page.waitForResponse((res) => res.url().endsWith("/api/admin/login") && res.request().method() === "POST");
       await page.getByRole("button", { name: /دخول|Sign in/i }).click();
-      if (attempt < 4) {
-        await expect(page.getByText(/غير صحيحة|incorrect/i)).toBeVisible();
-      }
+      return (await response).status();
     }
-    await expect(page.getByText(/دقيقة|minutes/i)).toBeVisible();
+
+    for (let index = 1; index <= 4; index += 1) {
+      expect(await attempt("wrong-password")).toBe(422);
+      await expect(page.getByText("البريد أو كلمة المرور غير صحيحة.")).toBeVisible();
+    }
+    expect(await attempt("wrong-password")).toBe(423);
+    await expect(page.getByText("محاولات كثيرة. أعد المحاولة بعد 15 دقيقة.")).toBeVisible();
     await shot(page, "login-ar-light-locked-1440");
+
+    // The lock lives on the user row, not in the cache: clearing the cache must not unlock it.
     artisan(["cache:clear"]);
-    await page.locator("#email").fill(email);
-    await page.locator("#password").fill(throwawayPassword);
-    await page.getByRole("button", { name: /دخول|Sign in/i }).click();
-    await expect(page.getByText(/دقيقة|minutes/i)).toBeVisible();
+    expect(await attempt(throwawayPassword)).toBe(423);
+    await expect(page.getByText(/^محاولات كثيرة\. أعد المحاولة بعد \d+ دقيقة\.$/)).toBeVisible();
+    await expect(page).toHaveURL(/\/dashboard\/login/);
+
+    await page.getByRole("button", { name: "EN" }).click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    artisan(["cache:clear"]);
+    expect(await attempt(throwawayPassword)).toBe(423);
+    await expect(page.getByText(/^Too many attempts\. Try again in \d+ minutes\.$/)).toBeVisible();
     await expect(page).toHaveURL(/\/dashboard\/login/);
     purgeE2eExtras();
   });

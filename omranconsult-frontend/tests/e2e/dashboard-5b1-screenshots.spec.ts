@@ -93,7 +93,11 @@ test.describe("dashboard 5B-1 screenshots", () => {
               document.documentElement.classList.toggle("dark", next === "dark");
             }, theme);
             if (target.name === "public-detail" && locale === "ar" && theme === "light" && width === 1440) {
-              await expect(page.getByText("لاختبار")).toHaveCount(0);
+              // Test copy must not leak into this project's own sections. Related cards are excluded:
+              // the E2E seed has robustness projects whose long titles contain «لاختبار».
+              for (const section of ["hero", "facts-bar", "body"]) {
+                await expect(page.locator(`[data-section="${section}"]`).getByText("لاختبار")).toHaveCount(0);
+              }
               await expect(page.getByRole("link", { name: "مشاريع أخرى للجهة نفسها" })).toBeVisible();
             }
             await page.screenshot({ fullPage: true, path: path.join(SHOTS, `${target.name}-${locale}-${theme}-${width}.png`) });

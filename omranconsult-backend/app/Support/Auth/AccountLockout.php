@@ -28,7 +28,8 @@ final class AccountLockout
             return 0;
         }
 
-        return (int) max(1, $user->locked_until->diffInMinutes(now(), true));
+        // Round up: a fresh 15-minute lock must read 15, not 14.
+        return (int) max(1, ceil($user->locked_until->diffInMinutes(now(), true)));
     }
 
     public function recordFailure(User $user, Request $request): void
