@@ -282,3 +282,23 @@ test("on mobile the inquiry form follows the project content", async ({ page }) 
   expect(asideTop).toBeGreaterThanOrEqual(galleryBottom);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
+
+test.describe("filter bar keeps search and filters on the first chip row", { tag: "@desktop" }, () => {
+  for (const width of [1440, 1024]) {
+    for (const locale of ["ar", "en"]) {
+      test(`${locale} at ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(`/${locale}/projects`);
+        const bar = page.locator('[data-section="filter-bar"]');
+        await expect(bar.getByRole("search")).toBeVisible();
+        // One evaluate, so a scroll between measurements cannot skew the comparison.
+        const tops = await bar.evaluate((section) =>
+          ["li a", '[role="search"]', "summary"].map((selector) => section.querySelector(selector)?.getBoundingClientRect().top ?? Number.NaN),
+        );
+        const [chip, search, filter] = tops;
+        expect(Math.abs((search ?? Number.NaN) - (chip ?? 0))).toBeLessThanOrEqual(1);
+        expect(Math.abs((filter ?? Number.NaN) - (chip ?? 0))).toBeLessThanOrEqual(1);
+      });
+    }
+  }
+});

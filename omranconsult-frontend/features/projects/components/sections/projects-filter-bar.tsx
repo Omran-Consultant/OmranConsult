@@ -41,7 +41,7 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
 
   return (
     <section aria-label={t("filtersLabel")} className="md:border-b md:border-line md:bg-surface" data-section="filter-bar">
-      <Container className="flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:py-7">
+      <Container className="flex flex-col gap-4 py-5 lg:flex-row lg:items-start lg:justify-between lg:gap-8 lg:py-7">
         {/*
           F0c — wrap to a second line on desktop. Closer to Figma (every sector chip visible;
           handoff has no edge fade or prev/next). Mobile keeps one scrolling row.
