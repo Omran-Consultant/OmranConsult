@@ -42,7 +42,15 @@ export function HomeAbout({ view }: { readonly view: HomeView }) {
               </div>
               <div className="self-start md:hidden">
                 <LinkButton arrow href="/about" variant="secondary">
-                  {about.link_short ?? about.link}
+                  {/* The short label is generic («Read more»); the full label names the link for assistive tech and crawlers. */}
+                  {about.link_short ? (
+                    <>
+                      <span aria-hidden="true">{about.link_short}</span>
+                      <span className="sr-only">{about.link}</span>
+                    </>
+                  ) : (
+                    about.link
+                  )}
                 </LinkButton>
               </div>
             </>

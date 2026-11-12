@@ -116,7 +116,8 @@ export function MediaPageContent({ view }: { readonly view: MediaView }) {
             {view.hasMore ? (
               <div className="flex justify-center pt-0 lg:pt-6">
                 <LinkButton arrow className="max-md:w-full" href={`/media${mediaQuery(filters, { page: filters.page + 1 })}`} scroll={false} variant="secondary">
-                  {t("loadMore")}
+                  <span aria-hidden="true">{t("loadMore")}</span>
+                  <span className="sr-only">{t("loadMoreLabel")}</span>
                 </LinkButton>
               </div>
             ) : null}

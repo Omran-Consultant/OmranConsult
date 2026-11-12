@@ -109,7 +109,8 @@ export async function ProjectsGrid({ view }: { readonly view: ProjectsView }) {
 
             {view.mobileCards.length < view.total && currentPage < MAX_PAGE ? (
               <LinkButton className="mt-4 w-full md:hidden" href={href(currentPage + 1)} scroll={false} variant="secondary">
-                {t("loadMore")}
+                <span aria-hidden="true">{t("loadMore")}</span>
+                <span className="sr-only">{t("loadMoreLabel")}</span>
               </LinkButton>
             ) : null}
           </>

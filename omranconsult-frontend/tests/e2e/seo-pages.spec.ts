@@ -155,3 +155,23 @@ test("the sitemap lists every published project and article in both locales with
     }
   }
 });
+
+/** Lighthouse `link-text` list plus the Arabic equivalents used on this site. */
+const GENERIC_LINK_TEXT = new Set([
+  "click here", "click this", "go", "here", "information", "learn more", "more", "more info", "more information",
+  "right here", "read more", "see more", "show more", "load more", "discover more", "start", "this", "continue",
+  "اقرأ المزيد", "المزيد", "عرض المزيد", "تحميل المزيد", "اكتشف المزيد", "اعرف المزيد", "هنا", "اضغط هنا",
+]);
+
+for (const locale of ["en", "ar"]) {
+  for (const route of ["", "/about", "/projects", "/media", "/services"]) {
+    test(`${locale}${route || "/"} has no link with a generic accessible name`, async ({ page }) => {
+      await page.goto(`/${locale}${route}`);
+      // Lighthouse `link-text` reads the text content (sr-only text included, aria-label ignored).
+      const texts = await page.locator("a[href]").evaluateAll((links) =>
+        links.map((link) => (link.textContent ?? "").replace(/\s+/g, " ").trim().toLowerCase()),
+      );
+      expect(texts.filter((text) => GENERIC_LINK_TEXT.has(text))).toEqual([]);
+    });
+  }
+}
