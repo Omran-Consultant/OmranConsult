@@ -318,7 +318,9 @@ test.describe("filter panel listbox", () => {
     const combobox = await openPanel(page, "ar");
     await expect(combobox).toHaveText("كل الجهات");
     const box = await combobox.boundingBox();
-    expect(box?.height).toBe(48);
+    // 48 px on desktop and tablet, 44 px at 767 px and below.
+    const narrow = (page.viewportSize()?.width ?? 1280) <= 767;
+    expect(box?.height).toBe(narrow ? 44 : 48);
     // The label must not be clipped vertically.
     const text = await combobox.locator("span").first().boundingBox();
     expect(text && box && text.y >= box.y && text.y + text.height <= box.y + box.height).toBe(true);
