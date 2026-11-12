@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import { useTranslations } from "next-intl";
 
 import { clearAccentMarkers, parseAccentText } from "@/core/text/accent-text";
@@ -14,6 +14,10 @@ type AccentTextFieldProps = {
   readonly lang: "ar" | "en";
   readonly disabled?: boolean;
   readonly long?: boolean;
+  /** Show «تمييز الكلمة / إزالة التمييز»; only fields the public site renders with the accent colour. */
+  readonly highlight?: boolean;
+  /** Id of the section's single highlight hint, when this field offers highlighting. */
+  readonly hintId?: string;
   readonly onChange: (value: string) => void;
 };
 
@@ -71,10 +75,9 @@ function htmlRootToValue(root: HTMLElement): string {
  * Text field that stores `{accent}…{/accent}` but never shows those tokens.
  * Select a word, then use «تمييز» to mark it green (same storage format as the public site).
  */
-export function AccentTextField({ id, label, value, lang, disabled = false, long = false, onChange }: AccentTextFieldProps) {
+export function AccentTextField({ id, label, value, lang, disabled = false, long = false, highlight = true, hintId, onChange }: AccentTextFieldProps) {
   const t = useTranslations("Dashboard.pages");
   const editorRef = useRef<HTMLDivElement>(null);
-  const hintId = useId();
   const html = valueToHtml(value);
 
   useEffect(() => {
@@ -139,7 +142,7 @@ export function AccentTextField({ id, label, value, lang, disabled = false, long
         <label className="text-label-s text-secondary" htmlFor={id}>
           {label}
         </label>
-        {!disabled ? (
+        {highlight && !disabled ? (
           <div className="flex items-center gap-2">
             <button
               className="h-9 rounded-[var(--control-radius)] border border-line bg-elevated px-3 text-label-s text-primary hover:bg-highlight"
@@ -160,7 +163,7 @@ export function AccentTextField({ id, label, value, lang, disabled = false, long
         ) : null}
       </div>
       <div
-        aria-describedby={hintId}
+        aria-describedby={highlight ? hintId : undefined}
         aria-disabled={disabled || undefined}
         aria-multiline={long || undefined}
         className={classNames(
@@ -181,9 +184,6 @@ export function AccentTextField({ id, label, value, lang, disabled = false, long
         role="textbox"
         suppressContentEditableWarning
       />
-      <p className="mt-2 text-caption text-muted" id={hintId}>
-        {t("highlightHint")}
-      </p>
     </div>
   );
 }

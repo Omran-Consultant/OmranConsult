@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Icon, isIconName } from "@/core/ui/icon";
 import { AccentTextField } from "@/features/dashboard/pages/accent-text-field";
 import {
+  ACCENT_FIELD_KEYS,
   ADVANCED_FIELD_KEYS,
   SECTION_GROUP_ORDER,
   fieldLabel,
@@ -52,8 +53,32 @@ function fieldId(path: PayloadPath, suffix?: string): string {
   return ["block", ...path, ...(suffix ? [suffix] : [])].join("-");
 }
 
+/** The one highlight hint of the block, shown above the fields (not under each field). */
+const ACCENT_HINT_ID = "block-accent-hint";
+
+function supportsAccent(node: TranslationMap, path: PayloadPath): boolean {
+  const key = path[path.length - 1];
+  const inListItem = path.some((part) => typeof part === "number");
+  const designed = typeof key === "string" && ACCENT_FIELD_KEYS.has(key) && !inListItem;
+  return designed || Object.values(node).some((text) => typeof text === "string" && text.includes("{accent}"));
+}
+
+function hasAccentField(node: PayloadNode, path: PayloadPath): boolean {
+  if (isTranslationMap(node)) {
+    return supportsAccent(node, path);
+  }
+  if (Array.isArray(node)) {
+    return node.some((item, index) => hasAccentField(item, [...path, index]));
+  }
+  if (isRecord(node)) {
+    return Object.entries(node).some(([key, child]) => hasAccentField(child, [...path, key]));
+  }
+  return false;
+}
+
 function TextNode({ node, path, label, ctx }: { node: TranslationMap; path: PayloadPath; label: string; ctx: TreeContext }) {
   const long = ctx.longPatterns.has(pathPattern(path));
+  const highlight = supportsAccent(node, path);
 
   return (
     <div className="min-w-0 flex-1">
@@ -61,6 +86,8 @@ function TextNode({ node, path, label, ctx }: { node: TranslationMap; path: Payl
         <div className={lang === ctx.lang ? undefined : "hidden"} key={lang}>
           <AccentTextField
             disabled={ctx.readOnly}
+            highlight={highlight}
+            hintId={ACCENT_HINT_ID}
             id={fieldId(path, lang)}
             label={label}
             lang={lang}
@@ -213,8 +240,15 @@ export function TreeChildren({ node, path, ctx }: { node: PayloadNode; path: Pay
   );
   const groups = ordered.filter(([, child]) => !isTranslationMap(child) && typeof child !== "string");
 
+  const showHint = path.length === 0 && !ctx.readOnly && hasAccentField(node, path);
+
   return (
     <>
+      {showHint ? (
+        <p className="rounded-xl bg-highlight/40 px-4 py-3 text-caption text-muted" data-accent-hint="" id={ACCENT_HINT_ID}>
+          {t("highlightHint")}
+        </p>
+      ) : null}
       {mainLeaves.map(([key, child]) => (
         <TreeNode ctx={ctx} fieldKey={key} key={key} node={child} path={[...path, key]} />
       ))}
@@ -222,9 +256,12 @@ export function TreeChildren({ node, path, ctx }: { node: PayloadNode; path: Pay
         <TreeNode ctx={ctx} fieldKey={key} key={key} node={child} path={[...path, key]} />
       ))}
       {advancedLeaves.length > 0 ? (
-        <details className="rounded-xl border border-line p-4" data-block-advanced="">
-          <summary className="cursor-pointer text-label-s text-secondary">{t("advancedSettings")}</summary>
-          <div className="mt-4 space-y-4">
+        <details className="group border-t border-line pt-3" data-block-advanced="">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-[var(--control-radius)] text-label-m text-secondary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+            <span>{t("advancedSettings")}</span>
+            <Icon className="text-muted transition-transform duration-150 group-open:rotate-180 motion-reduce:transition-none" name="chevron-down" />
+          </summary>
+          <div className="mt-3 space-y-4">
             {advancedLeaves.map(([key, child]) => (
               <TreeNode ctx={ctx} fieldKey={key} key={key} node={child} path={[...path, key]} />
             ))}

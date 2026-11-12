@@ -249,6 +249,21 @@ export const ADVANCED_FIELD_KEYS = new Set([
 ]);
 
 /**
+ * Keys the public site renders through `AccentText` (section headers, page and Home heroes, CTA
+ * boxes): only these offer «تمييز الكلمة». List items never do. A field that already stores an
+ * `{accent}` marker keeps the controls so the highlight can still be removed.
+ */
+export const ACCENT_FIELD_KEYS = new Set([
+  "headline",
+  "heading",
+  "title",
+  "title_short",
+  "section_title",
+  "overview_title",
+  "related_title",
+]);
+
+/**
  * Preferred order of nested groups inside a block, matching the public page top-to-bottom.
  * Unknown keys keep their stored order after the listed ones.
  */

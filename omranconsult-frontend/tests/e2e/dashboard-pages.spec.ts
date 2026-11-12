@@ -50,6 +50,33 @@ test.describe("dashboard site pages (5B-3a)", () => {
     await expect(page.locator('[data-page-card="about"] [data-block-link]')).toHaveCount(1);
   });
 
+  test("highlight controls only on accent fields, one hint per block, and a plain advanced disclosure", async ({ page }) => {
+    await openBlock(page, "about", "design_copy");
+    const fieldControls = (id: string) => page.locator(`label[for="${id}"]`).locator("xpath=../..").locator("[data-accent-highlight]");
+    // The hero title is rendered with the accent colour on /about; the intro paragraph is not.
+    await expect(fieldControls("block-hero-title-ar")).toHaveCount(1);
+    await expect(fieldControls("block-hero-intro-ar")).toHaveCount(0);
+    // List item titles never offer highlighting.
+    const listItemControls = page.locator("[data-block-item] [data-accent-highlight]");
+    await expect(listItemControls).toHaveCount(0);
+    await expect(page.locator("[data-accent-hint]")).toHaveCount(1);
+    await expect(page.locator("#block-hero-title-ar")).toHaveAttribute("aria-describedby", "block-accent-hint");
+    await expect(page.locator("#block-hero-intro-ar")).not.toHaveAttribute("aria-describedby", /.+/);
+
+    const advanced = page.locator("[data-block-advanced]").first();
+    const summary = advanced.locator("summary");
+    await expect(summary).toHaveText("إعدادات متقدمة");
+    expect(await summary.evaluate((el) => getComputedStyle(el).display)).toBe("flex");
+    expect(await summary.evaluate((el) => getComputedStyle(el).listStyleType)).toBe("none");
+    const caret = summary.locator("svg");
+    await expect(caret).toHaveCount(1);
+    // Tailwind 4 `rotate-180` sets the `rotate` property, not `transform`.
+    expect(await caret.evaluate((el) => getComputedStyle(el).rotate)).toBe("none");
+    await summary.click();
+    await expect(advanced).toHaveAttribute("open", "");
+    await expect.poll(() => caret.evaluate((el) => getComputedStyle(el).rotate)).toBe("180deg");
+  });
+
   test("an About title edit is a draft until published, then shows on the public page", async ({ page }) => {
     await openBlock(page, "about", "design_copy");
     const field = page.locator("#block-hero-title-ar");
