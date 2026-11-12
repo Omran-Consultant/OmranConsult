@@ -15,7 +15,7 @@ export async function ProjectsClients({ view }: { readonly view: ProjectsView })
   }
 
   return (
-    <section aria-labelledby="projects-clients-title" className="bg-surface py-section-y" data-reveal data-section="clients">
+    <section aria-labelledby="projects-clients-title" className="bg-surface pt-section-y" data-reveal data-section="clients">
       <Container className="flex flex-col gap-10 lg:gap-12">
         <SectionHeader title={t("clientsHeading")} titleId="projects-clients-title" />
         <LogoTileGrid fallbackAlt={layout("brand.clientLogoAlt")} tiles={view.clients} />

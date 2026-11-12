@@ -79,3 +79,73 @@ test("footer newsletter validates the email before sending", { tag: "@desktop" }
   await expect(footer.getByText("Enter a valid email address")).toBeVisible();
   await expect(footer.getByLabel("Email")).toHaveAttribute("aria-invalid", "true");
 });
+
+/** D2: logo and column headings share one top line; the gap above the columns equals the gap below. */
+function footerMetrics() {
+  const footer = document.querySelector<HTMLElement>('footer[data-section="footer"]');
+  const grid = footer?.querySelector<HTMLElement>(".grid");
+  const logo = footer?.querySelector<HTMLElement>("a img, a svg");
+  if (!footer || !grid || !logo) {
+    return null;
+  }
+  const headings = [...footer.querySelectorAll<HTMLElement>("h2")].filter((heading) => heading.offsetParent);
+  const top = (el: Element) => el.getBoundingClientRect().top + scrollY;
+  // The visible edge above the columns: the footer top, or the last content when the section above shares its surface.
+  const main = document.querySelector("main");
+  const last = main?.lastElementChild;
+  const sameSurface = last && getComputedStyle(last).backgroundColor === getComputedStyle(footer).backgroundColor;
+  let edge = top(footer);
+  if (sameSurface && last) {
+    edge = Math.max(...[...last.querySelectorAll("*")].filter((el) => el.children.length === 0).map((el) => el.getBoundingClientRect().bottom + scrollY));
+  }
+  const gridBottom = grid.getBoundingClientRect().bottom + scrollY;
+  const mark = [...footer.querySelectorAll<HTMLElement>("p")].find((p) => p.textContent?.trim() === "OMRAN" && p.offsetParent);
+  let below: number;
+  if (mark) {
+    const style = getComputedStyle(mark);
+    const ctx = document.createElement("canvas").getContext("2d");
+    if (!ctx) {
+      return null;
+    }
+    ctx.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const metrics = ctx.measureText("OMRAN");
+    const content = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+    const baseline = top(mark) + (parseFloat(style.lineHeight) - content) / 2 + metrics.fontBoundingBoxAscent;
+    below = baseline - metrics.actualBoundingBoxAscent - gridBottom;
+  } else {
+    const bar = footer.querySelector<HTMLElement>(".border-t");
+    below = (bar ? top(bar) : 0) - gridBottom;
+  }
+  return {
+    logoTop: top(logo),
+    headingTops: headings.map(top),
+    above: top(grid) - edge,
+    below,
+  };
+}
+
+for (const width of [1440, 390]) {
+  for (const locale of ["ar", "en"]) {
+    for (const path of ["", "/about", "/projects", "/media", "/contact"]) {
+      test(`footer is aligned and balanced on /${locale}${path} at ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(`/${locale}${path}`);
+        await page.locator("footer").scrollIntoViewIfNeeded();
+        // Sections stream in and reveal on scroll; measure once the layout has settled.
+        await expect.poll(async () => {
+          const settled = await page.evaluate(footerMetrics);
+          return settled ? Math.abs(settled.above - settled.below) : Infinity;
+        }).toBeLessThanOrEqual(8);
+        const m = await page.evaluate(footerMetrics);
+        expect(m).not.toBeNull();
+        if (!m) {
+          return;
+        }
+        for (const headingTop of m.headingTops) {
+          // Desktop: one top line with the logo. Mobile: the two columns share a line below the logo.
+          expect(Math.abs(headingTop - (width >= 1024 ? m.logoTop : (m.headingTops[0] ?? 0)))).toBeLessThanOrEqual(1);
+        }
+      });
+    }
+  }
+}

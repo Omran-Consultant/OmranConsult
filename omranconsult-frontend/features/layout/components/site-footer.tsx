@@ -101,7 +101,7 @@ export async function SiteFooter() {
           OMRAN
         </p>
 
-        <div className="mt-7 flex flex-col gap-2 border-t border-line pt-5 text-caption text-muted md:mt-16 md:flex-row md:items-center md:justify-between md:pt-6">
+        <div className="mt-12 flex flex-col gap-2 border-t border-line pt-5 text-caption text-muted md:mt-16 md:flex-row md:items-center md:justify-between md:pt-6">
           <p className="md:hidden">{copyrightShort}</p>
           <p className="max-md:hidden">{copyright}</p>
           {data.tagline ? <p className="hidden md:block">{data.tagline}</p> : null}
