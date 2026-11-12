@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const DETAIL = "/ar/projects/king-saud-university-operation-and-maintenance-efficiency";
@@ -300,5 +301,87 @@ test.describe("filter bar keeps search and filters on the first chip row", { tag
         expect(Math.abs((filter ?? Number.NaN) - (chip ?? 0))).toBeLessThanOrEqual(1);
       });
     }
+  }
+});
+
+test.describe("filter panel listbox", () => {
+  async function openPanel(page: Page, locale: "ar" | "en") {
+    await page.goto(`/${locale}/projects`);
+    await page.locator('[data-section="filter-bar"] summary').click();
+    const name = locale === "ar" ? "الجهة المالكة" : "Owning entity";
+    const combobox = page.getByRole("combobox", { name });
+    await expect(combobox).toBeVisible();
+    return combobox;
+  }
+
+  test("keyboard: arrows, Enter, Escape and type-ahead, then the form submits the value", async ({ page }) => {
+    const combobox = await openPanel(page, "ar");
+    await expect(combobox).toHaveText("كل الجهات");
+    const box = await combobox.boundingBox();
+    expect(box?.height).toBe(48);
+    // The label must not be clipped vertically.
+    const text = await combobox.locator("span").first().boundingBox();
+    expect(text && box && text.y >= box.y && text.y + text.height <= box.y + box.height).toBe(true);
+
+    await combobox.focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(combobox).toHaveAttribute("aria-expanded", "true");
+    const listbox = page.getByRole("listbox", { name: "الجهة المالكة" });
+    await expect(listbox).toBeVisible();
+    await expect(listbox.getByRole("option", { selected: true })).toHaveText("كل الجهات");
+    await page.keyboard.press("Escape");
+    await expect(combobox).toHaveAttribute("aria-expanded", "false");
+    await expect(combobox).toHaveText("كل الجهات");
+
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    const second = await listbox.getByRole("option").nth(1).textContent();
+    await expect(combobox).toHaveAttribute("aria-activedescendant", "projects-client-option-1");
+    await page.keyboard.press("Enter");
+    await expect(combobox).toHaveAttribute("aria-expanded", "false");
+    await expect(combobox).toHaveText(second ?? "");
+    await expect(combobox).toBeFocused();
+
+    // Type-ahead moves to the first option that starts with the typed text.
+    // Hidden options are not in the accessibility tree, so read the closed list by its markup.
+    const labels = await page.locator('#projects-client ~ [role="listbox"] [role="option"]').allTextContents();
+    const letter = (labels[3] ?? "").charAt(0);
+    const target = labels.find((label, index) => index > 1 && label.startsWith(letter));
+    // Playwright has no Arabic key map; an Arabic keyboard sends this keydown.
+    await combobox.dispatchEvent("keydown", { key: letter, bubbles: true });
+    await expect(combobox).toHaveAttribute("aria-expanded", "true");
+    await page.keyboard.press("Enter");
+    await expect(combobox).toHaveText(target ?? "");
+
+    await page.getByRole("button", { name: "تطبيق" }).click();
+    await expect(page).toHaveURL(/client=/);
+    await page.locator('[data-section="filter-bar"] summary').click();
+    await expect(page.getByRole("combobox", { name: "الجهة المالكة" })).toHaveText(target ?? "");
+  });
+
+  test("mouse picks an option and the list stays inside the viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const combobox = await openPanel(page, "en");
+    await expect(combobox).toHaveText("All entities");
+    await combobox.click();
+    const listbox = page.getByRole("listbox", { name: "Owning entity" });
+    const box = await listbox.boundingBox();
+    expect(box && box.x >= 0 && box.x + box.width <= 390).toBe(true);
+    expect(box?.height).toBeLessThanOrEqual(320);
+    await listbox.getByRole("option").nth(2).click();
+    await expect(listbox).toBeHidden();
+    await expect(combobox).not.toHaveText("All entities");
+    const panel = await page.locator('[data-section="filter-bar"] details form').boundingBox();
+    expect(panel && panel.x >= 0 && panel.x + panel.width <= 390).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+  });
+
+  for (const locale of ["ar", "en"] as const) {
+    test(`${locale} open filter panel and listbox have no serious axe violations`, async ({ page }) => {
+      const combobox = await openPanel(page, locale);
+      await combobox.click();
+      const axe = await new AxeBuilder({ page }).analyze();
+      expect(axe.violations.filter((v) => v.impact === "serious" || v.impact === "critical")).toEqual([]);
+    });
   }
 });

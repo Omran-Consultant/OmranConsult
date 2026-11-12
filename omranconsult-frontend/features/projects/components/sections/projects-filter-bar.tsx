@@ -5,7 +5,7 @@ import { classNames } from "@/core/ui/class-names";
 import { Container } from "@/core/ui/container";
 import { filterChipClassName } from "@/core/ui/filter-chip";
 import { Icon } from "@/core/ui/icon";
-import { SelectField } from "@/core/ui/input-field";
+import { ListboxSelect } from "@/core/ui/listbox-select";
 import { ProjectsSearch } from "@/features/projects/components/projects-search";
 import type { ProjectsView } from "@/features/projects/services/get-projects-page-data";
 import { projectsQuery } from "@/features/projects/services/projects-filters";
@@ -36,8 +36,6 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
       </li>
     );
   };
-
-  const filterSelectClass = "box-border h-11 py-0 md:h-12";
 
   return (
     <section aria-label={t("filtersLabel")} className="md:border-b md:border-line md:bg-surface" data-section="filter-bar">
@@ -71,38 +69,24 @@ export async function ProjectsFilterBar({ view }: { readonly view: ProjectsView 
             </summary>
             <form
               action=""
-              className="absolute end-0 top-full z-20 mt-2 flex w-80 max-w-[calc(100vw-2.5rem)] flex-col gap-4 rounded-lg border border-line bg-elevated p-5 shadow-lg"
+              className="absolute end-0 top-full z-20 mt-2 flex w-80 max-w-[calc(100vw-2.5rem)] flex-col gap-4 rounded-lg border border-line bg-elevated p-5 shadow-elevated"
             >
               {filters.sector ? <input name="sector" type="hidden" value={filters.sector} /> : null}
               {filters.q ? <input name="q" type="hidden" value={filters.q} /> : null}
-              <SelectField
+              <ListboxSelect
                 defaultValue={filters.client ?? ""}
                 id="projects-client"
                 label={t("clientFilterLabel")}
                 name="client"
-                selectClassName={filterSelectClass}
-              >
-                <option value="">{t("allClients")}</option>
-                {view.owners.map((owner) => (
-                  <option key={owner.slug} value={owner.slug}>
-                    {owner.name}
-                  </option>
-                ))}
-              </SelectField>
-              <SelectField
+                options={[{ value: "", label: t("allClients") }, ...view.owners.map((owner) => ({ value: owner.slug, label: owner.name }))]}
+              />
+              <ListboxSelect
                 defaultValue={filters.region ?? ""}
                 id="projects-region"
                 label={t("regionFilterLabel")}
                 name="region"
-                selectClassName={filterSelectClass}
-              >
-                <option value="">{t("allRegions")}</option>
-                {view.regions.map((region) => (
-                  <option key={region.slug} value={region.slug}>
-                    {region.name}
-                  </option>
-                ))}
-              </SelectField>
+                options={[{ value: "", label: t("allRegions") }, ...view.regions.map((region) => ({ value: region.slug, label: region.name }))]}
+              />
               <Button className="w-full" type="submit">
                 {t("applyFilters")}
               </Button>

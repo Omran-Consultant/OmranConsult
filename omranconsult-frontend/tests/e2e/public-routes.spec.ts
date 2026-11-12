@@ -79,7 +79,8 @@ test("arabic statistics keep suffix after the number", async ({ page }) => {
 test("projects filters update URL", async ({ page }) => {
   await page.goto("/en/projects");
   await page.locator("summary", { hasText: "More filters" }).click();
-  await page.selectOption('select[name="region"]', "riyadh");
+  await page.getByRole("combobox", { name: "Region" }).click();
+  await page.getByRole("listbox", { name: "Region" }).getByRole("option", { name: /Riyadh/ }).click();
   await page.getByRole("button", { name: "Apply" }).click();
 
   await expect(page).toHaveURL(/region=riyadh/);
